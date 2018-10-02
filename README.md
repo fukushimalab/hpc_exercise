@@ -899,12 +899,18 @@ Cache Conflict
 通常プログラムには順序依存関係があり，依存関係のない部分だけが並列化可能である．
 つまり，ある計算において，その計算の全てを並列化することは不可能であり，並列化を行う場合の性能はどれだけ並列化が可能であるかに依存する．
 アムダールの法則は，並列化処理可能な部分と不可能な部分の関係を表したものである．
-```math
+
+<!--
 S = \frac{1}{(1-P)+\frac{P}{N}}
+-->
+<img src="https://latex.codecogs.com/gif.latex?S&space;=&space;\frac{1}{(1-P)&plus;\frac{P}{N}}">
+
+```math
 S: 高速化率
 P: 並列化率
 N: プロセッサ数
 ```
+
 並列化率Pが大きくなれば高速化率Sは向上する．
 しかし，プロセッサ数Nが非常に多くても，並列化不可能な部分のために高速化率が頭打ちになる．
 また，並列化するためには各スレッドを用意時間や，各スレッドを結合するための時間が必要であり必ずしも高速化になるとは限らない．
@@ -1865,7 +1871,8 @@ struct SoA {
 
 <img src="https://latex.codecogs.com/gif.latex?SoA&space;=&space;\begin{bmatrix}&space;a0&space;&&space;a1&space;&&space;a2\\&space;b0&space;&&space;b1&space;&&space;b2\\&space;c0&space;&&space;c1&space;&&space;c2&space;\end{bmatrix}">
 
-<img src="https://latex.codecogs.com/gif.latex?SoA&space;=&space;AoS^T&space;AoS&space;=&space;SoA^T">
+<img src="https://latex.codecogs.com/gif.latex?SoA&space;=&space;AoS^T">
+<img src="https://latex.codecogs.com/gif.latex?AoS&space;=&space;SoA^T">
 
 <!--
 $$
