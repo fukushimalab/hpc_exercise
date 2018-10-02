@@ -131,7 +131,7 @@ void mat_rand(Mat_8U& m, const unsigned char rand_min, const unsigned char rand_
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1) / (1 + RAND_MAX));
+			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
@@ -142,7 +142,7 @@ void mat_rand(Mat_16S& m, const short rand_min, const short rand_max)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1) / (1 + RAND_MAX));
+			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
@@ -153,7 +153,7 @@ void mat_rand(Mat_32S& m, const int rand_min, const int rand_max)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1) / (1 + RAND_MAX));
+			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
