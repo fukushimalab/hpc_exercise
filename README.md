@@ -1405,7 +1405,7 @@ for(int i=0;i<size;i+=8)
 {
 	__m256 ma = _mm256_load_ps(a+i);
 	__m256 mb = _mm256_load_ps(b+i);
-	__m256 mc = _mm256_div_ps(a,b);
+	__m256 mc = _mm256_div_ps(ma,mb);
 
 	_mm256_store_ps(c+i, );
 }
@@ -1416,7 +1416,7 @@ for(int i=0;i<size;i+=8)
 	__m256 ma = _mm256_load_ps(a+i);
 	__m256 mb = _mm256_load_ps(b+i);
 	__m256 tmp = _mm256_rcp_ps(mb);
-	__m256 mc = _mm256_mul_ps(a,tmp);
+	__m256 mc = _mm256_mul_ps(ma,tmp);
 
 	_mm256_store_ps(c+i, );
 }
@@ -1425,7 +1425,7 @@ for(int i=0;i<size;i+=8)
 for(int i=0;i<size;i+=8)
 {
 	__m256 ma = _mm256_load_ps(a+i);
-	__m256 mc = _mm256_sqrt_ps(a);
+	__m256 mc = _mm256_sqrt_ps(ma);
 
 	_mm256_store_ps(c+i, );
 }
@@ -1559,7 +1559,7 @@ c[7]=dp1;
 
 これらような特殊な演算は，専用回路として用意されていることが多く，例えばGPUのテンソルコアなどもこのような特殊な用途の計算となります．
 
-#### 課題
+#### 課題24
 haddとdpで要素の総和を取るプログラムを作成せよ．
 また，それぞれの計算時間を比較せよ．
 （この課題は，後にリダクションの最適化でもう一度登場します．）
