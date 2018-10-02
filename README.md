@@ -210,7 +210,9 @@ g++ -Os test.c　（プログラムサイズの最適化）
 g++ -Og test.c　（デバッグ用最適化）
 ```
 そのほかにも様々なオプションがある．
-* g++ -O3 -mtune=native -march=native -mfpmath=both
+```
+g++ -O3 -mtune=native -march=native -mfpmath=both
+```
 
 `-mtune=native -march=native`は，バイナリファイルをローカルマシンに最適化します．
 `-mfpmath=both`は，浮動小数点演算とsseやavxといったSIMD命令を使ったコードを生成するようになります．
@@ -290,7 +292,13 @@ ax+bx+cx= (a+b+c)*x
 
 #### 課題4
 小さな行列に対して，各要素$x$を下記の定数倍するプログラムを作成し，数式の展開前後で計算速度を比較せよ．
-$$(2\pi+\sqrt{5}+0.5^2) \times x$$
+<!--
+$$
+(2\pi+\sqrt{5}+0.5^2) \times x
+$$
+-->
+<img src="https://latex.codecogs.com/gif.latex?(2\pi&plus;\sqrt{5}&plus;0.5^2)&space;\times&space;x" />
+
 
 ### 共通部分式の削除
 数式の計算で，共通部分がある場合，その計算を先にやっておき一時変数として格納しておくと，演算が削除できる．
@@ -541,7 +549,9 @@ FLOPSは，演算性能しか評価しておらず，メモリI/Oに掛かる時
 例えば，メモリ帯域幅に律速していない場合は，まだ最適化によって演算性能を高めることができる余地を残していることを表している．
 また，メモリ帯域に律速している場合（斜め線で頭打ち）は，演算強度を上げるようにアルゴリズムなどを変更してでも，メモリ帯域幅で律速しないようにする必要があることを示している．
 ルーフラインモデルより，対象とする計算機及びプログラムで達成可能なFLOPSは以下のように求められる．
-$$達成可能なFLOPS = min(ピーク演算性能[FLOPS], ピークメモリ帯域幅[Byte/s] \times 対象プログラムの演算強度[FLOP/Byte])$$
+```
+達成可能なFLOPS = min(ピーク演算性能[FLOPS], ピークメモリ帯域幅[Byte/s] x 対象プログラムの演算強度[FLOP/Byte])
+```
 
 演算性能に対して，遅いメモリ帯域幅を隠蔽するための仕組みとしてキャッシュ機構が存在する．
 キャッシュ機構では，使用したデータを局所性の原理（時間的局所性・空間的局所性）CPUに近いキャッシュ一時保持し，再度キャッシュに格納されたデータが使用される場合はメモリではなくキャッシュにアクセスすることで高速化を図る．
@@ -1850,6 +1860,14 @@ struct SoA {
 しかしながら，データ構造変換自体も計算時間がかかるため，その変換処理の高速化も重要であり，また，変換時間を含めたトレードオフを考慮してコードを記述する必要がある．
 
 これらのデータ構造を行列と捉えると，これらのデータ構造への相互変換は行列の転置演算に等しい．
+
+<img src="https://latex.codecogs.com/gif.latex?AoS&space;=&space;\begin{bmatrix}&space;a0&space;&&space;b0&space;&&space;c0\\&space;a1&space;&&space;b1&space;&&space;c1\\&space;a2&space;&&space;b2&space;&&space;c2&space;\end{bmatrix}">
+
+<img src="https://latex.codecogs.com/gif.latex?SoA&space;=&space;\begin{bmatrix}&space;a0&space;&&space;a1&space;&&space;a2\\&space;b0&space;&&space;b1&space;&&space;b2\\&space;c0&space;&&space;c1&space;&&space;c2&space;\end{bmatrix}">
+
+<img src="https://latex.codecogs.com/gif.latex?SoA&space;=&space;AoS^T&space;AoS&space;=&space;SoA^T">
+
+<!--
 $$
 AoS = \begin{bmatrix}
 a0 & b0 & c0\\
@@ -1870,6 +1888,8 @@ $$
 SoA = AoS^T
 AoS = SoA^T
 $$
+-->
+
 
 このSoAとAoSの相互変換（行列の転置）は，整数型を使うのか，変換のサイズが２の累乗かによって効率的な記述が異なる．
 2のべき乗の時は，非常に効率的な転置が可能である．
