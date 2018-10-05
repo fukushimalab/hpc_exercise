@@ -89,8 +89,8 @@ VisualStudioの使用に習熟した人のみの利用にしてください（�
 例題のコードはC言語っぽい疑似コードであって，コンパイルできるとは限りません．
 実際に使うコードは以下のコードを参照してください．
 主に行列の演算と画像処理のコードを拡張して使います．
-* [演習用コードと行列演算ライブラリ](hpc-exercise)
-* [画像処理ライブラリとサンプルコード](image_processing)
+* [演習用コードと行列演算ライブラリ](https://github.com/fukushimalab/hpc_exercise/tree/master/hpc-exercise)
+* [画像処理ライブラリとサンプルコード](https://github.com/fukushimalab/hpc_exercise/tree/master/image_processing)
 
 また，これらのコードの使用方法については，以下のリンクより確認してください．
 * [演習用コードと行列演算ライブラリの説明](ライブラリ説明.md)
@@ -2097,7 +2097,7 @@ SIMDとOpenMPを使って総和処理を効率的に記述せよ．（難易度�
 ## 画像処理
 画像処理用のライブラリとサンプルコードの使用方法，また画像処理で並列化・ベクトル演算をしようする場合の基本的な方法を下記に記載しています．
 画像処理を対象とする人は，適時確認してください．
-* [画像処理ライブラリとサンプルコード](image_processing)
+* [画像処理ライブラリとサンプルコード](https://github.com/fukushimalab/hpc_exercise/tree/master/image_processing)
 * [演習用コードと行列演算ライブラリの説明](画像処理.md)
 
 課題
