@@ -629,7 +629,7 @@ for (int j=0; j<height; ++j)
 {
 	for (int i=0; i<width; ++i)
 	{
-		x[i][j] = 0.0f;
+		x[j][i] = 0.0f;
 	}
 }
 ```
@@ -646,7 +646,7 @@ for (int i=0; i<size; ++i)
 	{
 		for (int k=0; k<size; ++k)
 		{
-			c[i][j]=c[i][j]+a[i][k] * b[k][j];
+			c[j][i]=c[i][j]+a[i][k] * b[k][j];
 		}
 	}
 }
