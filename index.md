@@ -616,7 +616,7 @@ for (int i=0; i<width; ++i)
 {
 	for (int j=0; j<height; ++j)
 	{
-		x[i][j] = 0.0f;
+		x[j][i] = 0.0f;
 	}
 }
 ```
