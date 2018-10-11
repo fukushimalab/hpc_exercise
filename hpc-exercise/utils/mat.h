@@ -24,6 +24,10 @@ struct Mat_8U
 	~Mat_8U();
 	Mat_8U& operator=(const Mat_8U& m);
 	void show() const;
+	int index(const int row, const int col) const
+	{
+		return row*cols + col;
+	}
 };
 
 struct Mat_16S
@@ -43,6 +47,10 @@ struct Mat_16S
 	~Mat_16S();
 	Mat_16S& operator=(const Mat_16S& m);
 	void show() const;
+	int index(const int row, const int col) const
+	{
+		return row*cols + col;
+	}
 };
 
 struct Mat_32S
@@ -62,6 +70,10 @@ struct Mat_32S
 	~Mat_32S();
 	Mat_32S& operator=(const Mat_32S& m);
 	void show() const;
+	int index(const int row, const int col) const
+	{
+		return row*cols + col;
+	}
 };
 
 struct Mat_32F
@@ -81,6 +93,10 @@ struct Mat_32F
 	~Mat_32F();
 	Mat_32F& operator=(const Mat_32F& m);
 	void show() const;
+	int index(const int row, const int col) const
+	{
+		return row*cols + col;
+	}
 };
 
 struct Mat_64F
@@ -100,5 +116,9 @@ struct Mat_64F
 	~Mat_64F();
 	Mat_64F& operator=(const Mat_64F& m);
 	void show() const;
+	int index(const int row, const int col) const
+	{
+		return row*cols + col;
+	}
 };
 

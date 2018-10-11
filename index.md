@@ -74,12 +74,11 @@ VisualStudioの使用に習熟した人のみの利用にしてください（�
 * [プロセッサを支える技術－－果てしなくスピードを追求する世界（Hisa Ando）](https://www.amazon.co.jp/%E3%83%97%E3%83%AD%E3%82%BB%E3%83%83%E3%82%B5%E3%82%92%E6%94%AF%E3%81%88%E3%82%8B%E6%8A%80%E8%A1%93-%EF%BC%8D%EF%BC%8D%E6%9E%9C%E3%81%A6%E3%81%97%E3%81%AA%E3%81%8F%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%92%E8%BF%BD%E6%B1%82%E3%81%99%E3%82%8B%E4%B8%96%E7%95%8C-WEB-DB-PRESS-plus/dp/4774145211/ref=pd_sim_14_97?_encoding=UTF8&pd_rd_i=4774145211&pd_rd_r=564d946c-a1b4-11e8-9d84-25270957ff53&pd_rd_w=pjDUu&pd_rd_wg=TMkH9&pf_rd_i=desktop-dp-sims&pf_rd_m=AN1VRQENFRJN5&pf_rd_p=053a78c4-e34f-47d4-9426-4d23f47a211d&pf_rd_r=7GV789RMBET9ZE9FAH5X&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=7GV789RMBET9ZE9FAH5X)
 * [コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁（Hisa Ando）](https://www.amazon.co.jp/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E6%8A%80%E8%A1%93%E5%85%A5%E9%96%80-%E9%AB%98%E9%80%9F%E5%8C%96%E3%81%AE%E8%BF%BD%E6%B1%82%C3%97%E6%B6%88%E8%B2%BB%E9%9B%BB%E5%8A%9B%E3%81%AE%E5%A3%81-WEB-PRESS-plus/dp/4774164267/ref=pd_sim_14_2?_encoding=UTF8&pd_rd_i=4774164267&pd_rd_r=6a50425c-a1b4-11e8-88fd-59ccc6f09d99&pd_rd_w=AHRk1&pd_rd_wg=8FIoI&pf_rd_i=desktop-dp-sims&pf_rd_m=AN1VRQENFRJN5&pf_rd_p=053a78c4-e34f-47d4-9426-4d23f47a211d&pf_rd_r=P0QYFJEX2MYX882CWE20&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=P0QYFJEX2MYX882CWE20)
 * [数値計算の常識（伊理 正夫, 藤野 和建）](https://www.amazon.co.jp/%E6%95%B0%E5%80%A4%E8%A8%88%E7%AE%97%E3%81%AE%E5%B8%B8%E8%AD%98-%E4%BC%8A%E7%90%86-%E6%AD%A3%E5%A4%AB/dp/4320013433/ref=pd_sim_14_59?_encoding=UTF8&pd_rd_i=4320013433&pd_rd_r=564d946c-a1b4-11e8-9d84-25270957ff53&pd_rd_w=pjDUu&pd_rd_wg=TMkH9&pf_rd_i=desktop-dp-sims&pf_rd_m=AN1VRQENFRJN5&pf_rd_p=053a78c4-e34f-47d4-9426-4d23f47a211d&pf_rd_r=7GV789RMBET9ZE9FAH5X&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=7GV789RMBET9ZE9FAH5X)
-* []()
 
 ## 予定表
 * １週：導入，最適化コンパイラとパフォーマンス測定方法
 * ２週：古典的な高速化技法（演算量の削減・置換，テーブル参照，固定小数点など）
-* ３週：メモリとキャッシュの最適化（行列演算か画像処理）
+* ３週：メモリとキャッシュの最適化（行列演算）
 * ４週：並列化プログラミング（OpenMPによる並列化）
 * ５週：ベクトル化プログラミング．IntrinsicsによるAVXベクトル化
 * ６週：総合演習：６，７週通しで何かを高速化する
@@ -96,6 +95,17 @@ VisualStudioの使用に習熟した人のみの利用にしてください（�
 * [演習用コードと行列演算ライブラリの説明](ライブラリ説明.md)
 * [画像処理ライブラリの説明](画像処理.md)
 
+## 注意
+計算資源は，CSEのメインフレームではなく，ローカル環境を使用してください．
+`kterml`を実行することで，使用しているローカルPCの環境で実行することが可能です．
+詳細は，下記のページを参照．
+[ローカル環境の使用の仕方](http://cse.cs.nitech.ac.jp/centos_login/centos_login.html)
+
+
+コンパイルは，makeコマンドを使用してください．
+Makefileには，既に必要なオプションが記述されています．
+コンパイルオプションを変更する場合は，`CXXFLAG_ST`を編集してください．
+`CXXFLAG`は必要なコンパイルオプションなので，変更しないように注意すること．
 
 # 最適化コンパイラとパフォーマンス測定方法
 
@@ -228,7 +238,7 @@ C++が書ける人は，サンプルコードや具体的な指示を無視し�
 行列積を計算するプログラムにおいて，コンパイラオプションを変えて計算速度の計測し，その違いを観測せよ．
 
 ### コンパイラによる速度の違い
-コンパイラには，gcc以外にもVisual Studioのvc，iccやLLVM Clangなどがあり，コンパイラによって最適化できる程度が違う．
+コンパイラには，gcc以外にもVisual Studioのvc，IntelコンパイラのiccやLLVM Clangなどがあり，コンパイラによって最適化できる程度が違う．
 例えば，iccはインテルのCPUに特化したコードを生成することができる．
 ただし，最適化に時間がかかるためコンパイル時間は長くなりやすい．
 例えば以下のオプションを使うとiccで最大限の最適化が働く．
@@ -241,9 +251,9 @@ icc -fast test.c
 ここからプログラムを書き換えることでプログラムを高速化することを目指す．
 
 プログラムを高速化するためには以下３つのアプローチが考えられる：
-命令の実行回数を減らす
-より速い命令を使う
-並列度を上げる
+* 命令の実行回数を減らす
+* より速い命令を使う
+* 並列度を上げる
 
 本章では，1,2の主に演算量の削減，演算の置き換えによる高速化技法を学ぶ．
 また，関数呼び出しや条件分岐の削減による高速化を学ぶ．
@@ -389,7 +399,7 @@ intの行列を２倍，1/2倍するときに，ビットシフトと除算や�
 
 ### 固定小数点
 浮動小数点は，整数演算を除算することでも作成することができる．
-例えば，3.142は3142/1,000で表現可能である．
+例えば，3.141は3141/1,000で表現可能である．
 しかし，除算計算は重たいため，それをビットシフトで置き換える．
 1,000に近い２のべき乗は，2^10=1,024であり，小数点を四捨五入すれば，いかで表すことができる．
 ```cpp
@@ -401,7 +411,7 @@ intの行列を２倍，1/2倍するときに，ビットシフトと除算や�
 ```
 
 #### 課題10
-floatの行列をを3.142倍する場合と，intの行列を3.142倍を固定小数点で行う場合で計算し比較せよ．
+floatの行列をを3.141倍する場合と，intの行列を3.141倍を固定小数点で行う場合で計算し比較せよ．
 
 
 ###	テーブル参照
@@ -426,7 +436,7 @@ for(int i=0;i<size;i++)
 ただし，LUTのサイズ＜データサイズでなければ効果はない．
 
 #### 課題11
-floatの行列への定数値の四則演算と，`sin, cos, exp, log, sqrt`関数の適用した場合と計算時間を比較せよ．
+floatの行列への定数値の四則演算と，行列の各要素に`sin, cos, exp, log, sqrt`関数の適用した場合と計算時間を比較せよ．
 また，`sin, cos, exp, log, sqrt`計算はテーブル参照も作成した場合についても比較せよ．
 なお，環境によっては，演算したほうが速い演算もある可能性がある．
 
@@ -616,7 +626,7 @@ for (int i=0; i<width; ++i)
 {
 	for (int j=0; j<height; ++j)
 	{
-		x[i][j] = 0.0f;
+		x[j][i] = 0.0f;
 	}
 }
 ```
@@ -799,8 +809,12 @@ const int height = 512;
 float a[height][width];
 
 for (int j = 0; j < height; j++)
+{
 	for (int i = 0; i < width; i++)
+  {
     	a[j][i] = i+j;
+  }
+}
 ```
 
 ```c
@@ -825,13 +839,17 @@ for (int n = 0; n < size; n++)
 また，インデックス計算が簡単化することで若干の高速化効果が得られる場合もある．
 
 ```c
-int width = 768;
-int height = 512;
+const int width = 768;
+const int height = 512;
 float a[height][width];
 
 for (int j = 0; j < height; j++)
+{
 	for (int i = 0; i < width; i++)
+  {
     	a[j][i] = 0.f;
+  }
+}
 ```
 ループをつぶせば，ループ操作がポインタのインクリメントだけで表現できる．
 ```c
@@ -841,7 +859,9 @@ float a[height][width];
 int *p = &a[0][0];
 int size = width*height;
 for (i = 0; i < size; i++)
+{
   *p++ = 0;
+}
 ```
 #### 課題17
 上記のループつぶしのコードの計算時間を比較せよ．
@@ -1080,7 +1100,7 @@ IntelのCPUにおける2コア4スレッドという表記は，コアは2つで
 スループットとは，単位時間あたり何回実行できるかを表す指標であり，レイテンシとは，命令を発行してから何単位時間後に命令が完了するかを表す指標である．
 どの命令もレイテンシは０にはならないため，一つの命令を発行したら最大のスループットが出るとは限らない．
 例えば，ある命令のスループットが２でレイテンシが４である場合，命令を１つ発行したら４待たなければその命令は終わらないため，その待ち時間では演算が進まず，実質のスループットは４相当となる．
-これを解決には，命令のパイプライン化が必要となる．
+これを解決するには，命令のパイプライン化が必要となる．
 パイプライン化とは，待ち時間にも他の演算を埋めることで実質スループットを向上させる方法である．
 例えば，同様のスループット２，レイテンシ４の命令の場合，２つ演算を連続で発行すると，待ち時間にも演算が行われるため，[演算２][演算２][待ち２]で実質スループットが3相当になる．三つ重ねれば，[演算２][演算２][演算２][待ち２]もしこの命令を無限に重ねた場合は，レイテンシがすべて隠れスループット２の演算相当の計算となる．
 実際は，同じ命令に対して異なる回路があったり，別の命令を発行したりするため，このようにきれいに考えることはできないが，基本的には命令の待ち時間に別の命令を行うことでパイプラインを組む．
@@ -1175,8 +1195,8 @@ free(b);
 また，静的確保の場合は，`__attribute__ ((aligned(n)))`を用いてnを合わせることでアライメントが取れる．
 ```c
 const int size = 1024;
-__attribute__ ((aligned(64))) float a[size];
-//__declspec(align(64)) float a[size]; //Visual Studioの場合
+__attribute__ ((aligned(32))) float a[size];
+//__declspec(align(32)) float a[size]; //Visual Studioの場合
 ```
 
 またデータの`load/store`命令には，以下の命令がある．
@@ -1206,6 +1226,8 @@ uがついていない`load/store`命令がアライメントが取れている�
 また，SSE命令しかない時代には，アライメントが取れていないメモリにアライメントが取れているとして`load`命令を発行するとプログラムが落ちたが，現代では基本的には動く．
 `store`命令に関しては今でも落ちる関数があるため注意が必要である．
 つまり，はじめに示したload/storeによるメモリコピーは，アライメントの指定がない上にuのついていない関数を用いているため，落ちる可能性がある．
+
+***本演習で使用しているMatクラスは，32bitでアライメントが合うように確保しています．***
 
 ### データのセット
 
@@ -1286,7 +1308,7 @@ for(int i=0;i<size;i+=8)
 	__m256 ma = _mm256_load_ps(a+i);
 	__m256 mb = _mm256_load_ps(b+i);
 	__m256 mc = _mm256_add_ps(a,b);
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, mc);
 }
 ```
 `_mm256_add_ps`の関数を変えれば四則演算も簡単に実現できる．対応する関数は以下となる．
@@ -1326,12 +1348,12 @@ for(int i=0;i<size;i+=8)
 	__m256 mb = _mm256_load_ps(b+i);
 	__m256 mc = _mm256_load_ps(c+i);
 
-	//__m256 tmp = _mm256_mul_ps(a,b);
-	//__m256 md = _mm256_add_ps(tmp,c)
+	__m256 tmp = _mm256_mul_ps(a,b);
+	__m256 md = _mm256_add_ps(tmp,c)
 	//下のように書いたほうが見やすいことも．
-	__m256 md = _mm256_add_ps(_mm256_mul_ps(a,b),c);
+	// __m256 md = _mm256_add_ps(_mm256_mul_ps(a,b),c);
 
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, md);
 }
 
 //fma
@@ -1343,7 +1365,7 @@ for(int i=0;i<size;i+=8)
 
 	__m256 md = _mm256_fmadd_ps(a,b,c);
 
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, md);
 }
 ```
 
@@ -1396,9 +1418,9 @@ gcc等を用いる場合は，
 
 ```c
 const int size = 1024;
-float a[size];
-float b[size];
-float c[size];
+__attribute__ ((aligned(32))) float a[size];
+__attribute__ ((aligned(32))) float b[size];
+__attribute__ ((aligned(32))) float c[size];
 
 // c=a/b div
 for(int i=0;i<size;i+=8)
@@ -1407,7 +1429,7 @@ for(int i=0;i<size;i+=8)
 	__m256 mb = _mm256_load_ps(b+i);
 	__m256 mc = _mm256_div_ps(ma,mb);
 
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, mc);
 }
 
 // c=a/b rcp->mul
@@ -1418,7 +1440,7 @@ for(int i=0;i<size;i+=8)
 	__m256 tmp = _mm256_rcp_ps(mb);
 	__m256 mc = _mm256_mul_ps(ma,tmp);
 
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, mc);
 }
 
 // c=sqrt(a)
@@ -1427,7 +1449,7 @@ for(int i=0;i<size;i+=8)
 	__m256 ma = _mm256_load_ps(a+i);
 	__m256 mc = _mm256_sqrt_ps(ma);
 
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, mc);
 }
 
 // c=sqrt(a) rsqrt ->rcp
@@ -1437,12 +1459,13 @@ for(int i=0;i<size;i+=8)
 	__m256 mrs = _mm256_rsqrt_ps(ma);
 	__m256 mc = _mm256_rcp_ps(mrs);
 
-	_mm256_store_ps(c+i, );
+	_mm256_store_ps(c+i, mc);
 }
 ```
 
 #### 課題23
 divとrcp,sqrtとrsqrtの実行速度を比較せよ．
+
 
 ### ビット演算
 
@@ -1936,7 +1959,6 @@ A[y][x] -> A[x][y]
 
 ### 課題27
 上の関数を用いて，データ構造の相互変換を確認せよ．
-４ｘ４のdouble型データの転置を手書きで考えてみよ．
 
 ## 型変換
 型を変換するキャストは普段何気なく行っているが，ベクトル化プログラミングでは特別の注意が必要である．
@@ -2055,25 +2077,25 @@ OpenMPによる並列化とSIMDによる並列化は，異なる並列性に基�
 
 ```c
 const int size = 128;
-__attribute__ ((aligned(32))) float a[size][size];
-__attribute__ ((aligned(32))) float b[size][size];
-__attribute__ ((aligned(32))) float c[size][size];
+Mat_32F a(size, size);
+Mat_32F b(size, size);
+Mat_32F c(size, size);
 
 #pragma omp parallel for
 for(int j=0;k < size; j++)
 {
   for (int i = 0; i < size; i += 8)
   {
-  	__m256 ma = _mm256_load_ps((float*)&a[j][i]);
-  	__m256 mb = _mm256_load_ps((float*)&b[j][i]);
+  	__m256 ma = _mm256_load_ps(a+j*size+i);
+  	__m256 mb = _mm256_load_ps(b+j*size+i);
   	__m256 temp = _mm256_mul_ps(ma, mb);
-  	_mm256_store_ps((float*)&c[j][i], temp);
+  	_mm256_store_ps(c.data + j*size+i, temp);
   }
 }
 ```
 
 ### 課題29
-上記の二つの行列の各要素の積を計算するコードを実行し，計算時間を計測せよ．
+二つの行列の各要素の積を計算するコードを実行し，計算時間を計測せよ．
 また，スカラ実装，スカラ実装＋並列化，SIMD実装のみを作成し，計算時間を比較せよ．
 
 
@@ -2127,6 +2149,6 @@ OpenMPはコンパイル時に有効化しないとディレクティブを書�
 
 ## コンパイルが通りません・実行時エラーが発生します
 エラーメッセージを確認しましょう．
-Segmantation Falseの場合は，`-g`でデバッグ用のバイナリを作成し，gdbで確認しましょう．
+Segmentation Faultの場合は，`-g`でデバッグ用のバイナリを作成し，gdbで確認しましょう．
 また，OpenMPで並列化している場合は，順次実行では起きないようなポインタ移動でエラーが発生する場合があります．
 そのため，並列化を切って動作させてみましょう．
