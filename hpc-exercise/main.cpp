@@ -665,8 +665,8 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "課題10" << std::endl;
 		const int loop = 1000;
-		const int row = 3;
-		const int col = 3;
+		const int row = 64;
+		const int col = 64;
 		Mat_32S x_32s(row, col);
 		mat_rand(x_32s, 0, 100);
 		Mat_32S ret_32s(row, col);
