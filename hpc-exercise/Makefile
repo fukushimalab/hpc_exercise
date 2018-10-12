@@ -6,6 +6,7 @@ CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -mfpmath=both
 CXXFLAGS_ST=#-O3 #-mtune=native
 
 
+
 .SUFFIXES: .cpp .o
 
 .PHONY: all
@@ -13,6 +14,8 @@ all: depend $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
 	$(CC) $(CXXFLAGS) $(CXXFLAGS_ST) -o $(PROGRAM) $^
+	-@ utils/check_host.sh
+	
 
 .c.o:
 	$(CC) $(CXXFLAGS) -c $<
