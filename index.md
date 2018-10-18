@@ -198,7 +198,7 @@ clock_gettime(CLOCK_REALTIME, &end);
 double time = (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9; //[ms]
 ```
 
-## 時間計測クラス
+### 時間計測クラス
 　本演習では，時間計測を簡素化するために，CalcTimeクラスを提供している．
 CalcTimeは次の様に使用する．
 ```cpp
