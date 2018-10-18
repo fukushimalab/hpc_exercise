@@ -2,9 +2,6 @@
 #include "utils/mat_util.h"
 #include "utils/simd_util.h"
 #include <math.h>
-#include <time.h>
-
-
 
 //課題12
 inline void rot(double a, double b, double &x, double &y, double radian)
@@ -59,19 +56,15 @@ int main(const int argc, const char** argv)
 		Mat_32F ret(row, col);
 		mat_zero(ret);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int i = 0; i < loop; i++)
 		{
-			//時間計測開始
-			//XXXX
+			t.start();	//時間計測開始
 			ret = mat_add(mat_mul(a, x), b);
-			//時間計測終了
-			//XXXX
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			std::cout << "time: " << (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();	//時間計測終了
+			std::cout << "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		a.show();
 		x.show();
@@ -96,17 +89,15 @@ int main(const int argc, const char** argv)
 		Mat_32F ret(row, col);
 		mat_zero(ret);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			ret = mat_mul(a, b);
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			std::cout << "time: " << (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		a.show();
 		b.show();
@@ -131,33 +122,32 @@ int main(const int argc, const char** argv)
 		mat_zero(ret);
 
 		//before
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
 			//3x^4+3x^3+3 そのまま
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < x.rows; j++)
 			{
 				for (int i = 0; i < x.cols; i++)
 				{
 					//計算
 					//XXXX
+					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			std::cout << "before: time: " << (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "before: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//after
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//3x^4+3x^3+3 ホーナー法つかった場合
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < x.rows; j++)
 			{
 				for (int i = 0; i < x.cols; i++)
@@ -166,11 +156,10 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			std::cout << "after: time: " << (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "after: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "after: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -189,14 +178,12 @@ int main(const int argc, const char** argv)
 		Mat_32F ret(row, col);
 		mat_zero(ret);
 
-
 		//before
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
 			//毎回計算する場合
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < x.rows; j++)
 			{
 				for (int i = 0; i < x.cols; i++)
@@ -205,19 +192,18 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "before: time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "before: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//after
 		const float c = (2 * 3.14 + sqrt(5) + 0.5*0.5);
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//先に計算する場合
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < x.rows; j++)
 			{
 				for (int i = 0; i < x.cols; i++)
@@ -226,11 +212,10 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "after: time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "after: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "after: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -249,13 +234,12 @@ int main(const int argc, const char** argv)
 		Mat_32F ret(row, col);
 		mat_zero(ret);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		//before
 		for (int k = 0; k < loop; k++)
 		{
 			//除算の場合
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < x.rows; j++)
 			{
 				for (int i = 0; i < x.cols; i++)
@@ -264,18 +248,17 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "div: time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "div: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "div: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//after
 		for (int k = 0; k < loop; k++)
 		{
 			//乗算にした場合
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < x.rows; j++)
 			{
 				for (int i = 0; i < x.cols; i++)
@@ -284,11 +267,10 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "mul: time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "mul: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "mul: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -313,13 +295,12 @@ int main(const int argc, const char** argv)
 		mat_zero(ret);
 
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		//before
 		for (int k = 0; k < loop; k++)
 		{
 			//普通に計算
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret.rows; j++)
 			{
 				for (int i = 0; i < ret.cols; i++)
@@ -328,18 +309,17 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "before: time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "before: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//after
 		for (int k = 0; k < loop; k++)
 		{
 			//除算を削減した場合
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret.rows; j++)
 			{
 				for (int i = 0; i < ret.cols; i++)
@@ -348,11 +328,10 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "after: time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			std::cout << "after: time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "after: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -367,21 +346,19 @@ int main(const int argc, const char** argv)
 		const float v = 2.5f;
 		float ret = 0;
 
-		timespec start, end;
 		for (int i = 0; i < n; i++)
 		{
-			double time = 0;
+			CalcTime t;
 			//v^i乗を計算
 			for (int j = 0; j < loop; j++)
 			{
-				clock_gettime(CLOCK_REALTIME, &start);
+				t.start();
 				//pow，計算
 				//XXXX
-				clock_gettime(CLOCK_REALTIME, &end);
-				time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-				//std::cout<< "time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+				t.end();
+				//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 			}
-			std::cout << i << " : time (avg): " << time / (double)loop << " ms" << std::endl;
+			std::cout << i << " : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 			//std::cout << ret << std::endl;
 		}
 		return 0;
@@ -406,18 +383,16 @@ int main(const int argc, const char** argv)
 		Mat_8U ret_8u(row, col);
 		mat_zero(ret_8u);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//unsigned char
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << " 8U : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << " 8U : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//short
 		Mat_16S a_16s(row, col);
@@ -427,17 +402,16 @@ int main(const int argc, const char** argv)
 		Mat_16S ret_16s(row, col);
 		mat_zero(ret_16s);
 
-		time = 0;
+		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//short
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "16S : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "16S : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//int
 		Mat_32S a_32s(row, col);
@@ -447,17 +421,16 @@ int main(const int argc, const char** argv)
 		Mat_32S ret_32s(row, col);
 		mat_zero(ret_32s);
 
-		time = 0;
+		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//int
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "32S : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "32S : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//float
@@ -468,17 +441,16 @@ int main(const int argc, const char** argv)
 		Mat_32F ret_32f(row, col);
 		mat_zero(ret_32f);
 
-		time = 0;
+		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//float
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "32F : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "32F : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//double
@@ -489,17 +461,16 @@ int main(const int argc, const char** argv)
 		Mat_64F ret_64f(row, col);
 		mat_zero(ret_64f);
 
-		time = 0;
+		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//float
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout<< "time: " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << " ms" << std::endl;
+			t.end();
+			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "64F : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "64F : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -521,12 +492,11 @@ int main(const int argc, const char** argv)
 		mat_zero(ret_32s);
 
 		//2x mul
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
 			//2倍 乗算
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32s.rows; j++)
 			{
 				for (int i = 0; i < ret_32s.cols; i++)
@@ -534,17 +504,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "2x mul: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "2x mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//2x bit shift
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//2倍 ビットシフト
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32s.rows; j++)
 			{
 				for (int i = 0; i < ret_32s.cols; i++)
@@ -552,18 +521,17 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "2x bit shift: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "2x bit shift: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//1/2 div
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32s.rows; j++)
 			{
 				for (int i = 0; i < ret_32s.cols; i++)
@@ -571,18 +539,17 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "1/2 div: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//1/2 -> mul 0.5
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 0.5乗算で実現
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32s.rows; j++)
 			{
 				for (int i = 0; i < ret_32s.cols; i++)
@@ -590,17 +557,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "1/2 mul: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "1/2 mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//1/2->bit shift
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 ビットシフト
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32s.rows; j++)
 			{
 				for (int i = 0; i < ret_32s.cols; i++)
@@ -608,10 +574,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "1/2 bit shift: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "1/2 bit shift: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//float
 		Mat_32F x_32f(row, col);
@@ -620,11 +585,11 @@ int main(const int argc, const char** argv)
 		mat_zero(ret_32f);
 
 		//1/2 div
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -632,18 +597,17 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "float: 1/2 div: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "float: 1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//1/2 -> mul 0.5
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 0.5乗算
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -651,10 +615,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "float: 1/2 mul: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "float: 1/2 mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -665,20 +628,19 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "課題10" << std::endl;
 		const int loop = 1000;
-		const int row = 64;
-		const int col = 64;
+		const int row = 3;
+		const int col = 3;
 		Mat_32S x_32s(row, col);
 		mat_rand(x_32s, 0, 100);
 		Mat_32S ret_32s(row, col);
 		mat_zero(ret_32s);
 
 		//int
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
 			//固定小数点
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32s.rows; j++)
 			{
 				for (int i = 0; i < ret_32s.cols; i++)
@@ -686,10 +648,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "fixed: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "fixed: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		Mat_32F x_32f(row, col);
 		mat_rand(x_32f, 0, 100);
@@ -697,11 +658,11 @@ int main(const int argc, const char** argv)
 		mat_zero(ret_32f);
 
 		//float
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//浮動小数点
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -709,10 +670,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "float: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "float: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -735,12 +695,11 @@ int main(const int argc, const char** argv)
 		mat_zero(ret_32f);
 
 		//四則演算
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
 			//四則演算
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -748,17 +707,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "arithmetic: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "arithmetic: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sin
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//sin関数
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -766,17 +724,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "sin: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "sin: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//cos
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//cos関数
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -784,17 +741,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "cos: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "cos: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//exp
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//exp関数
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -802,17 +758,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "exp: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "exp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//log
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//log関数
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -820,17 +775,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "log: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "log: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sqrt
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//sqrt関数
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -838,10 +792,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "sqrt: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "sqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		std::cout << std::endl;
 		//sin LUT
@@ -851,10 +804,10 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//sin LUT
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
@@ -863,10 +816,9 @@ int main(const int argc, const char** argv)
 					ret_32f.data[j*ret_32f.cols + i] = LUT[(int)x_32f.data[j*ret_32f.cols + i]];
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "sin LUT: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "sin LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//cos LUT
 		for (int i = 0; i < 256; i++)
@@ -874,11 +826,11 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//cos LUT
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -886,10 +838,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "cos LUT: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "cos LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//exp LUT
 		for (int i = 0; i < 256; i++)
@@ -897,11 +848,11 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//exp LUT
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -909,10 +860,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "exp LUT: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "exp LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//log LUT
 		for (int i = 0; i < 256; i++)
@@ -920,11 +870,11 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//log LUT
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -932,10 +882,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "log LUT: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "log LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sqrt LUT
 		for (int i = 0; i < 256; i++)
@@ -943,11 +892,11 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//sqrt LUT
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < ret_32f.rows; j++)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
@@ -955,10 +904,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "sqrt LUT: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "sqrt LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -990,11 +938,10 @@ int main(const int argc, const char** argv)
 		mat_zero(y);
 
 		const float radian = 2.2f;
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < a.rows; j++)
 			{
 				for (int i = 0; i < a.cols; i++)
@@ -1003,10 +950,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		return 0;
 	}
 
@@ -1023,12 +969,10 @@ int main(const int argc, const char** argv)
 			Mat_64F c(row, col);
 			mat_zero(c);
 
-			timespec start, end;
-			double time = 0;
+			CalcTime t;
 			for (int k = 0; k < loop; k++)
 			{
-
-				clock_gettime(CLOCK_REALTIME, &start);
+				t.start();
 				//C=A*B
 				Mat_64F a(row, col);
 				mat_rand(a, 0, 100);
@@ -1041,20 +985,18 @@ int main(const int argc, const char** argv)
 						//XXXX
 					}
 				}
-				clock_gettime(CLOCK_REALTIME, &end);
-				time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+				t.end();
 			}
-			std::cout << "c=a*b: time (avg): " << time / (double)loop << " ms" << std::endl;
+			std::cout << "c=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		}
 
 		//a = a x b
 		{
 
-			timespec start, end;
-			double time = 0;
+			CalcTime t;
 			for (int k = 0; k < loop; k++)
 			{
-				clock_gettime(CLOCK_REALTIME, &start);
+				t.start();
 				//A=AxB
 				Mat_64F a(row, col);
 				mat_rand(a, 0, 100);
@@ -1067,10 +1009,9 @@ int main(const int argc, const char** argv)
 						//XXXX
 					}
 				}
-				clock_gettime(CLOCK_REALTIME, &end);
-				time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+				t.end();
 			}
-			std::cout << "a=a*b: time (avg): " << time / (double)loop << " ms" << std::endl;
+			std::cout << "a=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		}
 
 		return 0;
@@ -1087,12 +1028,11 @@ int main(const int argc, const char** argv)
 		const int height = 64;
 		float x[width][height];
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		//col, row
 		for (int k = 0; k < loop; k++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < width; ++i)
 			{
 				for (int j = 0; j < height; ++j)
@@ -1100,16 +1040,15 @@ int main(const int argc, const char** argv)
 					x[i][j] = 0.0f;
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "col-row: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "col-row: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//row, col
 		for (int k = 0; k < loop; k++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < width; ++i)
 			{
 				for (int j = 0; j < height; ++j)
@@ -1117,10 +1056,9 @@ int main(const int argc, const char** argv)
 					x[i][j] = 0.0f;
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "row-col: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "row-col: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		const int size = 64;
 		float a[size][size];
@@ -1138,10 +1076,10 @@ int main(const int argc, const char** argv)
 		}
 
 		//i, j, k
-		time = 0;
+		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; ++i)
 			{
 				for (int j = 0; j < size; ++j)
@@ -1152,17 +1090,16 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout << "time : " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << std::endl;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "i-j-k: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "i-j-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//i, k, j
-		time = 0;
+		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; ++i)
 			{
 				for (int k = 0; k < size; ++k)
@@ -1173,17 +1110,16 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout << "time : " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << std::endl;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "i-k-j: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "i-k-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//j, i, k
-		time = 0;
+		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < size; ++j)
 			{
 				for (int i = 0; i < size; ++i)
@@ -1194,16 +1130,16 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "j-i-k: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "j-i-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//j, k, i
-		time = 0;
+		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < size; ++j)
 			{
 				for (int k = 0; k < size; ++k)
@@ -1214,16 +1150,16 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "j-k-i: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "j-k-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//k, i, j
-		time = 0;
+		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int k = 0; k < size; ++k)
 			{
 				for (int i = 0; i < size; ++i)
@@ -1234,16 +1170,16 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "k-i-j: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "k-i-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//k, j, i
-		time = 0;
+		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int k = 0; k < size; ++k)
 			{
 				for (int j = 0; j < size; ++j)
@@ -1254,10 +1190,10 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "k-j-i: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "k-j-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1279,44 +1215,41 @@ int main(const int argc, const char** argv)
 			x[i] = rand_32f(0, 100);
 		}
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		//unrolling 1
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 1
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i++)
 			{
 				y[i + 0] = a * x[i + 0] + b;
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "no unrolling: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "no unrolling: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//unrolling 2
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 2
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 2)
 			{
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "unrolling  2: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "unrolling  2: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//unrolling 4
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 4
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 4)
 			{
 				//XXXX
@@ -1324,17 +1257,16 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "unrolling  4: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "unrolling  4: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//unrolling 8
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 8
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				//XXXX
@@ -1346,17 +1278,16 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "unrolling  8: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "unrolling  8: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//unrolling 16
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 16
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 16)
 			{
 				//XXXX
@@ -1376,17 +1307,16 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "unrolling 16: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "unrolling 16: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//unrolling 32
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 32
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 32)
 			{
 				//XXXX
@@ -1422,17 +1352,16 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "unrolling 32: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "unrolling 32: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//unrolling 64
 		for (int j = 0; j < loop; j++)
 		{
 			//unrolling 64
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 64)
 			{
 				//XXXX
@@ -1500,10 +1429,9 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "unrolling 64: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "unrolling 64: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1523,12 +1451,11 @@ int main(const int argc, const char** argv)
 			y[i] = rand_32f(0, 100);
 		}
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		//original
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; ++i)
 			{
 				if (i == 0)
@@ -1544,16 +1471,15 @@ int main(const int argc, const char** argv)
 					y[i] = (x[i - 1] + x[i] + x[i + 1]) / 3;
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "original: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "original: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//Loop peeling
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			{
 				//XXXX
 				//XXXX
@@ -1562,10 +1488,9 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "loop peeling: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "loop peeling: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1581,12 +1506,11 @@ int main(const int argc, const char** argv)
 		const int height = 512;
 		float a[height][width];
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		// before
 		for (int k = 0; k < loop; k++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < height; j++)
 			{
 				for (int i = 0; i < width; i++)
@@ -1594,25 +1518,23 @@ int main(const int argc, const char** argv)
 					a[j][i] = 0.f;
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "before: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//after
 		const int size = width * height;
 		for (int k = 0; k < loop; k++)
 		{
+			t.start();
 			float *p = &a[0][0];
-			clock_gettime(CLOCK_REALTIME, &start);
 			for (int i = 0; i < size; i++) {
 				*p++ = 0.f;
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "after: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1689,14 +1611,13 @@ int main(const int argc, const char** argv)
 		mat_rand(b, 0, 100);
 		Mat_32F c(size, size);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int l = 0; l < loop; l++)
 		{
 			mat_zero(c);
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//omp num_threads(n)で並列化，nを入れる
-//XXXX
+			//XXXX
 			for (int i = 0; i < size; ++i)
 			{
 				for (int k = 0; k < size; ++k)
@@ -1707,11 +1628,10 @@ int main(const int argc, const char** argv)
 					}
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
-			//std::cout << "time : " << (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9 << std::endl;
+			t.end();
+			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		return 0;
 	}
 
@@ -1782,13 +1702,11 @@ int main(const int argc, const char** argv)
 			c[i] = 0;
 		}
 
-
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		//mul, add
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				const __m256 ma = _mm256_load_ps(a + i);
@@ -1803,17 +1721,16 @@ int main(const int argc, const char** argv)
 				//XXXX
 				_mm256_store_ps(c + i, temp);
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "mul-add: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "mul-add: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		time = 0;
+		t.clear();
 		//fma
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				const __m256 ma = _mm256_load_ps(a + i);
@@ -1828,10 +1745,9 @@ int main(const int argc, const char** argv)
 				//XXXX
 				_mm256_store_ps(c + i, temp);
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "fma: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "fma: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1858,12 +1774,11 @@ int main(const int argc, const char** argv)
 			b[i] = rand_32f(0, 100);
 		}
 
-		double time = 0;
-		timespec start, end;
+		CalcTime t;
 		//div
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				const __m256 ma = _mm256_load_ps(a + i);
@@ -1871,18 +1786,17 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//divを使って
-				//XXXX
+//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "div: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//rcp
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				const __m256 ma = _mm256_load_ps(a + i);
@@ -1890,18 +1804,17 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//rcpをつかって
-				//XXXX
+//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "rcp: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "rcp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//sqrt
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				const __m256 ma = _mm256_load_ps(a + i);
@@ -1909,18 +1822,17 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//sqrtを使って
-				//XXXX
+//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << " sqrt: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << " sqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		//rsqrt
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
 				const __m256 ma = _mm256_load_ps(a + i);
@@ -1928,12 +1840,11 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//rsqrtを使って
-				//XXXX
+//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "rsqrt: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1961,12 +1872,11 @@ int main(const int argc, const char** argv)
 			b[i] = rand_32f(0, 100);
 		}
 
-		double time = 0;
-		timespec start, end;
+		CalcTime t;
 		//hadd
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			__m256 ma = _mm256_load_ps(a);
 			//haddを使って
 			//XXXX
@@ -1976,18 +1886,17 @@ int main(const int argc, const char** argv)
 			//XXXX
 			//XXXX
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "hadd: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "hadd: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		time = 0;
+		t.clear();
 		const __m256 one = _mm256_set1_ps(1);
 		//dp
 		for (int i = 0; i < loop; i++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			__m256 mb = _mm256_load_ps(b);
 			//dpを使って
 			//XXXX
@@ -1996,10 +1905,9 @@ int main(const int argc, const char** argv)
 			//XXXX
 			//XXXX
 			//XXXX
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "dp: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "dp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -2071,12 +1979,11 @@ int main(const int argc, const char** argv)
 			c[i] = 0;
 		}
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		// unrolling 8
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			// unrolling 8
 			for (int i = 0; i < size; i += 8)
 			{
@@ -2084,16 +1991,15 @@ int main(const int argc, const char** argv)
 				__m256 mb = _mm256_load_ps(b + i);
 				_mm256_store_ps(c + i, _mm256_add_ps(ma, mb));
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "  8: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "  8: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		// unrolling 16
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			// unrolling 16
 			for (int i = 0; i < size; i += 16)
 			{
@@ -2105,16 +2011,15 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << " 16: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << " 16: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		// unrolling 32
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			// unrolling 32
 			for (int i = 0; i < size; i += 32)
 			{
@@ -2134,16 +2039,15 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << " 32: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << " 32: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		// unrolling 64
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			// unrolling 64
 			for (int i = 0; i < size; i += 64)
 			{
@@ -2179,16 +2083,15 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << " 64: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << " 64: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		// unrolling 128
 		for (int j = 0; j < loop; j++)
 		{
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			// unrolling 128
 			for (int i = 0; i < size; i += 128)
 			{
@@ -2256,10 +2159,9 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "128: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "128: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -2295,7 +2197,7 @@ int main(const int argc, const char** argv)
 		}
 
 		//転置
-		//XXXX
+//XXXX
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -2314,7 +2216,7 @@ int main(const int argc, const char** argv)
 
 		print_m256(m32f);
 		//cvtを使って
-		//XXXX
+//XXXX
 		print_m256(m32f);
 	}
 
@@ -2336,12 +2238,11 @@ int main(const int argc, const char** argv)
 		mat_rand(b, 0, 100);
 		mat_zero(c);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
 			//スカラー実装
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < size; ++j)
 			{
 				for (int i = 0; i < size; i++)
@@ -2349,16 +2250,15 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "scalar    : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "scalar    : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//スカラー，並列化実装
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//XXXX
 			for (int j = 0; j < size; ++j)
 			{
@@ -2367,17 +2267,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "scalar+omp: time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "scalar+omp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//SIMD実装
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			for (int j = 0; j < size; ++j)
 			{
 				for (int i = 0; i < size; i += 8)
@@ -2388,17 +2287,16 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "SIMD      : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "SIMD      : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		time = 0;
+		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//SIMD，並列化実装
-			clock_gettime(CLOCK_REALTIME, &start);
+			t.start();
 			//XXXX
 			for (int j = 0; j < size; ++j)
 			{
@@ -2410,10 +2308,9 @@ int main(const int argc, const char** argv)
 					//XXXX
 				}
 			}
-			clock_gettime(CLOCK_REALTIME, &end);
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			t.end();
 		}
-		std::cout << "SIMD+omp  : time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "SIMD+omp  : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}

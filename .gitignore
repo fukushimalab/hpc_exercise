@@ -31,3 +31,4 @@
 *.out
 *.app
 hpc-exercise/depend.inc
+*~

@@ -51,13 +51,12 @@ int main(const int argc, const char** argv)
 		split(temp_32f, splitImg);
 		Image_32F dest_32f(src.rows, src.cols, src.channels);
 
-		timespec start, end;
-		double time = 0;
+		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
+			t.start();
 			if (src.channels == 3)
 			{
-				clock_gettime(CLOCK_REALTIME, &start);
 				for (int y = 0; y < src.rows; y++)
 				{
 					for (int x = 0; x < src.cols; x++)
@@ -84,11 +83,14 @@ int main(const int argc, const char** argv)
 						}
 					}
 				}
-				clock_gettime(CLOCK_REALTIME, &end);
 			}
-			time += (double)end.tv_sec - start.tv_sec + (double)(end.tv_nsec - start.tv_nsec)*1e-9;
+			else if(src.channels == 1)
+			{
+				//gray image
+			}
+			t.end();
 		}
-		std::cout << "time (avg): " << time / (double)loop << " ms" << std::endl;
+		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		Image_8U dest_8u(dest_32f);
 		writePXM("gauss.ppm", dest_8u);
 		return 0;

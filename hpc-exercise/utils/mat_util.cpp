@@ -1,7 +1,6 @@
-#include "mat_util.h"
 #include <stdlib.h>
+#include "mat_util.h"
 #include <iostream>
-
 
 //Mat util functions
 ////////////////////////////
@@ -703,3 +702,54 @@ double rand_64f(const double rand_min, const double rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min + 1.0) / (1.0 + RAND_MAX));
 }
+
+//timer
+void CalcTime::start()
+{
+	clock_gettime(CLOCK_REALTIME, &s);
+	return;
+}
+
+void CalcTime::end()
+{
+	clock_gettime(CLOCK_REALTIME, &e);
+	que.push_back((double)e.tv_sec-s.tv_sec + (double)(e.tv_nsec-s.tv_nsec)*1e-9);
+	return;
+}
+
+void CalcTime::clear()
+{
+	que.clear();
+	return;
+}
+
+double CalcTime::getAvgTime(const bool dropFirstMeasure)
+{
+	double count = 0;
+	double time = 0;
+	if((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
+	{
+		return -1;
+	}
+	std::vector<double>::iterator it = que.begin();
+	if(dropFirstMeasure)
+	{
+		it++;
+	}
+	for (; it != que.end(); ++it)
+	{
+		time += *it;
+		count++;
+	}
+	return time/count;
+}
+
+double CalcTime::getLastTime()
+{
+	if(que.size() == 0)
+	{
+		return -1;
+	}
+	return que.back();
+}
+
