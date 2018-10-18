@@ -198,6 +198,29 @@ clock_gettime(CLOCK_REALTIME, &end);
 double time = (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9; //[ms]
 ```
 
+## 時間計測クラス
+　本演習では，時間計測を簡素化するために，CalcTimeクラスを提供している．
+CalcTimeは次の様に使用する．
+```cpp
+CalcTime t;
+for(int i=0;i<10;i++)
+{
+  t.start(); //計測開始
+  //計測したい処理
+  t.end(); //計測終了
+  double tl = t.getLastTime();  //最後に計測した時間を取得
+}
+double tavg = t.getAvgTime();  //t.getAvgTime(true);も同様．計測した時間の平均（1回目の計測時間を除外）
+// double tavg= t.getAvgTime(false);  //計測した時間の平均（1回目の計測時間を含む）
+
+t.clear(); //計測した時間をクリア
+```
+　1回目の処理は，データがキャッシュに入っていないなどの理由で，2回目以降の処理に比べて時間がかかる（どの処理時間が正しいのかは，どのような用途を対象としているのかで異なる）．
+そこで，`getAvgTime()`もしくは`getAvgTime(true)`では，1回目の計測した時間を除外する．
+`getAvgTime(false)`では，1回目の計測時間も含めた平均が出力される．
+なお，CaclTimeクラスでは，それまで計測した時間すべてを保持している．
+そのため，同じオブジェクトを使い回す場合は，`t.clear()`で保持している計測時間を初期化する必要がある．
+
 #### 課題1
 行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 なお，デフォルトのサンプルコードには行列積の後，和をとるプログラムがサンプルとして書かれている．

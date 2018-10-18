@@ -15,7 +15,6 @@ all: depend $(PROGRAM)
 $(PROGRAM): $(OBJS)
 	$(CC) $(CXXFLAGS) $(CXXFLAGS_ST) -o $(PROGRAM) $^
 	-@ utils/check_host.sh
-	
 
 .c.o:
 	$(CC) $(CXXFLAGS) -c $<

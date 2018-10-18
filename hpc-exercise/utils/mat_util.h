@@ -1,5 +1,7 @@
 #pragma once
 #include "mat.h"
+#include <vector>
+#include <time.h>
 
 //Mat util functions
 //init (zero)
@@ -71,3 +73,17 @@ short rand_16s(const short rand_min, const short rand_max);
 int rand_32s(const int rand_min, const int rand_max);
 float rand_32f(const float rand_min, const float rand_max);
 double rand_64f(const double rand_min, const double rand_max);
+
+//timer
+struct CalcTime
+{
+	std::vector<double> que;
+	timespec s;
+	timespec e;
+	void start();
+	void end();
+	void clear();
+
+	double getAvgTime(const bool dropFirstMeasure = true);
+	double getLastTime();
+};
