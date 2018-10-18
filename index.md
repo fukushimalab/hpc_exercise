@@ -497,11 +497,11 @@ for(int i=0;i<size;i++)
 
 また，冗長に計算してでも分岐を外に出したほうが速い場合がある．
 ```cpp
-float A[height][width]
-float B[height][width]
-for(int j=0;j<width;j++)
+float A[size][size]
+float B[size][size]
+for(int j=0;j<size;j++)
 {
-	for(int i=0;i<width;i++)
+	for(int i=0;i<size;i++)
 	{
 		if(i==j)
 			A[j][i]=1.0f;
@@ -841,7 +841,7 @@ float a[height][width];
 
 for (int j = 0; j < height; j++)
 {
-	for (int i = 0; i < width; i++)
+   for (int i = 0; i < width; i++)
   {
     	a[j][i] = i+j;
   }
@@ -856,9 +856,9 @@ float a[height][width];
 int size = width*height;
 for (int n = 0; n < size; n++)
 {
-	int j = n/width;
-	int i= n%width;
-    a[j][i] = i+j;
+   int j = n/width;
+   int i= n%width;
+   a[j][i] = i+j;
 }
 ```
 
@@ -876,7 +876,7 @@ float a[height][width];
 
 for (int j = 0; j < height; j++)
 {
-	for (int i = 0; i < width; i++)
+   for (int i = 0; i < width; i++)
   {
     	a[j][i] = 0.f;
   }
@@ -1279,7 +1279,7 @@ for(int i=0;i<size;i+=8)
 	//正順序
 	_mm256_store_ps(b+i, _mm256_setr_ps(a[i+0],a[i+1],a[i+2],a[i+3],a[i+4],a[i+5],a[i+6],a[i+7]));
 	//逆順序
-	_mm256_store_ps(b+i, _mm256_set_ps(a[i+0],a[i+1],a[i+2],a[i+3],a[i+4],a[i+5],a[i+6],a[i+7]));
+	//_mm256_store_ps(b+i, _mm256_set_ps(a[i+0],a[i+1],a[i+2],a[i+3],a[i+4],a[i+5],a[i+6],a[i+7]));
 }
 ```
 
@@ -1436,8 +1436,8 @@ a=_mm256_fmadd_ps(a,b,c);
 gcc等を用いる場合は，
 一般的な関数はオープンソースで公開されていることも多いため検索するとよい．
 
-* https://github.com/herumi/fmath
-* https://github.com/telmin/SIMDMath
+* [herumi/fmath](https://github.com/herumi/fmath)
+* [telmin/SIMDMath](https://github.com/telmin/SIMDMath)
 
 より都合の良い精度を持つ演算がほしい場合は数値計算の勉強をして自作すること．
 
