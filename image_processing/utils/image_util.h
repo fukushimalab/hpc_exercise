@@ -71,6 +71,6 @@ struct CalcTime
 	void end();
 	void clear();
 
-	double getAvgTime(const bool dropFirstMeasure = true);
+	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
 	double getLastTime();
 };
