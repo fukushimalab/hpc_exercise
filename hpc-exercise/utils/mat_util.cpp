@@ -723,7 +723,7 @@ void CalcTime::clear()
 	return;
 }
 
-double CalcTime::getAvgTime(const bool dropFirstMeasure)
+double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
 {
 	double count = 0;
 	double time = 0;
@@ -740,6 +740,10 @@ double CalcTime::getAvgTime(const bool dropFirstMeasure)
 	{
 		time += *it;
 		count++;
+	}
+	if(isClear)
+	{
+		que.clear();
 	}
 	return time/count;
 }

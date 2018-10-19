@@ -143,7 +143,6 @@ int main(const int argc, const char** argv)
 
 
 		//after
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//3x^4+3x^3+3 ホーナー法つかった場合
@@ -199,7 +198,6 @@ int main(const int argc, const char** argv)
 
 		//after
 		const float c = (2 * 3.14 + sqrt(5) + 0.5*0.5);
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//先に計算する場合
@@ -253,7 +251,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//after
 		for (int k = 0; k < loop; k++)
 		{
@@ -314,7 +311,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//after
 		for (int k = 0; k < loop; k++)
 		{
@@ -402,7 +398,6 @@ int main(const int argc, const char** argv)
 		Mat_16S ret_16s(row, col);
 		mat_zero(ret_16s);
 
-		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
@@ -421,7 +416,6 @@ int main(const int argc, const char** argv)
 		Mat_32S ret_32s(row, col);
 		mat_zero(ret_32s);
 
-		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
@@ -441,7 +435,6 @@ int main(const int argc, const char** argv)
 		Mat_32F ret_32f(row, col);
 		mat_zero(ret_32f);
 
-		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
@@ -461,7 +454,6 @@ int main(const int argc, const char** argv)
 		Mat_64F ret_64f(row, col);
 		mat_zero(ret_64f);
 
-		t.clear();
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
@@ -509,7 +501,6 @@ int main(const int argc, const char** argv)
 		std::cout << "2x mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//2x bit shift
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//2倍 ビットシフト
@@ -527,7 +518,6 @@ int main(const int argc, const char** argv)
 
 
 		//1/2 div
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
@@ -545,7 +535,6 @@ int main(const int argc, const char** argv)
 
 
 		//1/2 -> mul 0.5
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 0.5乗算で実現
@@ -562,7 +551,6 @@ int main(const int argc, const char** argv)
 		std::cout << "1/2 mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//1/2->bit shift
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 ビットシフト
@@ -585,7 +573,6 @@ int main(const int argc, const char** argv)
 		mat_zero(ret_32f);
 
 		//1/2 div
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
@@ -603,7 +590,6 @@ int main(const int argc, const char** argv)
 
 
 		//1/2 -> mul 0.5
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 0.5乗算
@@ -658,7 +644,6 @@ int main(const int argc, const char** argv)
 		mat_zero(ret_32f);
 
 		//float
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//浮動小数点
@@ -712,7 +697,6 @@ int main(const int argc, const char** argv)
 		std::cout << "arithmetic: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sin
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//sin関数
@@ -729,7 +713,6 @@ int main(const int argc, const char** argv)
 		std::cout << "sin: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//cos
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//cos関数
@@ -746,7 +729,6 @@ int main(const int argc, const char** argv)
 		std::cout << "cos: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//exp
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//exp関数
@@ -763,7 +745,6 @@ int main(const int argc, const char** argv)
 		std::cout << "exp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//log
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//log関数
@@ -780,7 +761,6 @@ int main(const int argc, const char** argv)
 		std::cout << "log: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sqrt
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//sqrt関数
@@ -804,7 +784,6 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
@@ -826,7 +805,6 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//cos LUT
@@ -848,7 +826,6 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//exp LUT
@@ -870,7 +847,6 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//log LUT
@@ -892,7 +868,6 @@ int main(const int argc, const char** argv)
 			//LUT作成
 			//XXXX
 		}
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//sqrt LUT
@@ -1044,7 +1019,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "col-row: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//row, col
 		for (int k = 0; k < loop; k++)
 		{
@@ -1076,7 +1050,6 @@ int main(const int argc, const char** argv)
 		}
 
 		//i, j, k
-		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
 			t.start();
@@ -1096,7 +1069,6 @@ int main(const int argc, const char** argv)
 		std::cout << "i-j-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//i, k, j
-		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
 			t.start();
@@ -1116,7 +1088,6 @@ int main(const int argc, const char** argv)
 		std::cout << "i-k-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//j, i, k
-		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
 			t.start();
@@ -1136,7 +1107,6 @@ int main(const int argc, const char** argv)
 		std::cout << "j-i-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//j, k, i
-		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
 			t.start();
@@ -1156,7 +1126,6 @@ int main(const int argc, const char** argv)
 		std::cout << "j-k-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//k, i, j
-		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
 			t.start();
@@ -1176,7 +1145,6 @@ int main(const int argc, const char** argv)
 		std::cout << "k-i-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//k, j, i
-		t.clear();
 		for (int l = 0; l < loop; l++)
 		{
 			t.start();
@@ -1229,7 +1197,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "no unrolling: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//unrolling 2
 		for (int j = 0; j < loop; j++)
 		{
@@ -1244,7 +1211,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "unrolling  2: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//unrolling 4
 		for (int j = 0; j < loop; j++)
 		{
@@ -1261,7 +1227,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "unrolling  4: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//unrolling 8
 		for (int j = 0; j < loop; j++)
 		{
@@ -1282,7 +1247,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "unrolling  8: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//unrolling 16
 		for (int j = 0; j < loop; j++)
 		{
@@ -1311,7 +1275,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "unrolling 16: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//unrolling 32
 		for (int j = 0; j < loop; j++)
 		{
@@ -1356,7 +1319,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "unrolling 32: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//unrolling 64
 		for (int j = 0; j < loop; j++)
 		{
@@ -1475,7 +1437,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "original: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//Loop peeling
 		for (int j = 0; j < loop; j++)
 		{
@@ -1522,7 +1483,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//after
 		const int size = width * height;
 		for (int k = 0; k < loop; k++)
@@ -1726,7 +1686,6 @@ int main(const int argc, const char** argv)
 		std::cout << "mul-add: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		t.clear();
 		//fma
 		for (int j = 0; j < loop; j++)
 		{
@@ -1792,7 +1751,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//rcp
 		for (int j = 0; j < loop; j++)
 		{
@@ -1810,7 +1768,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "rcp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//sqrt
 		for (int j = 0; j < loop; j++)
 		{
@@ -1828,7 +1785,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << " sqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		//rsqrt
 		for (int j = 0; j < loop; j++)
 		{
@@ -1891,7 +1847,6 @@ int main(const int argc, const char** argv)
 		std::cout << "hadd: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		t.clear();
 		const __m256 one = _mm256_set1_ps(1);
 		//dp
 		for (int i = 0; i < loop; i++)
@@ -1995,7 +1950,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "  8: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		// unrolling 16
 		for (int j = 0; j < loop; j++)
 		{
@@ -2015,7 +1969,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << " 16: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		// unrolling 32
 		for (int j = 0; j < loop; j++)
 		{
@@ -2043,7 +1996,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << " 32: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		// unrolling 64
 		for (int j = 0; j < loop; j++)
 		{
@@ -2087,7 +2039,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << " 64: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		// unrolling 128
 		for (int j = 0; j < loop; j++)
 		{
@@ -2254,7 +2205,6 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "scalar    : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//スカラー，並列化実装
@@ -2272,7 +2222,6 @@ int main(const int argc, const char** argv)
 		std::cout << "scalar+omp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//SIMD実装
@@ -2292,7 +2241,6 @@ int main(const int argc, const char** argv)
 		std::cout << "SIMD      : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		t.clear();
 		for (int k = 0; k < loop; k++)
 		{
 			//SIMD，並列化実装
