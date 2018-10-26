@@ -219,7 +219,7 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題5
-	//小さな行列に対して，各要素を５で除算する計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
+	//小さな行列に対して，各要素を3.141592で除算する計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
 	//大きな行列で行うと，効果が少ない可能性があるため注意すること．
 	if (false)
 	{
@@ -469,22 +469,26 @@ int main(const int argc, const char** argv)
 
 
 	//課題9
-	//intの行列を２倍，1/2倍するときに，ビットシフトと除算や除数の逆数での乗算で計算し計算時間を比較せよ．
-	//また，floatの行列で，除算と除数の逆数での乗算の計算時間を比較せよ．
-	//なお，大きい行列サイズでないと，効果がでない場合がある．
+	//intの行列を整数で2倍，浮動小数点で2.f倍,整数を１ビットだけビットシフトすることで2倍する場合の計算速度を比較せよ．
+	//また，intの行列を整数で2で除算する場合，浮動小数点で2で除算する場合，浮動小数点の0.5で乗算する場合，１ビットだけビットシフトすることで1/2倍する場合の速度を比較せよ．
+	//加えて，floatの行列で，2.0で除算する場合と0.5で乗算する場合を比較せよ．
+	//なお，浮動小数点で乗算する場合は整数の場合よりも遅い． 
+	//また，大きい行列サイズでないと，効果がでない場合がある．
 	if (false)
 	{
 		std::cout << "課題9" << std::endl;
 		const int loop = 1000;
 		const int row = 50;
 		const int col = 50;
+		
+		//int
 		Mat_32S x_32s(row, col);
 		mat_rand(x_32s, 0, 100);
 		Mat_32S ret_32s(row, col);
 		mat_zero(ret_32s);
 
-		//2x mul
 		CalcTime t;
+		//2x mul
 		for (int k = 0; k < loop; k++)
 		{
 			//2倍 乗算
@@ -499,6 +503,22 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "2x mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		
+		//2.0x mul
+		for (int k = 0; k < loop; k++)
+		{
+			//2.0倍 乗算(double)
+			t.start();
+			for (int j = 0; j < ret_32s.rows; j++)
+			{
+				for (int i = 0; i < ret_32s.cols; i++)
+				{
+					//XXXX
+				}
+			}
+			t.end();
+		}
+		std::cout << "2x mul (double): time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//2x bit shift
 		for (int k = 0; k < loop; k++)
@@ -517,7 +537,7 @@ int main(const int argc, const char** argv)
 		std::cout << "2x bit shift: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
-		//1/2 div
+		//1/2 div int
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
@@ -532,6 +552,22 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		
+		//1/2 div float
+		for (int k = 0; k < loop; k++)
+		{
+			//1/2 除算
+			t.start();
+			for (int j = 0; j < ret_32s.rows; j++)
+			{
+				for (int i = 0; i < ret_32s.cols; i++)
+				{
+					//XXXX
+				}
+			}
+			t.end();
+		}
+		std::cout << "1/2 div (float): time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//1/2 -> mul 0.5
@@ -571,7 +607,7 @@ int main(const int argc, const char** argv)
 		mat_rand(x_32f, 0, 100);
 		Mat_32F ret_32f(row, col);
 		mat_zero(ret_32f);
-
+		
 		//1/2 div
 		for (int k = 0; k < loop; k++)
 		{
@@ -587,7 +623,6 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "float: 1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
 
 		//1/2 -> mul 0.5
 		for (int k = 0; k < loop; k++)
