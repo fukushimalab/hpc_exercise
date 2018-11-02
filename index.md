@@ -1690,7 +1690,7 @@ divとrcp,sqrtとrsqrtの実行速度を比較せよ．
 
 notはないので適宜作ってください．
 
-[ Is NOT missing from SSE, AVX? - Stack Overflow][https://stackoverflow.com/questions/42613821/is-not-missing-from-sse-avx]
+[ Is NOT missing from SSE, AVX? - Stack Overflow](https://stackoverflow.com/questions/42613821/is-not-missing-from-sse-avx)
 
 本演習では取り扱わないため，詳細は省略します．
 
