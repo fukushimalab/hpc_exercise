@@ -1145,15 +1145,6 @@ dynamicは，分割した処理の負荷が均等でない場合に有効であ�
 #pragma omp parallel for schedule(dynamic)
 ```
 
-## 並列化用の関数群 omp.h
-`<omp.h>`には，実行時ライブラリ関数が提供されている．
-これらの関数を使用しなくても並列化をすることは可能であるが，使用することで更にきめ細やかな制御が可能である．
-
-例えば以下の関数がある．
-* omp_get_max_threads() //最大スレッド数を返す
-* omp_get_num_threads()//呼び出された場所のスレッドの番号を返す．各スレッドのidを識別するために使う．
-* omp_get_thread_num() //現在使っているスレッド数を返す．上と似ているため注意．上は the numebr of threadsの略，これは thread numberの略．
-
 <!--
 ## pthreadによる並列化（オプショナル）
 もしOpenMPがなかったら？pthreadで制御する必要がありコード量が多い
@@ -1177,6 +1168,55 @@ IntelのCPUにおける2コア4スレッドという表記は，コアは2つで
 #### 課題20
 二つの行列の各要素の積を計算するコードで，スレッド数を変更して，計算時間がどのように推移するのかを確認せよ．
 
+## 並列化用の関数群 omp.h
+`<omp.h>`には，実行時ライブラリ関数が提供されている．
+これらの関数を使用しなくても並列化をすることは可能であるが，使用することで更にきめ細やかな制御が可能である．
+
+例えば以下の関数がある．
+* omp_get_max_threads() //最大スレッド数を返す
+* omp_get_num_threads()//現在使っているスレッド数を返す．
+* omp_get_thread_num() //呼び出された場所のスレッドの番号を返す．各スレッドのidを識別するために使う．上と似ているため注意．上は the numebr of threadsの略，これは thread numberの略．
+これらの関数を使用するためには，`#include <omp.h>`をコードに追記する必要がある．
+
+以下のサンプルコードは現在の計算機で使用しているスレッド数と使用可能な最大スレッド数，スレッド番号を表示するプログラムとなる．
+```
+#include <omp.h>
+int main()
+{
+    //シリアル処理
+    printf("現在使用中のスレッド数:   %d\n", omp_get_num_threads());
+    printf("使用可能な最大スレッド数: %d\n", omp_get_max_threads());
+    printf("現在使用中のスレッド番号: %d\n", omp_get_thread_num());
+
+    //並列処理
+    #pragma omp parallel
+    {
+        #pragma omp single
+        {
+		printf("現在使用中のスレッド数:   %d\n", omp_get_num_threads());
+		printf("使用可能な最大スレッド数: %d\n", omp_get_max_threads());
+		printf("現在使用中のスレッド番号: %d\n", omp_get_thread_num());
+        }
+    }
+
+    //並列処理でスレッド数を変更した場合
+    #pragma omp parallel num_threads(2)
+    {
+        #pragma omp single
+        {
+		printf("現在使用中のスレッド数:   %d\n", omp_get_num_threads());
+		printf("使用可能な最大スレッド数: %d\n", omp_get_max_threads());
+		printf("現在使用中のスレッド番号: %d\n", omp_get_thread_num());
+        }
+    }
+    return 0;
+}
+```
+
+#### 課題（省略可）
+`omp_get_thread_num()`を使って行列をスレッド番号の値で埋めよ．（CSEの場合0～3の値で初期化される）．
+
+また，scheduleをstatic，dynamicに変えた場合に初期化されたスレッド番号がどのように並ぶか観察せよ．
 ___
 # 5. ベクトル化プログラミング
 
