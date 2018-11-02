@@ -63,9 +63,9 @@ int main(const int argc, const char** argv)
 	}
 
 	///////////////////////
-	// gamma correction
+	// mean-var
 	///////////////////////
-	//if (false)
+	if (false)
 	{
 		const int loop = 10;
 
