@@ -1626,8 +1626,8 @@ gcc等を用いる場合は，
 
 * [https://en.wikipedia.org/wiki/Multiplicative_inverse](https://en.wikipedia.org/wiki/Multiplicative_inverse)
 * [Fast inverse square root](https://en.wikipedia.org/wiki/Fast_inverse_square_root)
-* [Methods of computing square roots] (https://en.wikipedia.org/wiki/Methods_of_computing_square_roots)
-* [Best Square Root Method - Algorithm - Function ] (https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi)
+* [Methods of computing square roots](https://en.wikipedia.org/wiki/Methods_of_computing_square_roots)
+* [Best Square Root Method - Algorithm - Function ](https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi)
 
 ```c
 const int size = 1024;
