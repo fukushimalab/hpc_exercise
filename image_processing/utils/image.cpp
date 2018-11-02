@@ -39,7 +39,7 @@ Image_8U::Image_8U(const Image_16S& m)
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	for(int j=0;j<rows*cols*channels*channels;j++)
 	{
-		data[j]=m.data[j];
+		data[j]=(unsigned char)std::min(std::max(m.data[j], (short)0), (short)255);
 	}
 	memcpy((void*)this->data, (void*)m.data, size);
 }
@@ -51,7 +51,7 @@ Image_8U::Image_8U(const Image_32S& m)
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	for(int j=0;j<rows*cols*channels;j++)
 	{
-		data[j]=m.data[j];
+		data[j]=(unsigned char)std::min(std::max(m.data[j], (int)0), (int)255);
 	}
 }
 
@@ -62,7 +62,7 @@ Image_8U::Image_8U(const Image_32F& m)
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	for(int j=0;j<rows*cols*channels;j++)
 	{
-		data[j]=m.data[j];
+		data[j]=(unsigned char)std::min(std::max(m.data[j], (float)0), (float)255);
 	}
 }
 
@@ -73,7 +73,7 @@ Image_8U::Image_8U(const Image_64F& m)
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	for(int j=0;j<rows*cols*channels;j++)
 	{
-		data[j]=m.data[j];
+		data[j]=(unsigned char)std::min(std::max(m.data[j], (double)0), (double)255);
 	}
 }
 
