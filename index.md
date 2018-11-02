@@ -2316,8 +2316,8 @@ for(int j=0; j < size; j++)
 {
   for (int i = 0; i < size; i += 8)
   {
-  	__m256 ma = _mm256_load_ps(a+j*size+i);
-  	__m256 mb = _mm256_load_ps(b+j*size+i);
+  	__m256 ma = _mm256_load_ps(a.data+j*size+i);
+  	__m256 mb = _mm256_load_ps(b.data+j*size+i);
   	__m256 temp = _mm256_mul_ps(ma, mb);
   	_mm256_store_ps(c.data + j*size+i, temp);
   }
