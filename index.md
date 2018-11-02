@@ -2312,7 +2312,7 @@ Mat_32F b(size, size);
 Mat_32F c(size, size);
 
 #pragma omp parallel for
-for(int j=0;k < size; j++)
+for(int j=0; j < size; j++)
 {
   for (int i = 0; i < size; i += 8)
   {
