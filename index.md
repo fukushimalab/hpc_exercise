@@ -62,6 +62,7 @@ VisualStudioの使用に習熟した人のみの利用を想定している．
 * [RIKEN:計算科学技術特論B (2018)](http://www.r-ccs.riken.jp/library/event/tokuronB_180406.html)
 * [Intel Intrinsics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide/)
 * [x86/x64 SIMD命令一覧表（SSE～AVX2）](https://www.officedaytime.com/tips/simd.html)
+* [計算科学概論](https://www.eidos.ic.i.u-tokyo.ac.jp/~tau/lecture/cs_alliance/)
 * [組み込み関数（intrinsic）によるSIMD入門](https://www.slideshare.net/FukushimaNorishige/simd-10548373)
 * [マルチコアを用いた画像処理](https://www.slideshare.net/FukushimaNorishige/ssii-33751285)
 * [計算機アーキテクチャを考慮した高能率画像処理プログラミング](https://www.slideshare.net/FukushimaNorishige/ss-83087912)
