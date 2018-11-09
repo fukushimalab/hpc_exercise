@@ -713,7 +713,7 @@ void CalcTime::start()
 void CalcTime::end()
 {
 	clock_gettime(CLOCK_REALTIME, &e);
-	que.push_back((double)e.tv_sec-s.tv_sec + (double)(e.tv_nsec-s.tv_nsec)*1e-9);
+	que.push_back((double)(e.tv_sec-s.tv_sec)*1e3 + (double)(e.tv_nsec-s.tv_nsec)*1e-3); //ms
 	return;
 }
 
