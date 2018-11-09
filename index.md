@@ -211,7 +211,7 @@ timespec start, end;
 clock_gettime(CLOCK_REALTIME, &start);
 //計測したい処理
 clock_gettime(CLOCK_REALTIME, &end);
-double time = (double)end.tv_sec-start.tv_sec + (double)(end.tv_nsec-start.tv_nsec)*1e-9; //[ms]
+double time = (double)(end.tv_sec-start.tv_sec)*1e3 + (double)(end.tv_nsec-start.tv_nsec)*1e-6; //[ms]
 ```
 タイマー計測関数はいろいろあり，精度も異なる．また，OSによって用意されている関数も異なる．
 この時間計測関数は，本演習環境を想定した精度の高いタイマーである．
@@ -228,8 +228,8 @@ for(int i=0;i<10;i++)
   t.end(); //計測終了
   double tl = t.getLastTime();  //最後に計測した時間を取得
 }
-double tavg = t.getAvgTime();  //t.getAvgTime(true);も同様．計測した時間の平均（1回目の計測時間を除外）
-// double tavg= t.getAvgTime(false);  //計測した時間の平均（1回目の計測時間を含む）
+double tavg = t.getAvgTime();  //t.getAvgTime(true);も同様．計測した時間の平均（1回目の計測時間を除外）[ms]
+// double tavg= t.getAvgTime(false);  //計測した時間の平均（1回目の計測時間を含む）[ms]
 ```
 　1回目の処理は，データがキャッシュに入っていないなどの理由で，2回目以降の処理に比べて時間がかかる（どの処理時間が正しいのかは，どのような用途を対象としているのかで異なる）．
 そこで，`getAvgTime()`もしくは`getAvgTime(true)`では，1回目の計測した時間を除外する．
