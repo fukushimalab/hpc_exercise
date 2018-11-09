@@ -5,18 +5,18 @@
 #include <math.h>
 
 /////////////////////////////////
-// ‹¤’ÊŠÖ”
+// å…±é€šé–¢æ•°
 /////////////////////////////////
 double calcPSNR(const Image_8U& src1, const Image_8U& src2);
 /////////////////////////////////
-// ƒ`ƒ…[ƒgƒŠƒAƒ‹
+// ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«
 /////////////////////////////////
 void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma);
 void MeanVar(const Image_8U& src, float& mean, float& var);
 void GaussianFilter(const Image_8U& src, Image_8U& dest, const int r, const float sigma);
 
 /////////////////////////////////
-// ‘‡‰Û‘èiŒÂ•Êj
+// ç·åˆèª²é¡Œï¼ˆå€‹åˆ¥ï¼‰
 /////////////////////////////////
 void BilateralFilter(const Image_8U& src, Image_8U& dest, const int r, const float sigma_r, const float sigma_s);
 void NonLocalMeansFilter(const Image_8U& src, Image_8U& dest, const int template_r, const int search_r, const float h);
@@ -59,7 +59,7 @@ int main(const int argc, const char** argv)
 
 
 	//////////////////////////////////////////////////////////////////////
-	// ƒ`ƒ…[ƒgƒŠƒAƒ‹
+	// ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«
 	//////////////////////////////////////////////////////////////////////
 	///////////////////////
 	// gamma correction
@@ -135,7 +135,7 @@ int main(const int argc, const char** argv)
 
 
 	//////////////////////////////////////////////////////////////////////
-	// ‘‡‰Û‘èiŒÂ•Êj
+	// ç·åˆèª²é¡Œï¼ˆå€‹åˆ¥ï¼‰
 	//////////////////////////////////////////////////////////////////////
 	///////////////////////
 	// bilateral filter
@@ -144,7 +144,7 @@ int main(const int argc, const char** argv)
 	{
 		const int loop = 10;
 
-		const float sigma_s = 8;
+		const float sigma_s = 1.f;
 		const int r = 3 * sigma_s;
 		const float sigma_r = 16.0f;
 		Image_8U src, dest;
@@ -158,7 +158,7 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
-		std::cout << "PSNR : " << calcPSNR(src, dest) << " dB" << std::endl; //‚‘¬‰»‚µ‚½ŠÖ”‚Ì‚ÆƒTƒ“ƒvƒ‹ƒR[ƒh‚Ìo—Í‚Ì¸“x‚ğŠm”F‚·‚é‚±‚ÆiŒ»ó‚ÍC“ü—Í‰æ‘œ‚ğ“ü‚ê‚Ä‚¢‚éDj
+		std::cout << "PSNR : " << calcPSNR(src, dest) << " dB" << std::endl; //é«˜é€ŸåŒ–ã—ãŸé–¢æ•°ã®ã¨ã‚µãƒ³ãƒ—ãƒ«ã‚³ãƒ¼ãƒ‰ã®å‡ºåŠ›ã®ç²¾åº¦ã‚’ç¢ºèªã™ã‚‹ã“ã¨ï¼ˆç¾çŠ¶ã¯ï¼Œå…¥åŠ›ç”»åƒã‚’å…¥ã‚Œã¦ã„ã‚‹ï¼ï¼‰
 		writePXM("bf.ppm", dest);
 		return 0;
 	}
@@ -184,7 +184,7 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
-		std::cout << "PSNR : " << calcPSNR(gray, dest) << " dB" << std::endl; //‚‘¬‰»‚µ‚½ŠÖ”‚Ì‚ÆƒTƒ“ƒvƒ‹ƒR[ƒh‚Ìo—Í‚Ì¸“x‚ğŠm”F‚·‚é‚±‚ÆiŒ»ó‚ÍC“ü—Í‰æ‘œ‚ğ“ü‚ê‚Ä‚¢‚éDj
+		std::cout << "PSNR : " << calcPSNR(gray, dest) << " dB" << std::endl; //é«˜é€ŸåŒ–ã—ãŸé–¢æ•°ã®ã¨ã‚µãƒ³ãƒ—ãƒ«ã‚³ãƒ¼ãƒ‰ã®å‡ºåŠ›ã®ç²¾åº¦ã‚’ç¢ºèªã™ã‚‹ã“ã¨ï¼ˆç¾çŠ¶ã¯ï¼Œå…¥åŠ›ç”»åƒã‚’å…¥ã‚Œã¦ã„ã‚‹ï¼ï¼‰
 		writePXM("nlmf.pgm", dest);
 		return 0;
 	}
@@ -192,7 +192,7 @@ int main(const int argc, const char** argv)
 
 
 ///////////////////////
-// ‰æ‘œ‚Ì¸“xŒvZŠÖ”
+// ç”»åƒã®ç²¾åº¦è¨ˆç®—é–¢æ•°
 ///////////////////////
 double calcPSNR(const Image_8U& src1, const Image_8U& src2)
 {
@@ -233,10 +233,10 @@ double calcPSNR(const Image_8U& src1, const Image_8U& src2)
 }
 
 //////////////////////////////////////////////////////////////////////
-// ƒ`ƒ…[ƒgƒŠƒAƒ‹
+// ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«
 //////////////////////////////////////////////////////////////////////
 ///////////////////////
-// ƒKƒ“ƒ}•ÏŠ·
+// ã‚¬ãƒ³ãƒå¤‰æ›
 ///////////////////////
 void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma)
 {
@@ -252,7 +252,7 @@ void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma)
 }
 
 ///////////////////////
-// •½‹ÏE•ªUŒvZ
+// å¹³å‡ãƒ»åˆ†æ•£è¨ˆç®—
 ///////////////////////
 void MeanVar(const Image_8U& src, float& mean, float& var)
 {
@@ -273,7 +273,7 @@ void MeanVar(const Image_8U& src, float& mean, float& var)
 }
 
 ///////////////////////
-// ƒKƒEƒVƒAƒ“ƒtƒBƒ‹ƒ^
+// ã‚¬ã‚¦ã‚·ã‚¢ãƒ³ãƒ•ã‚£ãƒ«ã‚¿
 ///////////////////////
 void GaussianFilter(const Image_8U& src, Image_8U& dest, const int r, const float sigma)
 {
@@ -323,10 +323,10 @@ void GaussianFilter(const Image_8U& src, Image_8U& dest, const int r, const floa
 
 
 //////////////////////////////////////////////////////////////////////
-// ‘‡‰Û‘èiŒÂ•Êj
+// ç·åˆèª²é¡Œï¼ˆå€‹åˆ¥ï¼‰
 //////////////////////////////////////////////////////////////////////
 ///////////////////////
-// ƒoƒCƒ‰ƒeƒ‰ƒ‹ƒtƒBƒ‹ƒ^iƒJƒ‰[‰æ‘œ‚Ì‚İ‘Î‰j
+// ãƒã‚¤ãƒ©ãƒ†ãƒ©ãƒ«ãƒ•ã‚£ãƒ«ã‚¿ï¼ˆã‚«ãƒ©ãƒ¼ç”»åƒã®ã¿å¯¾å¿œï¼‰
 ///////////////////////
 void BilateralFilter(const Image_8U& src, Image_8U& dest, const int r, const float sigma_r, const float sigma_s)
 {
@@ -387,7 +387,7 @@ void BilateralFilter(const Image_8U& src, Image_8U& dest, const int r, const flo
 
 
 ///////////////////////
-// ƒmƒ“ƒ[ƒJƒ‹ƒ~[ƒ“ƒtƒBƒ‹ƒ^iƒOƒŒ[‰æ‘œ‚Ì‚İ‘Î‰j
+// ãƒãƒ³ãƒ­ãƒ¼ã‚«ãƒ«ãƒŸãƒ¼ãƒ³ãƒ•ã‚£ãƒ«ã‚¿ï¼ˆã‚°ãƒ¬ãƒ¼ç”»åƒã®ã¿å¯¾å¿œï¼‰
 ///////////////////////
 void NonLocalMeansFilter(const Image_8U& src, Image_8U& dest, const int template_r, const int search_r, const float h)
 {
