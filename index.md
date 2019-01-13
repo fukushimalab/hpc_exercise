@@ -1259,6 +1259,34 @@ int main()
 `omp_get_thread_num()`を使って行列をスレッド番号の値で埋めよ．（CSEの場合0～3の値で初期化される）．
 
 また，scheduleをstatic，dynamicに変えた場合に初期化されたスレッド番号がどのように並ぶか観察せよ．
+
+## アトミックな演算とクリティカルセクション
+`#pragma omp critical`
+`#pragma omp atomic`
+以下のようなコードは並列実行されるため出力が入り乱れ，あるコアのprintfの途中で別のコアがprintfを発行し，コマンド出力の資源は1つしかないためその出力は入り乱れる．
+
+```c
+#pragma omp parallel for
+for (int i = 0; i < 1000; i++)
+{
+  printf("processing number is %d\n", i);
+}
+```
+
+その場合，printfの前にクリティカルセクションであることを明記する．
+この処理は，printfがクリティカルセクションになり，内部で同期を取るため処理が非常に重たくなる．
+デバッグ時などprintfしたいときに`#pragma omp critical`でクリティカルセクションを指定することはよくあるため覚えておくとよい．
+```c
+#pragma omp parallel for
+for (int i = 0; i < 1000; i++)
+{
+#pragma omp critical
+  printf("processing number is %d\n", i);
+}
+```
+#### 課題（省略可）
+上記コードを実行し，違いを確認せよ．
+
 ___
 # 5. ベクトル化プログラミング
 
