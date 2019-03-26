@@ -24,7 +24,7 @@ int main(const int argc, const char** argv)
 	//image read
 	///////////////////////
 	//Image_8U img;
-	//readPXM("../img/lena.ppm", img);
+	//readPXM("img/lena.ppm", img);
 	///////////////////////
 	//copyMakeBorder
 	///////////////////////
@@ -66,7 +66,7 @@ int main(const int argc, const char** argv)
 
 		const float gamma = 2;
 		Image_8U src, dest;
-		readPXM("../img/lena.ppm", src);
+		readPXM("img/lena.ppm", src);
 
 		CalcTime t;
 		for (int k = 0; k < loop; k++)
@@ -88,7 +88,7 @@ int main(const int argc, const char** argv)
 		const int loop = 10;
 
 		Image_8U src;
-		readPXM("../img/lena.ppm", src);
+		readPXM("img/lena.ppm", src);
 
 		float mean, var;
 		CalcTime t;
@@ -114,7 +114,7 @@ int main(const int argc, const char** argv)
 		const float sigma = 2;
 		const int r = sigma * 3;
 		Image_8U src, dest;
-		readPXM("../img/lena.ppm", src);
+		readPXM("img/lena.ppm", src);
 
 
 		CalcTime t;
@@ -144,7 +144,7 @@ int main(const int argc, const char** argv)
 		const int r = 3 * sigma_s;
 		const float sigma_r = 16.0f;
 		Image_8U src, dest;
-		readPXM("../img/lena.ppm", src);
+		readPXM("img/lena.ppm", src);
 
 		CalcTime t;
 		for (int k = 0; k < loop; k++)
@@ -169,7 +169,7 @@ int main(const int argc, const char** argv)
 		const int search_r = 3;
 		const int template_r = 1;
 		Image_8U src, gray, dest;
-		readPXM("../img/lena.ppm", src);
+		readPXM("img/lena.ppm", src);
 		cvtColorGray(src, gray);
 
 		CalcTime t;

@@ -38,7 +38,7 @@ int main(const int argc, const char** argv)
 
 		const int r = 3;
 		Image_8U src_8u;
-		readPXM("../img/lena.ppm", src_8u);
+		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
 		Image_32F dest_32f_AoS;
 		Image_32F dest_32f_SoA;
@@ -83,7 +83,7 @@ int main(const int argc, const char** argv)
 
 		const int r = 3;
 		Image_8U src_8u;
-		readPXM("../img/lena.ppm", src_8u);
+		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
 		Image_32F dest_32f_pixel_parallel_y;
 		Image_32F dest_32f_pixel_parallel_x;
@@ -129,7 +129,7 @@ int main(const int argc, const char** argv)
 
 		const int r = 3;
 		Image_8U src_8u;
-		readPXM("../img/lena.ppm", src_8u);
+		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
 		Image_32F dest_32f_scalar;
 		Image_32F dest_32f_kernel_unrolling;
@@ -189,7 +189,7 @@ int main(const int argc, const char** argv)
 
 		const int r = 3;
 		Image_8U src_8u;
-		readPXM("../img/lena.ppm", src_8u);
+		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
 		Image_32F dest_32f_scalar;
 		Image_32F dest_32f_simd;
