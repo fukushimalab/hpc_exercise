@@ -30,5 +30,5 @@
 *.exe
 *.out
 *.app
-hpc-exercise/depend.inc
+**depend.inc
 *~

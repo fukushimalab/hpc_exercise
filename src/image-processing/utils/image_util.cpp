@@ -619,3 +619,80 @@ double CalcTime::getLastTime()
 	}
 	return que.back();
 }
+
+// calcPSNR
+double calcPSNR(const Image_8U& src1, const Image_8U& src2)
+{
+        if (src1.channels != src2.channels)
+        {
+                std::cout << "error: different number of chennels" << std::endl;
+                return -1;
+        }
+        if (src1.rows != src2.rows || src1.cols != src2.cols)
+        {
+                std::cout << "error: different image size" << std::endl;
+                return -1;
+        }
+
+        Image_64F temp1(src1);
+        Image_64F temp2(src2);
+
+        const int height = src1.rows;
+        const int width = src1.cols;
+        const int ch = src1.channels;
+
+        double sse = 0;
+        for (int i = 0; i < height*width*ch; i++)
+        {
+                double t = src1.data[i] - src2.data[i];
+                sse += t * t;
+        }
+
+        if (sse <= 1e-10)
+        {
+                return INFINITY;
+        }
+        else
+        {
+                const double  mse = sse / (double)(ch * height * width);
+                return 10.0 * log10((255.0 * 255.0) / mse);
+        }
+}
+
+double calcPSNR(const Image_32F& src1, const Image_32F& src2)
+{
+        if (src1.channels != src2.channels)
+        {
+                std::cout << "error: different number of chennels" << std::endl;
+                return -1;
+        }
+        if (src1.rows != src2.rows || src1.cols != src2.cols)
+        {
+                std::cout << "error: different image size" << std::endl;
+                return -1;
+        }
+
+        Image_64F temp1(src1);
+        Image_64F temp2(src2);
+
+        const int height = src1.rows;
+        const int width = src1.cols;
+        const int ch = src1.channels;
+
+        double sse = 0;
+        for (int i = 0; i < height*width*ch; i++)
+        {
+                double t = src1.data[i] - src2.data[i];
+                sse += t * t;
+        }
+
+        if (sse <= 1e-10)
+        {
+                return INFINITY;
+        }
+        else
+        {
+                const double  mse = sse / (double)(ch * height * width);
+                return 10.0 * log10((255.0 * 255.0) / mse);
+        }
+}

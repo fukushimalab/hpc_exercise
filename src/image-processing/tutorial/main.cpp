@@ -1,13 +1,9 @@
-#include "utils/image.h"
-#include "utils/image_util.h"
-#include "utils/simd_util.h"
+#include "../utils/image.h"
+#include "../utils/image_util.h"
+#include "../utils/simd_util.h"
 #include <time.h>
 #include <math.h>
 
-/////////////////////////////////
-// 共通関数
-/////////////////////////////////
-double calcPSNR(const Image_8U& src1, const Image_8U& src2);
 /////////////////////////////////
 // チュートリアル
 /////////////////////////////////
@@ -28,7 +24,7 @@ int main(const int argc, const char** argv)
 	//image read
 	///////////////////////
 	//Image_8U img;
-	//readPXM("img/lena.ppm", img);
+	//readPXM("../img/lena.ppm", img);
 	///////////////////////
 	//copyMakeBorder
 	///////////////////////
@@ -70,7 +66,7 @@ int main(const int argc, const char** argv)
 
 		const float gamma = 2;
 		Image_8U src, dest;
-		readPXM("img/lena.ppm", src);
+		readPXM("../img/lena.ppm", src);
 
 		CalcTime t;
 		for (int k = 0; k < loop; k++)
@@ -92,7 +88,7 @@ int main(const int argc, const char** argv)
 		const int loop = 10;
 
 		Image_8U src;
-		readPXM("img/lena.ppm", src);
+		readPXM("../img/lena.ppm", src);
 
 		float mean, var;
 		CalcTime t;
@@ -118,7 +114,7 @@ int main(const int argc, const char** argv)
 		const float sigma = 2;
 		const int r = sigma * 3;
 		Image_8U src, dest;
-		readPXM("img/lena.ppm", src);
+		readPXM("../img/lena.ppm", src);
 
 
 		CalcTime t;
@@ -148,7 +144,7 @@ int main(const int argc, const char** argv)
 		const int r = 3 * sigma_s;
 		const float sigma_r = 16.0f;
 		Image_8U src, dest;
-		readPXM("img/lena.ppm", src);
+		readPXM("../img/lena.ppm", src);
 
 		CalcTime t;
 		for (int k = 0; k < loop; k++)
@@ -173,7 +169,7 @@ int main(const int argc, const char** argv)
 		const int search_r = 3;
 		const int template_r = 1;
 		Image_8U src, gray, dest;
-		readPXM("img/lena.ppm", src);
+		readPXM("../img/lena.ppm", src);
 		cvtColorGray(src, gray);
 
 		CalcTime t;
@@ -187,48 +183,6 @@ int main(const int argc, const char** argv)
 		std::cout << "PSNR : " << calcPSNR(gray, dest) << " dB" << std::endl; //高速化した関数のとサンプルコードの出力の精度を確認すること（現状は，入力画像を入れている．）
 		writePXM("nlmf.pgm", dest);
 		return 0;
-	}
-}
-
-
-///////////////////////
-// 画像の精度計算関数
-///////////////////////
-double calcPSNR(const Image_8U& src1, const Image_8U& src2)
-{
-	if (src1.channels != src2.channels)
-	{
-		std::cout << "error: different number of chennels" << std::endl;
-		return -1;
-	}
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-	{
-		std::cout << "error: different image size" << std::endl;
-		return -1;
-	}
-
-	Image_64F temp1(src1);
-	Image_64F temp2(src2);
-
-	const int height = src1.rows;
-	const int width = src1.cols;
-	const int ch = src1.channels;
-
-	double sse = 0;
-	for (int i = 0; i < height*width*ch; i++)
-	{
-		double t = src1.data[i] - src2.data[i];
-		sse += t * t;
-	}
-
-	if (sse <= 1e-10)
-	{
-		return INFINITY;
-	}
-	else
-	{
-		const double  mse = sse / (double)(ch * height * width);
-		return 10.0 * log10((255.0 * 255.0) / mse);
 	}
 }
 

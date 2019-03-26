@@ -74,3 +74,7 @@ struct CalcTime
 	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
 	double getLastTime();
 };
+
+//calc PSNR
+double calcPSNR(const Image_8U& src1, const Image_8U& src2);
+double calcPSNR(const Image_32F& src1, const Image_32F& src2);
