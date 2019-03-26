@@ -1,6 +1,6 @@
-#include "../utils/image.h"
-#include "../utils/image_util.h"
-#include "../utils/simd_util.h"
+#include "utils/image.h"
+#include "utils/image_util.h"
+#include "utils/simd_util.h"
 #include <time.h>
 #include <math.h>
 

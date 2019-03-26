@@ -1,5 +1,5 @@
 PROGRAM=image_processing
-OBJS=../utils/image.o ../utils/image_util.o main.o
+OBJS=utils/image.o utils/image_util.o main.o
 
 CC = g++
 CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -mfpmath=both
