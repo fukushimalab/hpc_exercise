@@ -19,7 +19,7 @@ $(PROGRAM): $(OBJS)
 
 .PHONY: clean
 clean:
-	$(RM) $(PROGRAM) $(OBJS) depend.inc
+	$(RM) $(PROGRAM) $(OBJS) depend.inc *.ppm *.pgm
 
 .PHONY: depend
 depend: $(OBJS:.o=.cpp)
