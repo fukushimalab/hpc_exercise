@@ -128,6 +128,18 @@ Makefileには，既に必要なオプションが記述されている．
 
 また，発展と書いてある項目には課題はついていないため，より発展した学習がしたい人のための自習用となっている．
 
+#### 課題0
+ファイルをダウンロードしてコンパイル＆実行せよ．
+本課題では，コンパイルはmakeコマンドで可能である．(gcc hoge.cなどと打つ必要はない．)
+以下のコマンドを打てばmake可能である．
+```
+> make
+```
+実行は下記コマンドで可能である．
+```
+> ./hpc_exercise
+```
+
 ___
 # 1. 最適化コンパイルとパフォーマンス測定方法
 
@@ -285,6 +297,45 @@ g++ -O3 -mtune=native -march=native -mfpmath=both
 ただし，本学の課程では，JavaとC言語しか履修していないことを前提にして，C++をほぼC言語として使っている．
 C++が書ける人は，サンプルコードや具体的な指示を無視してC++の機能を使ってコードを書いてもよい．
 
+本課題は，コマンドを何度も打たなくてよいように，Makefileでオプションが指定されている．
+`CXXFLAGS`や`CXXFLAGS_ST`に追加のオプションが記述してある．
+例えば，`CXXFLAGS_ST`の`-O3`や`#-mtune=native`はデフォルトでは`#`記号によってコメントアウトされているが，この`#`を削除すればオプションがそれぞれ有効化される．
+
+また，`CC`では`g++`を指定しているが，`icc`とすればインテルコンパイラが起動する．
+それぞれ適切なオプションを指定して使うこと．
+```
+PROGRAM=hpc_exercise
+OBJS=utils/mat.o utils/mat_util.o main.o
+
+CC = g++
+CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -mfpmath=both
+CXXFLAGS_ST=#-O3 #-mtune=native
+
+
+
+.SUFFIXES: .cpp .o
+
+.PHONY: all
+all: depend $(PROGRAM)
+
+$(PROGRAM): $(OBJS)
+	$(CC) $(CXXFLAGS) $(CXXFLAGS_ST) -o $(PROGRAM) $^
+	-@ utils/check_host.sh
+
+.c.o:
+	$(CC) $(CXXFLAGS) -c $<
+
+.PHONY: clean
+clean:
+	$(RM) $(PROGRAM) $(OBJS) depend.inc
+
+.PHONY: depend
+depend: $(OBJS:.o=.cpp)
+	-@ $(RM) depend.inc
+	-@ for i in $^; do cpp -MM $$i | sed "s/\ [_a-zA-Z0-9][_a-zA-Z0-9]*\.cpp//g" >> depend.inc; done
+
+-include depend.inc
+```
 
 #### 課題2
 行列積を計算するプログラムにおいて，コンパイラオプションを変えて計算速度の計測し，その違いを観測せよ．
@@ -297,7 +348,7 @@ C++が書ける人は，サンプルコードや具体的な指示を無視し�
 ```
 icc -fast test.c
 ```
-**なお，本演習では，現在iccやclangが動作しないため，使用することはできません．**
+**なお，本演習では，現在clangは動作しないがiccは動作する．**
 
 ___
 # 2. 古典的な高速化技法
