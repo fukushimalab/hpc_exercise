@@ -1,0 +1,20 @@
+# エッジ保存平滑化フィルタの高速化 （総合演習用（オプショナル））
+必須ではないが，これらを高速化して，レポートとしてまとめて提出すれば加点対象とする．
+
+## バイラテラルフィルタ（カラー画像限定）
+エッジを残しながら，平滑化を行うエッジ保存平滑化フィルタの一つである．
+空間と色の二つのガウシアン重みで平滑化を行う．
+空間のガウシアン重みは，一般的なガウシアンフィルタである．
+色重みは，注目画素と参照画素の色距離が遠いほど小さくなるため，エッジなどの画素値が大きく変化する部分では重みは小さくなる．
+
+<img src="docfig/image-processing/bf.png" width="75%">
+
+<img src="https://latex.codecogs.com/gif.latex?\sigma_s" title="\sigma_s" />は空間方向の平滑化パラメータ，<img src="https://latex.codecogs.com/gif.latex?\sigma_r" title="\sigma_r" />は色方向の平滑化パラメータである．
+
+<!--
+\begin{eqnarray}
+\bm{J}_{\bm{p}} & = & \sum_{\bm{q}\in {N}_{\bm{p}}}G_{\sigma_s}(\bm{p}, \bm{q})G_{\sigma_r}(\bm{I}_{\bm{p}}, \bm{I}_{\bm{q}})\nonumber\\
+G_{\sigma_s}(\bm{p}, \bm{q}) & = &\exp\left(\frac{(p_x-q_x)^2+(p_y-q_y)^2}{-2\sigma_s^2}\right) \qquad \bm{p} = (p_x, p_y), \bm{q} = (q_x, q_y) \nonumber\\
+G_{\sigma_r}(\bm{I}_{\bm{p}}, \bm{I}_{\bm{q}}) &=& \exp\left(\frac{(r_p-r_q)^2+(g_p-g_q)^2+(b_p-b_q)^2}{-2\sigma_r^2}\right) \qquad \bm{I}_{\bm{p}} = (r_p, g_p, b_p), \bm{I}_{\bm{q}} = (r_q, g_q, b_q) \nonumber
+\end{eqnarray}
+-->
