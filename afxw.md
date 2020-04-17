@@ -1,7 +1,7 @@
 ﻿# あふｗ
 
-あふとは，[FD](https://ja.wikipedia.org/wiki/FD_(%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E7%AE%A1%E7%90%86%E3%82%BD%E3%83%95%E3%83%88))ライクなテキストベースの２画面ファイラのことです．
-このドキュメントは，Windowsユーザー向け，特に画像処理エンジニアへの２画面ファイラの導入を勧めるための情報です．
+あふとは，[FD](https://ja.wikipedia.org/wiki/FD_(%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E7%AE%A1%E7%90%86%E3%82%BD%E3%83%95%E3%83%88))ライクなテキストベースの２画面ファイラのことです．  
+このドキュメントは，Windowsユーザー向け，特に画像処理エンジニアへの２画面ファイラの導入を勧めるための情報です．  
 
 あふのリンクはこちら．[リンク](http://akt.d.dooo.jp/akt_afxw.html)．
 
@@ -145,9 +145,9 @@ EXT_00=exe bat
 COL_01=33023
 EXT_01=lnk
 COL_02=65535
-EXT_02=lzh zip 7z cab rar tgz tar bz2 gz msi
+EXT_02=lzh zip 7z cab rar tgz tar bz2 gz xz msi
 COL_03=16711935
-EXT_03=bmp ppm pgm jpg jpeg png gif tif tiff webp jp2 jls ico svg
+EXT_03=bmp ppm pgm pbm jpg jpeg jpe png gif tif tiff webp jp2 j2k jls ico webp svg wmf emf eps ps
 COL_04=8388863
 EXT_04=ifo mp2 mpa m1a m2p m2a mpg mpeg m1v m2v mp2v mp4 divx mov qt ra rm ram rmvb rpm smi avi wmv asf mkv
 COL_05=8454016
@@ -169,7 +169,7 @@ EXT_11=htm html url
 COL_12=12615808
 EXT_12=ini cfg dat bkp def key
 COL_13=8388736
-EXT_13=dll sys reg inf spi
+EXT_13=dll sys reg inf spi sph
 COL_14=128
 EXT_14=bak old tmp
 COL_15=8421631
@@ -206,23 +206,117 @@ susieプラグインのダウンロード
 
 pdf
 
+# 圧縮ファイルのための拡張
 圧縮・展開用のdllのダウンロード
 7z.dllでほぼすべての拡張子に対応可能
+7zipの公式からダウンロードしてきて，中にある7z.dllをコピー
+コマンドライン用の7za.dllと7zax.dllは違うものなので注意．
+
 7-zip dll
 tar64.dll
 http://ayakawa.o.oo7.jp/soft/ntutil.html#7z
 
-unlha32.dll
-https://micco.mars.jp/mysoft/unlha32.htm
 
+その他設定
 ｚ→各種登録（９）→フォルダ（F）→新規にdownload　フォルダ（ｚ）にC:\Users\fukushima（ユーザー名）\Downloads\
 
 shift+z:ファイルサイズ表示切替→KByte MByte 表示
+
+各種設定（１）
+ファイルサイズをKB MB GB TB　表示する（チェック推奨）
+あふｗをESCでも終了する→チェックあったほうが便利
+前回終了時のフォルダ履歴を保存して引き継ぎつぐにチェック（お好み）
+ソートの状態を表示する→チェック推奨
+左右逆カーソルで親フォルダに移動する→チェック推奨
+ルートフォルダからバックスペースでドライブ選択を開く→（チェックしないのを推奨．．ボタン連打で失敗しやすい．）
+タイムスタンプの秒表示を省略する→チェック推奨
+フォルダ作成後そのフォルダに移動する→チェック外したほうがいい．（ｋでフォルダ作成をフォルダ作成したのちに反対側のまどで移動するにしたほうがいい）
+
+irfanview
+Japanese.dllをLanguagesフォルダにコピー
+ｐを押してkanguageを先手くしてjapanese
+大体日本語になる．
+
+Lキー空いている
+K0008="1076&MENU "$~\afxwbkmkl.mnu""
+
+afxw.keyで拡張してあるキーバインドの確認
+AfxKView.exeを起動．（そんなに確認することはないと思って）ショートカット設定していない．
+
+
+[PROGRAM]
+EDITOR="notepad.exe"
+ED_V="$P\$F"
+VIEWER=""
+SUSIEPATH="%afxw%\susie"
+VARCPATH=""
+NXCMD=""
+SXCMD=""
+
+
+# 画像表示関連
+
+## 最優先
+jpg png gif bmp
+主要圧縮フォーマット3つとwindows非圧縮フォーマットのbmp
+# 優先
+tiff pxm(ppm/pgm/pbm) wmf emf
+たまに使われる画像圧縮tiffフォーマット，eps （texではもう本当は非推奨），linux系でよく使われる非圧縮フォーマットpxm，パワポの画像出力形式のwmf emf
+
+
+
+# 新しい圧縮フォーマット
+webp hief jp2
+WebpとHEIFとJPEG2000．あっても使うことはまれ．
+wicでは，Windows 10 では拡張（HEVC, HEIF）をインストールすればHEIF/HEVCも表示可能
+
+プログラム（６）
+Susie Plug-in
+の存在するフォルダに
+%afxw%\susie
+を追記．
+spiファイルはsusieに入れる
+
+WIC Susie Plug-in
+
+&S_ARC iftwic.spi
+
+png gif
+http://www.puni.jp/~overthe_stardust/susie_plugins.html
+
+pdf md
+http://yak3.myhome.cx:8080/junks/#misc.axpdf--_spi
+
+pdf
+https://mimizunoapp2.appspot.com/susie/
+
+拡張子判別実行
+DIRの時だけshift+enterが反対の窓を開く
+<DIR>を作ってShift+enterに以下を定義
+&EXCD -O"$P\$F\"
+
+各種設定（２）
+マークなしファイル操作→即操作する【非推奨】を選択．
+非推奨な理由は，間違って操作するのを抑制するためだが，慣れたらこっちのほうが操作が早い．
+
 
 キーカスタマイズ用のソフトのダウンロード
 外部ツールを使ったファイル移動()
 標準出力結果を内部テキストビューアで閲覧
 ブックマークの追加
+
+
+# Tips
+## 環境変数を登録するための処理
+L キーによるドライブ選択メニュー表示して，　My Doc.にカーソルを合わせたのちに _ キーを押おし，プロパティを選ぶと選択可能な画面がでる．
+## mnuファイルの保存形式
+SJISで保存すること．デフォルトのUTF-8だと文字化けする．
+
+# 反対のまどを使わない操作
+ほぼすべての動作が，基本的にdestが反対側の窓です．  
+そのため，動作のswap領域やdestの領域として反対側の窓を合わせる操作が必要となってきます．
+そのような動作は手数が一歩増えるため，特殊な操作を覚えるとよい．
+
 
 
 # その他拡張情報リンク
