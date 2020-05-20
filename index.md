@@ -293,10 +293,11 @@ VisualStudioの使用に習熟した人のみの利用を想定している．
 ## Makefileについて
 　コンパイルにはmakeコマンドを使用すること．
 Makefileには，既に必要なオプションが記述されている．
-もしコンパイルオプションを変更する場合は，`CXXFLAG_ST`を編集すること．
-また，`CXXFLAG`は必要なコンパイルオプションであるため，変更しないように注意すること．
+もしコンパイルオプションを変更する場合は，`CXXFLAGS`を編集すること．
 また，このMakefileはコンパイルの最後にCSEかlocal環境か分かるような表示がある．
 もし名工大CSEを使わない場合には，Makefile_notNIT_Userをリネームして使うこと．
+
+なお，2020年度はコロナウイルス対策で自宅での実行になったため，デフォルトをこちらにしている．普段のものをMakefile_for_CSEとした．
 
 
 ## エディタについて
@@ -544,10 +545,8 @@ C++が書ける人は，サンプルコードや具体的な指示を無視し�
 なお，本課題は，コマンドを何度も打たなくてよいように，Makefileでオプションが指定されている．
 つまり，上記の`g++`のオプション指定は，Makefileの編集で行う．
 
-Makefileには，既に必要なオプションが記述されており，`CXXFLAGS`や`CXXFLAGS_ST`が該当する．
-もしコンパイルオプションを変更する場合は，`CXXFLAG_ST`を編集すること．
-また，`CXXFLAG`は必要なコンパイルオプションであるため，変更しないように注意すること．
-例えば，`CXXFLAGS_ST`の`-O3`や`#-mtune=native`はデフォルトでは`#`記号によってコメントアウトされているが，この`#`を削除すればオプションがそれぞれ有効化される．
+Makefileには，既に必要なオプションが記述されており，`CXXFLAGS`が該当する．
+例えば，`CXXFLAGS`の`-O3`や`-mtune=native`はデフォルトでは`#`記号によってコメントアウトされているが，この`#`を削除すればオプションがそれぞれ有効化される．
 
 また，`CC`では`g++`を指定しているが，CSE上では`icc`とすればインテルコンパイラが起動する．
 その場合はそれぞれ適切なオプションを指定して使うこと．
@@ -560,10 +559,7 @@ PROGRAM=hpc_exercise
 OBJS=utils/mat.o utils/mat_util.o main.o
 
 CC = g++
-CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -mfpmath=both
-CXXFLAGS_ST=#-O3 #-mtune=native
-
-
+CXXFLAGS=-lm -std=c++0x -fopenmp -march=native  -Wno-unused-result -mfpmath=both #-O3 #-mtune=native
 
 .SUFFIXES: .cpp .o
 
@@ -571,7 +567,7 @@ CXXFLAGS_ST=#-O3 #-mtune=native
 all: depend $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(CXXFLAGS) $(CXXFLAGS_ST) -o $(PROGRAM) $^
+	$(CC) $(CXXFLAGS) -o $(PROGRAM) $^
 	-@ utils/check_host.sh
 
 .c.o:
