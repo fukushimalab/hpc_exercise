@@ -261,6 +261,7 @@ void merge(const Image_8U* src, const int channel, Image_8U& dest)
 	const int size = dest.rows * dest.cols * dest.channels * dest.type;
 	dest.data = (unsigned char*)_mm_malloc(size, 32);
 
+#pragma omp parallel for
 	for (int j = 0; j < dest.rows; j++)
 	{
 		for (int i = 0; i < dest.cols; i++)
@@ -282,6 +283,7 @@ void merge(const Image_32F* src, const int channel, Image_32F& dest)
 	const int size = dest.rows * dest.cols * dest.channels * dest.type;
 	dest.data = (float*)_mm_malloc(size, 32);
 
+#pragma omp parallel for
 	for (int j = 0; j < dest.rows; j++)
 	{
 		for (int i = 0; i < dest.cols; i++)

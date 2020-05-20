@@ -2,9 +2,7 @@ PROGRAM=boxfilter
 OBJS=utils/image.o utils/image_util.o main.o
 
 CC = g++
-CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -mfpmath=both
-CXXFLAGS_ST=-O3 #-mtune=native
-
+CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -Wno-unused-result -mfpmath=both -O3 -mtune=native
 
 .SUFFIXES: .cpp .o
 
@@ -12,7 +10,7 @@ CXXFLAGS_ST=-O3 #-mtune=native
 all: depend $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(CXXFLAGS) $(CXXFLAGS_ST) -o $(PROGRAM) $^
+	$(CC) $(CXXFLAGS) -o $(PROGRAM) $^
 
 .c.o:
 	$(CC) $(CXXFLAGS) -c $<

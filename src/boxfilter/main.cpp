@@ -32,7 +32,7 @@ void boxFilter_scalar_SoA_8U_pixelUnrollingParallel(const Image_32F& src, Image_
 int main(const int argc, const char** argv)
 {
 	//演習1
-	//if (false)
+	if (false)
 	{
 		const int loop = 10;
 
