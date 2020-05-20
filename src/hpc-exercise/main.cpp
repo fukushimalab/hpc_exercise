@@ -1,41 +1,13 @@
 #include "utils/mat.h"
 #include "utils/mat_util.h"
 #include "utils/simd_util.h"
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
 #include <math.h>
 
-//課題12
-inline void rot(double a, double b, double &x, double &y, double radian)
-{
-	x = a * cos(radian);
-	y = b * sin(radian);
-}
-
-//課題27
-void _mm256_transpose_8x8_ps(__m256* dst, const __m256* src)
-{
-	__m256  tmp[8], tmpp[8];
-
-	for (int i = 0; i < 8; i += 2)
-	{
-		tmp[i + 0] = _mm256_unpacklo_ps(src[i], src[i + 1]);
-		tmp[i + 1] = _mm256_unpackhi_ps(src[i], src[i + 1]);
-	}
-	for (int i = 0; i < 8; i += 4)
-	{
-		tmpp[i + 0] = _mm256_shuffle_ps(tmp[i + 0], tmp[i + 2], _MM_SHUFFLE(1, 0, 1, 0));
-		tmpp[i + 1] = _mm256_shuffle_ps(tmp[i + 0], tmp[i + 2], _MM_SHUFFLE(3, 2, 3, 2));
-	}
-	for (int i = 0; i < 8; i += 4)
-	{
-		tmpp[i + 2] = _mm256_shuffle_ps(tmp[i + 1], tmp[i + 3], _MM_SHUFFLE(1, 0, 1, 0));
-		tmpp[i + 3] = _mm256_shuffle_ps(tmp[i + 1], tmp[i + 3], _MM_SHUFFLE(3, 2, 3, 2));
-	}
-	for (int i = 0; i < 4; i++)
-	{
-		dst[i + 0] = _mm256_permute2f128_ps(tmpp[i], tmpp[i + 4], 0x20);
-		dst[i + 4] = _mm256_permute2f128_ps(tmpp[i], tmpp[i + 4], 0x31);
-	}
-}
+void inline _mm256_transpose_8x8_ps(__m256* dst, const __m256* src);
+void inline rot(double a, double b, double& x, double& y, double radian);
 
 int main(const int argc, const char** argv)
 {
@@ -43,7 +15,7 @@ int main(const int argc, const char** argv)
 	//行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 	if (false)
 	{
-		std::cout << "課題1" << std::endl;
+		std::cout << "exercise 1" << std::endl;
 		const int loop = 10;
 		const int row = 3;
 		const int col = 3;
@@ -78,10 +50,10 @@ int main(const int argc, const char** argv)
 	//行列積を計算するプログラムにおいて，コンパイラオプションを変えて計算速度の計測し，その違いを観測せよ．
 	if (false)
 	{
-		std::cout << "課題2" << std::endl;
-		const int loop = 10;
-		const int row = 3;
-		const int col = 3;
+		std::cout << "exercise 2" << std::endl;
+		const int loop = 1000;
+		const int row = 64;
+		const int col = 64;
 		Mat_32F a(row, col);
 		mat_rand(a, 0, 100);
 		Mat_32F b(row, col);
@@ -99,23 +71,19 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		a.show();
-		b.show();
-		ret.show();
-
 		return 0;
 	}
 
 	//課題3
 	//小さな行列に対して，各要素を
-	//3x^4+3x^3+3
+	//3x^6+3x^5+3*x^4+3*x^3+3
 	//する計算するプログラムを作成し，乗算回数を削減する前と後で計算速度を比較せよ．
 	if (false)
 	{
-		std::cout << "課題3" << std::endl;
-		const int loop = 10;
-		const int row = 3;
-		const int col = 3;
+		std::cout << "exercise 3" << std::endl;
+		const int loop = 100000;
+		const int row = 64;
+		const int col = 64;
 		Mat_32F x(row, col);
 		mat_rand(x, 0, 100);
 		Mat_32F ret(row, col);
@@ -125,95 +93,94 @@ int main(const int argc, const char** argv)
 		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
-			//3x^4+3x^3+3 そのまま
+			//そのまま
 			t.start();
-			for (int j = 0; j < x.rows; j++)
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < x.cols; i++)
-				{
-					//計算
-					//XXXX
-					//XXXX
-				}
+				//計算
+				const float v = x.data[i];
+				ret.data[i] = 3.f * v * v * v * v * v * v
+					+ 3.f * v * v * v * v * v
+					+ 3.f * v * v * v * v
+					+ 3.f;
 			}
+
 			t.end();
-			std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
 
 		//after
 		for (int k = 0; k < loop; k++)
 		{
-			//3x^4+3x^3+3 ホーナー法つかった場合
+			//ホーナー法つかった場合
+			//3 * (x * x * x * (x * (x * (x + 1) + 1) + 1));
 			t.start();
-			for (int j = 0; j < x.rows; j++)
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < x.cols; i++)
-				{
-					//計算
-					//XXXX
-				}
+				//計算
+				const float v = x.data[i];
+				//ret.data[i] = XXXXXXX;
 			}
 			t.end();
-			std::cout << "after: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "after : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
 
-	//課題4
+	//課題4----ok
 	//小さな行列に対して，各要素を下記の定数倍するプログラムを作成し，数式の展開前後で計算速度を比較せよ．
 	//(2π+sqrt(5)+0.5^2)x
 	if (false)
 	{
-		std::cout << "課題4" << std::endl;
-		const int loop = 10;
-		const int row = 3;
-		const int col = 3;
+		std::cout << "exercise 4" << std::endl;
+		const int loop = 10000;
+		const int row = 64;
+		const int col = 64;
 		Mat_32F x(row, col);
 		mat_rand(x, 0, 100);
 		Mat_32F ret(row, col);
 		mat_zero(ret);
 
-		//before
 		CalcTime t;
+
+		//before
 		for (int k = 0; k < loop; k++)
 		{
 			//毎回計算する場合
 			t.start();
-			for (int j = 0; j < x.rows; j++)
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < x.cols; i++)
-				{
-					//計算
-					//XXXX
-				}
+				//計算
+				ret.data[i] = (2.f * M_PI + sqrt(5.f) + 0.5f * 0.5f) * x.data[i];
 			}
+
 			t.end();
-			std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//after
-		const float c = (2 * 3.14 + sqrt(5) + 0.5*0.5);
 		for (int k = 0; k < loop; k++)
 		{
 			//先に計算する場合
 			t.start();
-			for (int j = 0; j < x.rows; j++)
+			const int size = x.rows * x.cols;
+			//XXXXXXXXXXXX //定数値を計算
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < x.cols; i++)
-				{
-					//計算
-					//XXXX
-				}
+				//計算
+				//ret.data[i] = XXXXXXXX;
 			}
 			t.end();
-			std::cout << "after: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "after : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -223,7 +190,7 @@ int main(const int argc, const char** argv)
 	//大きな行列で行うと，効果が少ない可能性があるため注意すること．
 	if (false)
 	{
-		std::cout << "課題5" << std::endl;
+		std::cout << "exercise 5" << std::endl;
 		const int loop = 10;
 		const int row = 3;
 		const int col = 3;
@@ -276,7 +243,7 @@ int main(const int argc, const char** argv)
 	//小さな４つの行列A,B,C,Dに対して，行列の各要素ごとに`(a/b)*(c/d)`を計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
 	if (false)
 	{
-		std::cout << "課題6" << std::endl;
+		std::cout << "exercise 6" << std::endl;
 		const int loop = 10;
 		const int row = 3;
 		const int col = 3;
@@ -325,7 +292,7 @@ int main(const int argc, const char** argv)
 				}
 			}
 			t.end();
-			std::cout << "after: time: " << t.getLastTime() << " ms" << std::endl;
+			std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
@@ -336,7 +303,7 @@ int main(const int argc, const char** argv)
 	//累乗を３乗，4乗．．．ｎ乗としたときに速度がどうなるのか計測せよ．ただし，累乗をすると値が大きくなるため，浮動小数点の最大値を超える可能性がある．その時は入力データを0.1倍`（i*0.1）`などすること．
 	if (false)
 	{
-		std::cout << "課題7" << std::endl;
+		std::cout << "exercise 7" << std::endl;
 		const int loop = 1000;
 		const int n = 50;
 		const float v = 2.5f;
@@ -366,7 +333,7 @@ int main(const int argc, const char** argv)
 	//なお，大きい行列サイズでないと，効果がでない場合がある．
 	if (false)
 	{
-		std::cout << "課題8" << std::endl;
+		std::cout << "exercise 8" << std::endl;
 		const int loop = 1000;
 		const int row = 64;
 		const int col = 64;
@@ -476,7 +443,7 @@ int main(const int argc, const char** argv)
 	//また，大きい行列サイズでないと，効果がでない場合がある．
 	if (false)
 	{
-		std::cout << "課題9" << std::endl;
+		std::cout << "exercise 9" << std::endl;
 		const int loop = 1000;
 		const int row = 50;
 		const int col = 50;
@@ -647,7 +614,7 @@ int main(const int argc, const char** argv)
 	//floatの行列をを3.141倍する場合と，intの行列を3.141倍を固定小数点で行う場合で計算し比較せよ．
 	if (false)
 	{
-		std::cout << "課題10" << std::endl;
+		std::cout << "exercise 10" << std::endl;
 		const int loop = 1000;
 		const int row = 3;
 		const int col = 3;
@@ -703,7 +670,7 @@ int main(const int argc, const char** argv)
 	//なお，環境によっては，演算したほうが速い演算もある可能性がある．
 	if (false)
 	{
-		std::cout << "課題11" << std::endl;
+		std::cout << "exercise 11" << std::endl;
 		const int loop = 100;
 		const int row = 50;
 		const int col = 50;
@@ -933,7 +900,7 @@ int main(const int argc, const char** argv)
 	//}
 	if (false)
 	{
-		std::cout << "課題12" << std::endl;
+		std::cout << "exercise 12" << std::endl;
 		const int loop = 10000;
 		const int row = 3;
 		const int col = 3;
@@ -970,7 +937,7 @@ int main(const int argc, const char** argv)
 	//行列A，Bの各要素の乗算を行うときに，結果を行列Cに格納する場合と行列Aに上書きする場合との計算時間をせよ．
 	if (false)
 	{
-		std::cout << "課題13" << std::endl;
+		std::cout << "exercise 13" << std::endl;
 		const int loop = 10000;
 		const int row = 3;
 		const int col = 3;
@@ -1032,7 +999,7 @@ int main(const int argc, const char** argv)
 	//また，行列積のコードのループの順序を変えてどれが速いか計測して検証せよ．
 	if (false)
 	{
-		std::cout << "課題14" << std::endl;
+		std::cout << "exercise 14" << std::endl;
 		const int loop = 1000;
 		const int width = 64;
 		const int height = 64;
@@ -1206,7 +1173,7 @@ int main(const int argc, const char** argv)
 	//アンローリングの段数を2,4,8,16,32,...と変更することで，速度がどのように変わるか計測せよ．
 	if (false)
 	{
-		std::cout << "課題15" << std::endl;
+		std::cout << "exercise 15" << std::endl;
 		const int loop = 100;
 		const int size = 1024;
 		float x[size], y[size];
@@ -1437,7 +1404,7 @@ int main(const int argc, const char** argv)
 	//上記のプログラムを実装し，ループピーリングの有無で速度がどのように変わるか計測せよ．
 	if (false)
 	{
-		std::cout << "課題16" << std::endl;
+		std::cout << "exercise 16" << std::endl;
 		const int loop = 100;
 		const int size = 1024;
 		int x[size], y[size];
@@ -1496,7 +1463,7 @@ int main(const int argc, const char** argv)
 	//なお，必ずしも差がでるとは限らない（配列の大きさを変更すると差が出やすい）．
 	if (false)
 	{
-		std::cout << "課題17" << std::endl;
+		std::cout << "exercise 17" << std::endl;
 		const int loop = 100;
 		const int width = 768;
 		const int height = 512;
@@ -1539,7 +1506,7 @@ int main(const int argc, const char** argv)
 	//また，並列化を有効にする場合としない場合の計算時間を比較せよ．
 	if (false)
 	{
-		std::cout << "課題18" << std::endl;
+		std::cout << "exercise 18" << std::endl;
 		//XXXX
 		for (int i = 0; i < 100; i++)
 		{
@@ -1552,7 +1519,7 @@ int main(const int argc, const char** argv)
 	//総和を計算するコードで，reduction指定子を使用する場合としない場合で計算結果がどのようになるか比較せよ．
 	if (false)
 	{
-		std::cout << "課題19" << std::endl;
+		std::cout << "exercise 19" << std::endl;
 		//並列化なし
 		std::cout << "no parallelization" << std::endl;
 		for (int j = 0; j < 10; j++)
@@ -1597,7 +1564,7 @@ int main(const int argc, const char** argv)
 	//二つの行列の各要素の積を計算するコードで，スレッド数を変更して，計算時間がどのように推移するのかを確認せよ．
 	if (false)
 	{
-		std::cout << "課題20" << std::endl;
+		std::cout << "exercise 20" << std::endl;
 		const int loop = 1000;
 		const int size = 128;
 		Mat_32F a(size, size);
@@ -1634,7 +1601,7 @@ int main(const int argc, const char** argv)
 	//四則演算のコードを書いてprintfデバッグで確認せよ．
 	if (false)
 	{
-		std::cout << "課題21" << std::endl;
+		std::cout << "exercise 21" << std::endl;
 		const __m256 a = _mm256_set_ps(7, 6, 5, 4, 3, 2, 1, 0);
 		const __m256 b = _mm256_set_ps(15, 14, 13, 12, 11, 10, 9, 8);
 
@@ -1673,7 +1640,7 @@ int main(const int argc, const char** argv)
 	//これは，単純にFMAが1度だとメモリで律速するこのコードでは計算速度の差が出にくいためである．差が小さければ，より演算を増やせば良い．
 	if (false)
 	{
-		std::cout << "課題22" << std::endl;
+		std::cout << "exercise 22" << std::endl;
 		const int loop = 1000;
 		const int size = 1024;
 #ifdef __GNUC__
@@ -1751,7 +1718,7 @@ int main(const int argc, const char** argv)
 	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
 	if (false)
 	{
-		std::cout << "課題23" << std::endl;
+		std::cout << "exercise 23" << std::endl;
 		const int loop = 10000;
 		const int size = 1024;
 #ifdef __GNUC__
@@ -1847,7 +1814,7 @@ int main(const int argc, const char** argv)
 	//（この課題は，後にリダクションの最適化でもう一度登場します．）
 	if (false)
 	{
-		std::cout << "課題24" << std::endl;
+		std::cout << "exercise 24" << std::endl;
 		const int loop = 100000;
 #ifdef __GNUC__
 		float __attribute__((aligned(32))) a[8];
@@ -1907,7 +1874,7 @@ int main(const int argc, const char** argv)
 	//if(a[i]>=threshold) a[i]=a[i]*a[i]*a[i];
 	if (false)
 	{
-		std::cout << "課題25" << std::endl;
+		std::cout << "exercise 25" << std::endl;
 		const int size = 8;
 		const float th = 50;
 
@@ -1948,7 +1915,7 @@ int main(const int argc, const char** argv)
 	//上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
 	if (false)
 	{
-		std::cout << "課題26" << std::endl;
+		std::cout << "exercise 26" << std::endl;
 		const int loop = 1000;
 		const int size = 1024 * 3;
 #ifdef __GNUC__
@@ -2158,7 +2125,7 @@ int main(const int argc, const char** argv)
 	//そのため，この動作を追って転置ができていることを手書きで確認するだけで良い．
 	if (false)
 	{
-		std::cout << "課題27" << std::endl;
+		std::cout << "exercise 27" << std::endl;
 		const int size = 64;
 #ifdef __GNUC__
 		__attribute__((aligned(32))) float a[size];
@@ -2198,7 +2165,7 @@ int main(const int argc, const char** argv)
 	//__m256i（int）型を_m256（float）型に変換せよ．
 	if (false)
 	{
-		std::cout << "課題28" << std::endl;
+		std::cout << "exercise 28" << std::endl;
 		__m256i m32i = _mm256_set_epi32(7, 6, 5, 4, 3, 2, 1, 0);
 		__m256 m32f = _mm256_setzero_ps();
 
@@ -2214,7 +2181,7 @@ int main(const int argc, const char** argv)
 	//また，スカラ実装，スカラ実装＋並列化，SIMD実装のみを作成し，計算時間を比較せよ．
 	if (false)
 	{
-		std::cout << "課題29" << std::endl;
+		std::cout << "exercise 29" << std::endl;
 		const int loop = 1000;
 		const int size = 128;
 		Mat_32F a(size, size);
@@ -2302,4 +2269,38 @@ int main(const int argc, const char** argv)
 
 	std::cout << "no select" << std::endl;
 	return 0;
+}
+
+//課題12
+inline void rot(double a, double b, double& x, double& y, double radian)
+{
+	x = a * cos(radian);
+	y = b * sin(radian);
+}
+
+//課題27
+inline void _mm256_transpose_8x8_ps(__m256* dst, const __m256* src)
+{
+	__m256  tmp[8], tmpp[8];
+
+	for (int i = 0; i < 8; i += 2)
+	{
+		tmp[i + 0] = _mm256_unpacklo_ps(src[i], src[i + 1]);
+		tmp[i + 1] = _mm256_unpackhi_ps(src[i], src[i + 1]);
+	}
+	for (int i = 0; i < 8; i += 4)
+	{
+		tmpp[i + 0] = _mm256_shuffle_ps(tmp[i + 0], tmp[i + 2], _MM_SHUFFLE(1, 0, 1, 0));
+		tmpp[i + 1] = _mm256_shuffle_ps(tmp[i + 0], tmp[i + 2], _MM_SHUFFLE(3, 2, 3, 2));
+	}
+	for (int i = 0; i < 8; i += 4)
+	{
+		tmpp[i + 2] = _mm256_shuffle_ps(tmp[i + 1], tmp[i + 3], _MM_SHUFFLE(1, 0, 1, 0));
+		tmpp[i + 3] = _mm256_shuffle_ps(tmp[i + 1], tmp[i + 3], _MM_SHUFFLE(3, 2, 3, 2));
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		dst[i + 0] = _mm256_permute2f128_ps(tmpp[i], tmpp[i + 4], 0x20);
+		dst[i + 4] = _mm256_permute2f128_ps(tmpp[i], tmpp[i + 4], 0x31);
+	}
 }
