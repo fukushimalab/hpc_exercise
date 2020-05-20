@@ -594,7 +594,7 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 9" << std::endl;
-		const int loop = 1000000;
+		const int loop = 10000;
 		const int row = 1024;
 		const int col = 1024;
 
@@ -611,7 +611,7 @@ int main(const int argc, const char** argv)
 			//2倍 乗算
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -625,7 +625,7 @@ int main(const int argc, const char** argv)
 			//2.0倍 乗算(double)
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -639,7 +639,7 @@ int main(const int argc, const char** argv)
 			//2倍 ビットシフト
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -653,7 +653,7 @@ int main(const int argc, const char** argv)
 			//1/2 除算
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 			//1/2 除算
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -682,7 +682,7 @@ int main(const int argc, const char** argv)
 			//1/2 0.5乗算で実現
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -696,7 +696,7 @@ int main(const int argc, const char** argv)
 			//1/2 ビットシフト
 			t.start();
 			const int size = ret_32s.cols * ret_32s.rows;
-			for (int i = 0; i < ret_32s.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -716,7 +716,7 @@ int main(const int argc, const char** argv)
 			//1/2 除算
 			t.start();
 			const int size = ret_32f.cols * ret_32f.rows;
-			for (int i = 0; i < ret_32f.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -730,7 +730,7 @@ int main(const int argc, const char** argv)
 			//1/2 0.5乗算
 			t.start();
 			const int size = ret_32f.cols * ret_32f.rows;
-			for (int i = 0; i < ret_32f.cols; i++)
+			for (int i = 0; i < size; i++)
 			{
 				//XXXX
 			}
@@ -745,7 +745,7 @@ int main(const int argc, const char** argv)
 	//floatの行列を3.141倍する場合と，intの行列を3.141倍する場合と，intの行列を3.141倍を固定小数点で行う場合とshortの行列を3.141倍を固定小数点で行う場合で計算し比較せよ．
 	//ただし，shortの配列ではオーバーフローに注意せよ．
 	//例えば，3.141を10ビットシフトで表現する場合，3.141 * 1024 = 3216であり，short maxは32768であるため，入力の値は最大10までしかとることができない．課題のコードでは0～100の乱数であるため，適宜シフトの量を工夫せよ．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 10" << std::endl;
 		const int loop = 10000;
@@ -1865,13 +1865,13 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 				_mm256_store_ps(c + i, temp);
-		}
+			}
 			t.end();
-	}
+		}
 		std::cout << "fma: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
-}
+	}
 
 
 	//課題23
@@ -1961,7 +1961,7 @@ int main(const int argc, const char** argv)
 //XXXX
 			}
 			t.end();
-	}
+		}
 		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
@@ -2060,7 +2060,7 @@ int main(const int argc, const char** argv)
 			//XXXX
 			//XXXX
 			_mm256_store_ps(a + i, temp);
-	}
+		}
 		for (int i = 0; i < size; i++)
 		{
 			std::cout << a[i] << ", ";
