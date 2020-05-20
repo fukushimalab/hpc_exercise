@@ -269,7 +269,7 @@ VisualStudioの使用に習熟した人のみの利用を想定している．
 * [画像処理ライブラリとそのサンプルコード](https://github.com/fukushimalab/hpc_exercise/tree/master/src/image-processing)
 
 また，これらのコードの使用方法については，以下のリンクより確認すること．
-* [演習用コードと行列演算ライブラリの説明](ライブラリ説明.md)
+* [演習用コードと行列演算ライブラリの説明](matrixlib_doc.md)
 * [画像処理ライブラリの説明と演習](画像処理.md)
 * [画像処理高速化演習](ボックスフィルタ.md)
 

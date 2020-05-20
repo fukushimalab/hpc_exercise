@@ -241,12 +241,12 @@ int main(const int argc, const char** argv)
 
 	//課題6
 	//小さな４つの行列A,B,C,Dに対して，行列の各要素ごとに`(a/b)*(c/d)`を計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 6" << std::endl;
-		const int loop = 10;
-		const int row = 3;
-		const int col = 3;
+		const int loop = 100;
+		const int row = 64;
+		const int col =64;
 		Mat_32F a(row, col);
 		mat_rand(a, 0, 100);
 		Mat_32F b(row, col);
@@ -274,7 +274,7 @@ int main(const int argc, const char** argv)
 				}
 			}
 			t.end();
-			std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "before: time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
@@ -292,7 +292,7 @@ int main(const int argc, const char** argv)
 				}
 			}
 			t.end();
-			std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
