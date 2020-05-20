@@ -331,30 +331,149 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題7
-	//累乗を３乗，4乗．．．ｎ乗としたときに速度がどうなるのか計測せよ．ただし，累乗をすると値が大きくなるため，浮動小数点の最大値を超える可能性がある．その時は入力データを0.1倍`（i*0.1）`などすること．
+	//行列の各要素を3乗，4乗．．．n乗としたときに，mulで作ったものとpowで作ったものの速度を比較せよ．
+	//また，ｎがいくつの時にmulのほうが速くなるのか（それとも常時powのほうが遅い・速いのか）比較せよ．
 	if (false)
 	{
 		std::cout << "exercise 7" << std::endl;
 		const int loop = 1000;
-		const int n = 50;
-		const float v = 2.5f;
-		float ret = 0;
+		const int row = 64;
+		const int col = 64;
+		Mat_64F x(row, col);
+		mat_rand(x, 0, 100);
+		Mat_32F ret(row, col);
+		mat_zero(ret);
 
-		for (int i = 0; i < n; i++)
+		CalcTime t;
+
+		//2乗をpow計算
+		int pow_n = 2;
+		for (int j = 0; j < loop; j++)
 		{
-			CalcTime t;
-			//v^i乗を計算
-			for (int j = 0; j < loop; j++)
+			t.start();
+			//powで計算
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
 			{
-				t.start();
-				//pow，計算
-				//XXXX
-				t.end();
-				//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
+				//計算
+				ret.data[i] = pow(x.data[i], pow_n);
 			}
-			std::cout << i << " : time (avg): " << t.getAvgTime() << " ms" << std::endl;
-			//std::cout << ret << std::endl;
+			t.end();
 		}
+		std::cout << pow_n << " : pow time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//2乗をmulで計算
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = x.data[i] * x.data[i];
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : mul time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+
+		//3乗をpow計算
+		pow_n = 3;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			//powで計算
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = pow(x.data[i], pow_n);
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : pow time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//3乗をmulで計算
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = x.data[i] * x.data[i] * x.data[i];
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : mul time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//4乗をpow計算
+		pow_n = 4;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			//powで計算
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = pow(x.data[i], pow_n);
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : pow time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//4乗をmulで計算
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = x.data[i] * x.data[i] * x.data[i] * x.data[i];
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : mul time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//n乗をpow計算(nを変える問題．powは64をサンプルとして入力している．)
+		pow_n = 64;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			//powで計算
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = pow(x.data[i], pow_n);
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : pow time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//n乗をmulで計算（nは任意）
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
+					;
+			}
+			t.end();
+		}
+		std::cout << pow_n << " : mul time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
 		return 0;
 	}
 
@@ -1836,7 +1955,7 @@ int main(const int argc, const char** argv)
 		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
-	}
+			}
 
 
 	//課題24
@@ -2300,16 +2419,16 @@ int main(const int argc, const char** argv)
 
 	std::cout << "no select" << std::endl;
 	return 0;
-}
+		}
 
-//課題12
+//課題12用
 inline void rot(double a, double b, double& x, double& y, double radian)
 {
 	x = a * cos(radian);
 	y = b * sin(radian);
 }
 
-//課題27
+//課題27用
 inline void _mm256_transpose_8x8_ps(__m256* dst, const __m256* src)
 {
 	__m256  tmp[8], tmpp[8];
