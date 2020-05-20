@@ -157,7 +157,7 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//計算
-				ret.data[i] = (2.f * M_PI + sqrt(5.f) + 0.5f * 0.5f) * x.data[i];
+				//XXXX
 			}
 
 			t.end();
@@ -481,7 +481,7 @@ int main(const int argc, const char** argv)
 	//課題8
 	//2つの行列の和を`unsigned char, short, int, float, double`で計算しそれぞれ比較せよ．
 	//なお，大きい行列サイズでないと，効果がでない場合がある．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 8" << std::endl;
 		const int loop = 500;
@@ -594,9 +594,9 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 9" << std::endl;
-		const int loop = 1000;
-		const int row = 50;
-		const int col = 50;
+		const int loop = 1000000;
+		const int row = 1024;
+		const int col = 1024;
 
 		//int
 		Mat_32S x_32s(row, col);
@@ -610,28 +610,24 @@ int main(const int argc, const char** argv)
 		{
 			//2倍 乗算
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "2x mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "2x mul (int)   : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//2.0x mul
 		for (int k = 0; k < loop; k++)
 		{
 			//2.0倍 乗算(double)
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -642,49 +638,42 @@ int main(const int argc, const char** argv)
 		{
 			//2倍 ビットシフト
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "2x bit shift: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
+		std::cout << "2x bit shift   : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//1/2 div int
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "1/2 div (int)  : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//1/2 div float
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 除算
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "1/2 div (float): time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "1/2 div(double): time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 
 		//1/2 -> mul 0.5
@@ -692,32 +681,28 @@ int main(const int argc, const char** argv)
 		{
 			//1/2 0.5乗算で実現
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "1/2 mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "1/2 mul(double): time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//1/2->bit shift
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 ビットシフト
 			t.start();
-			for (int j = 0; j < ret_32s.rows; j++)
+			const int size = ret_32s.cols * ret_32s.rows;
+			for (int i = 0; i < ret_32s.cols; i++)
 			{
-				for (int i = 0; i < ret_32s.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "1/2 bit shift: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "1/2 bit shift  : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//float
 		Mat_32F x_32f(row, col);
@@ -730,32 +715,28 @@ int main(const int argc, const char** argv)
 		{
 			//1/2 除算
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = ret_32f.cols * ret_32f.rows;
+			for (int i = 0; i < ret_32f.cols; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "float: 1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "float: 1/2 div : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//1/2 -> mul 0.5
 		for (int k = 0; k < loop; k++)
 		{
 			//1/2 0.5乗算
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = ret_32f.cols * ret_32f.rows;
+			for (int i = 0; i < ret_32f.cols; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "float: 1/2 mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "float: 1/2 mul : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1955,7 +1936,7 @@ int main(const int argc, const char** argv)
 		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
-			}
+	}
 
 
 	//課題24
@@ -2419,7 +2400,7 @@ int main(const int argc, const char** argv)
 
 	std::cout << "no select" << std::endl;
 	return 0;
-		}
+}
 
 //課題12用
 inline void rot(double a, double b, double& x, double& y, double radian)
