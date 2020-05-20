@@ -191,9 +191,9 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 5" << std::endl;
-		const int loop = 10;
-		const int row = 3;
-		const int col = 3;
+		const int loop = 100;
+		const int row = 64;
+		const int col = 64;
 		Mat_32F x(row, col);
 		mat_rand(x, 0, 100);
 		Mat_32F ret(row, col);
@@ -214,7 +214,7 @@ int main(const int argc, const char** argv)
 				}
 			}
 			t.end();
-			std::cout << "div: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "div: time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
@@ -232,21 +232,52 @@ int main(const int argc, const char** argv)
 				}
 			}
 			t.end();
-			std::cout << "mul: time: " << t.getLastTime() << " ms" << std::endl;
+			//std::cout << "mul: time: " << t.getLastTime() << " ms" << std::endl;
 		}
 		std::cout << "mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//1重ループの場合
+		for (int k = 0; k < loop; k++)
+		{
+			//1重ループの除算の場合
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				//XXXXXXXXXX
+			}
+			t.end();
+			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
+		}
+		std::cout << "div1: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//1重ループの乗算にした場合
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				//XXXXXXXXXX
+			}
+			t.end();
+			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
+		}
+		std::cout << "mul1: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
 
 	//課題6
 	//小さな４つの行列A,B,C,Dに対して，行列の各要素ごとに`(a/b)*(c/d)`を計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 6" << std::endl;
 		const int loop = 100;
 		const int row = 64;
-		const int col =64;
+		const int col = 64;
 		Mat_32F a(row, col);
 		mat_rand(a, 0, 100);
 		Mat_32F b(row, col);
@@ -447,7 +478,7 @@ int main(const int argc, const char** argv)
 		const int loop = 1000;
 		const int row = 50;
 		const int col = 50;
-		
+
 		//int
 		Mat_32S x_32s(row, col);
 		mat_rand(x_32s, 0, 100);
@@ -470,7 +501,7 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "2x mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-		
+
 		//2.0x mul
 		for (int k = 0; k < loop; k++)
 		{
@@ -519,7 +550,7 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "1/2 div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-		
+
 		//1/2 div float
 		for (int k = 0; k < loop; k++)
 		{
@@ -574,7 +605,7 @@ int main(const int argc, const char** argv)
 		mat_rand(x_32f, 0, 100);
 		Mat_32F ret_32f(row, col);
 		mat_zero(ret_32f);
-		
+
 		//1/2 div
 		for (int k = 0; k < loop; k++)
 		{
@@ -794,7 +825,7 @@ int main(const int argc, const char** argv)
 			{
 				for (int i = 0; i < ret_32f.cols; i++)
 				{
-					ret_32f.data[j*ret_32f.cols + i] = LUT[(int)x_32f.data[j*ret_32f.cols + i]];
+					ret_32f.data[j * ret_32f.cols + i] = LUT[(int)x_32f.data[j * ret_32f.cols + i]];
 				}
 			}
 			t.end();
@@ -1490,7 +1521,7 @@ int main(const int argc, const char** argv)
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
-			float *p = &a[0][0];
+			float* p = &a[0][0];
 			for (int i = 0; i < size; i++) {
 				*p++ = 0.f;
 			}
@@ -1586,7 +1617,7 @@ int main(const int argc, const char** argv)
 				{
 					for (int j = 0; j < size; ++j)
 					{
-						c.data[i*c.cols + j] = c.data[i*c.cols + j] + a.data[i*a.cols + k] * b.data[k*b.cols + j];
+						c.data[i * c.cols + j] = c.data[i * c.cols + j] + a.data[i * a.cols + k] * b.data[k * b.cols + j];
 					}
 				}
 			}
@@ -1904,7 +1935,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < size; i++)
 		{
 			std::cout << a[i] << ", ";
-			if (i != 0 && i%size == 0)
+			if (i != 0 && i % size == 0)
 				std::cout << std::endl;
 		}
 		std::cout << std::endl;
