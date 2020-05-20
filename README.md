@@ -3,5 +3,10 @@
 
 [ドキュメントURL](https://fukushimalab.github.io/hpc_exercise/)
 
-下記のファイルはVisual Studio 2019用のファイルです．必要ない人は無視してください．
+各プロジェクトは，Makefileでコンパイルできるようになっています（検証済み）．   
+
+Visual Studio 2019でもコンパイルできるようにしていますが，すべての課題でうまくいくかは検証していません（2020/5/20）
+下記のファイルはVisual Studio 2019用のファイルです．必要ない人は無視してください．  
 `*.sln` `*.vcxproj*`
+
+
