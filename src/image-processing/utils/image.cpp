@@ -6,7 +6,7 @@
 #endif
 #include <cstring>
 #include <iostream>
-
+#include <algorithm>
 
 //Image_8U
 Image_8U::Image_8U(const unsigned char* data, const int rows, const int cols, const int channels)
