@@ -331,8 +331,8 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題7
-	//行列の各要素を3乗，4乗．．．n乗としたときに，mulで作ったものとpowで作ったものの速度を比較せよ．
-	//また，ｎがいくつの時にmulのほうが速くなるのか（それとも常時powのほうが遅い・速いのか）比較せよ．
+	//行列の各要素を2乗，3乗，4乗．．．n乗としたときに，mulで作ったものとpowで作ったものの速度を比較せよ．
+	//また，nがいくつの時にmulのほうが速くなるのか（それとも常時powのほうが遅い・速いのか）比較せよ．
 	if (false)
 	{
 		std::cout << "exercise 7" << std::endl;
@@ -479,14 +479,14 @@ int main(const int argc, const char** argv)
 
 
 	//課題8
-	//２つの行列の和を`unsigned char, short, int, float, double`で計算しそれぞれ比較せよ．
+	//2つの行列の和を`unsigned char, short, int, float, double`で計算しそれぞれ比較せよ．
 	//なお，大きい行列サイズでないと，効果がでない場合がある．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 8" << std::endl;
-		const int loop = 1000;
-		const int row = 64;
-		const int col = 64;
+		const int loop = 500;
+		const int row = 1024;
+		const int col = 1024;
 
 		//unsigend char
 		Mat_8U a_8u(row, col);
@@ -501,7 +501,7 @@ int main(const int argc, const char** argv)
 		{
 			t.start();
 			//unsigned char
-			//XXXX
+			//XXXX //hint mat_add
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
@@ -574,7 +574,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
-			//float
+			//double
 			//XXXX
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;

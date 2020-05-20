@@ -1,6 +1,5 @@
 #pragma once
 
-
 struct Mat_8U;
 struct Mat_16S;
 struct Mat_32S;

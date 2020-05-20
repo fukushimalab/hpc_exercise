@@ -12,7 +12,7 @@ void mat_zero(Mat_8U& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 0;
+			m.data[j * m.cols + i] = 0;
 		}
 	}
 }
@@ -23,7 +23,7 @@ void mat_zero(Mat_16S& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 0;
+			m.data[j * m.cols + i] = 0;
 		}
 	}
 }
@@ -34,7 +34,7 @@ void mat_zero(Mat_32S& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 0;
+			m.data[j * m.cols + i] = 0;
 		}
 	}
 }
@@ -45,7 +45,7 @@ void mat_zero(Mat_32F& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 0;
+			m.data[j * m.cols + i] = 0;
 		}
 	}
 }
@@ -56,7 +56,7 @@ void mat_zero(Mat_64F& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 0;
+			m.data[j * m.cols + i] = 0;
 		}
 	}
 }
@@ -71,7 +71,7 @@ void mat_one(Mat_8U& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 1;
+			m.data[j * m.cols + i] = 1;
 		}
 	}
 }
@@ -82,7 +82,7 @@ void mat_one(Mat_16S& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 1;
+			m.data[j * m.cols + i] = 1;
 		}
 	}
 }
@@ -93,7 +93,7 @@ void mat_one(Mat_32S& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 1;
+			m.data[j * m.cols + i] = 1;
 		}
 	}
 }
@@ -104,7 +104,7 @@ void mat_one(Mat_32F& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 1.f;
+			m.data[j * m.cols + i] = 1.f;
 		}
 	}
 }
@@ -115,7 +115,7 @@ void mat_one(Mat_64F& m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = 1.0;
+			m.data[j * m.cols + i] = 1.0;
 		}
 	}
 }
@@ -130,7 +130,7 @@ void mat_rand(Mat_8U& m, const unsigned char rand_min, const unsigned char rand_
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
+			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
@@ -141,7 +141,7 @@ void mat_rand(Mat_16S& m, const short rand_min, const short rand_max)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
+			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
@@ -152,7 +152,7 @@ void mat_rand(Mat_32S& m, const int rand_min, const int rand_max)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
+			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
@@ -163,7 +163,7 @@ void mat_rand(Mat_32F& m, const float rand_min, const float rand_max)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
+			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
 		}
 	}
 }
@@ -174,7 +174,7 @@ void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			m.data[j*m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0) / (1.0 + RAND_MAX));
+			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0) / (1.0 + RAND_MAX));
 		}
 	}
 }
@@ -182,76 +182,66 @@ void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 ////////////////////////////
 //val add 
 ////////////////////////////
-Mat_8U mat_add(const Mat_8U m, const unsigned char v)
+Mat_8U mat_add(const Mat_8U& m, const unsigned char v)
 {
-	Mat_8U ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_8U dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] + v;
-		}
+		dest.data[i] = m.data[i] + v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_16S mat_add(const Mat_16S m, const short v)
+Mat_16S mat_add(const Mat_16S& m, const short v)
 {
-	Mat_16S ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_16S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] + v;
-		}
+		dest.data[i] = m.data[i] + v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32S mat_add(const Mat_32S m, const int v)
+Mat_32S mat_add(const Mat_32S& m, const int v)
 {
-	Mat_32S ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] + v;
-		}
+		dest.data[i] = m.data[i] + v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32F mat_add(const Mat_32F m, const float v)
+Mat_32F mat_add(const Mat_32F& m, const float v)
 {
-	Mat_32F ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32F dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] + v;
-		}
+		dest.data[i] = m.data[i] + v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_64F mat_add(const Mat_64F m, const double v)
+Mat_64F mat_add(const Mat_64F& m, const double v)
 {
-	Mat_64F ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_64F dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] + v;
-		}
+		dest.data[i] = m.data[i] + v;
 	}
-	return ret;
+	return dest;
 }
 
 
 ////////////////////////////
 //mat add
 ////////////////////////////
-Mat_8U mat_add(const Mat_8U m1, const Mat_8U m2)
+Mat_8U mat_add(const Mat_8U& m1, const Mat_8U& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
 	{
@@ -259,18 +249,16 @@ Mat_8U mat_add(const Mat_8U m1, const Mat_8U m2)
 		exit(-1);
 	}
 
-	Mat_8U ret(m1.rows, m1.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_8U dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = m1.data[j*m1.cols + i] + m2.data[j*m2.cols + i];
-		}
+		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return  ret;
+	return dest;
 }
 
-Mat_16S mat_add(const Mat_16S m1, const Mat_16S m2)
+Mat_16S mat_add(const Mat_16S& m1, const Mat_16S& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
 	{
@@ -278,18 +266,16 @@ Mat_16S mat_add(const Mat_16S m1, const Mat_16S m2)
 		exit(-1);
 	}
 
-	Mat_16S ret(m1.rows, m1.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_16S dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = m1.data[j*m1.cols + i] + m2.data[j*m2.cols + i];
-		}
+		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return  ret;
+	return dest;
 }
 
-Mat_32S mat_add(const Mat_32S m1, const Mat_32S m2)
+Mat_32S mat_add(const Mat_32S& m1, const Mat_32S& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
 	{
@@ -297,18 +283,16 @@ Mat_32S mat_add(const Mat_32S m1, const Mat_32S m2)
 		exit(-1);
 	}
 
-	Mat_32S ret(m1.rows, m1.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32S dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = m1.data[j*m1.cols + i] + m2.data[j*m2.cols + i];
-		}
+		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return  ret;
+	return dest;
 }
 
-Mat_32F mat_add(const Mat_32F m1, const Mat_32F m2)
+Mat_32F mat_add(const Mat_32F& m1, const Mat_32F& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
 	{
@@ -316,18 +300,16 @@ Mat_32F mat_add(const Mat_32F m1, const Mat_32F m2)
 		exit(-1);
 	}
 
-	Mat_32F ret(m1.rows, m1.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32F dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = m1.data[j*m1.cols + i] + m2.data[j*m2.cols + i];
-		}
+		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return  ret;
+	return dest;
 }
 
-Mat_64F mat_add(const Mat_64F m1, const Mat_64F m2)
+Mat_64F mat_add(const Mat_64F& m1, const Mat_64F& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
 	{
@@ -335,91 +317,78 @@ Mat_64F mat_add(const Mat_64F m1, const Mat_64F m2)
 		exit(-1);
 	}
 
-	Mat_64F ret(m1.rows, m1.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_64F dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = m1.data[j*m1.cols + i] + m2.data[j*m2.cols + i];
-		}
+		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return  ret;
+	return dest;
 }
-
 
 ////////////////////////////
 //val mul
 ////////////////////////////
-Mat_8U mat_mul(const Mat_8U m, const unsigned char v)
+Mat_8U mat_mul(const Mat_8U& m, const unsigned char v)
 {
-	Mat_8U ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_8U dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] * v;
-		}
+		dest.data[i] = m.data[i] * v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_16S mat_mul(const Mat_16S m, const short v)
+Mat_16S mat_mul(const Mat_16S& m, const short v)
 {
-	Mat_16S ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_16S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] * v;
-		}
+		dest.data[i] = m.data[i] * v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32S mat_mul(const Mat_32S m, const int v)
+Mat_32S mat_mul(const Mat_32S& m, const int v)
 {
-	Mat_32S ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] * v;
-		}
+		dest.data[i] = m.data[i] * v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32F mat_mul(const Mat_32F m, const float v)
+Mat_32F mat_mul(const Mat_32F& m, const float v)
 {
-	Mat_32F ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32F dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] * v;
-		}
+		dest.data[i] = m.data[i] * v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_64F mat_mul(const Mat_64F m, const double v)
+Mat_64F mat_mul(const Mat_64F& m, const double v)
 {
-	Mat_64F ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_64F dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] * v;
-		}
+		dest.data[i] = m.data[i] * v;
 	}
-	return ret;
+	return dest;
 }
 
 
 ////////////////////////////
 //mat mul
 ////////////////////////////
-Mat_8U mat_mul(const Mat_8U m1, const Mat_8U m2)
+Mat_8U mat_mul(const Mat_8U& m1, const Mat_8U& m2)
 {
 	if (m1.rows != m2.cols)
 	{
@@ -427,22 +396,16 @@ Mat_8U mat_mul(const Mat_8U m1, const Mat_8U m2)
 		exit(-1);
 	}
 
-	Mat_8U ret(m1.rows, m2.cols);
-	mat_zero(ret);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_8U dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			for (int k = 0; k < m1.cols; k++)
-			{
-				ret.data[j*ret.cols + i] += m1.data[j*m1.cols + k] * m2.data[k*m2.cols + i];
-			}
-		}
+		dest.data[i] = m1.data[i] * m2.data[i];
 	}
-	return ret;
+	return dest;
 }
 
-Mat_16S mat_mul(const Mat_16S m1, const Mat_16S m2)
+Mat_16S mat_mul(const Mat_16S& m1, const Mat_16S& m2)
 {
 	if (m1.rows != m2.cols)
 	{
@@ -450,22 +413,16 @@ Mat_16S mat_mul(const Mat_16S m1, const Mat_16S m2)
 		exit(-1);
 	}
 
-	Mat_16S ret(m1.rows, m2.cols);
-	mat_zero(ret);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_16S dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			for (int k = 0; k < m1.cols; k++)
-			{
-				ret.data[j*ret.cols + i] += m1.data[j*m1.cols + k] * m2.data[k*m2.cols + i];
-			}
-		}
+		dest.data[i] = m1.data[i] * m2.data[i];
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32S mat_mul(const Mat_32S m1, const Mat_32S m2)
+Mat_32S mat_mul(const Mat_32S& m1, const Mat_32S& m2)
 {
 	if (m1.rows != m2.cols)
 	{
@@ -473,22 +430,16 @@ Mat_32S mat_mul(const Mat_32S m1, const Mat_32S m2)
 		exit(-1);
 	}
 
-	Mat_32S ret(m1.rows, m2.cols);
-	mat_zero(ret);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32S dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			for (int k = 0; k < m1.cols; k++)
-			{
-				ret.data[j*ret.cols + i] += m1.data[j*m1.cols + k] * m2.data[k*m2.cols + i];
-			}
-		}
+		dest.data[i] = m1.data[i] * m2.data[i];
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32F mat_mul(const Mat_32F m1, const Mat_32F m2)
+Mat_32F mat_mul(const Mat_32F& m1, const Mat_32F& m2)
 {
 	if (m1.rows != m2.cols)
 	{
@@ -496,22 +447,16 @@ Mat_32F mat_mul(const Mat_32F m1, const Mat_32F m2)
 		exit(-1);
 	}
 
-	Mat_32F ret(m1.rows, m2.cols);
-	mat_zero(ret);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32F dest(m1.rows, m2.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			for (int k = 0; k < m1.cols; k++)
-			{
-				ret.data[j*ret.cols + i] += m1.data[j*m1.cols + k] * m2.data[k*m2.cols + i];
-			}
-		}
+		dest.data[i] = m1.data[i] * m2.data[i];
 	}
-	return ret;
+	return dest;
 }
 
-Mat_64F mat_mul(const Mat_64F m1, const Mat_64F m2)
+Mat_64F mat_mul(const Mat_64F& m1, const Mat_64F& m2)
 {
 	if (m1.rows != m2.cols)
 	{
@@ -519,95 +464,79 @@ Mat_64F mat_mul(const Mat_64F m1, const Mat_64F m2)
 		exit(-1);
 	}
 
-	Mat_64F ret(m1.rows, m2.cols);
-	mat_zero(ret);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_64F dest(m1.rows, m2.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			for (int k = 0; k < m1.cols; k++)
-			{
-				ret.data[j*ret.cols + i] += m1.data[j*m1.cols + k] * m2.data[k*m2.cols + i];
-			}
-		}
+		dest.data[i] = m1.data[i] * m2.data[i];
 	}
-	return ret;
+	return dest;
 }
 
 
 ////////////////////////////
 //val div
 ////////////////////////////
-Mat_8U mat_div(const Mat_8U m, const unsigned char v)
+Mat_8U mat_div(const Mat_8U& m, const unsigned char v)
 {
-	Mat_8U ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_8U dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] / v;
-		}
+		dest.data[i] = m.data[i] /v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_16S mat_div(const Mat_16S m, const short v)
+Mat_16S mat_div(const Mat_16S& m, const short v)
 {
-	Mat_16S ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_16S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] / v;
-		}
+		dest.data[i] = m.data[i] / v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32S mat_div(const Mat_32S m, const int v)
+Mat_32S mat_div(const Mat_32S& m, const int v)
 {
-	Mat_32S ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] / v;
-		}
+		dest.data[i] = m.data[i] / v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_32F mat_div(const Mat_32F m, const float v)
+Mat_32F mat_div(const Mat_32F& m, const float v)
 {
-	Mat_32F ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_32F dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] / v;
-		}
+		dest.data[i] = m.data[i] / v;
 	}
-	return ret;
+	return dest;
 }
 
-Mat_64F mat_div(const Mat_64F m, const double v)
+Mat_64F mat_div(const Mat_64F& m, const double v)
 {
-	Mat_64F ret(m.rows, m.cols);
-	for (int j = 0; j < ret.rows; j++)
+	Mat_64F dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < ret.cols; i++)
-		{
-			ret.data[j*ret.cols + i] = ret.data[j*ret.cols + i] / v;
-		}
+		dest.data[i] = m.data[i] / v;
 	}
-	return ret;
+	return dest;
 }
 
 
 ////////////////////////////
 //show
 ////////////////////////////
-void mat_show(const Mat_8U m)
+void mat_show(const Mat_8U& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 8U" << std::endl;
 
@@ -615,13 +544,13 @@ void mat_show(const Mat_8U m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			std::cout << (int)m.data[j*m.cols + i] << ", ";
+			std::cout << (int)m.data[j * m.cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
 }
 
-void mat_show(const Mat_16S m)
+void mat_show(const Mat_16S& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 16S" << std::endl;
 
@@ -629,13 +558,13 @@ void mat_show(const Mat_16S m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			std::cout << m.data[j*m.cols + i] << ", ";
+			std::cout << m.data[j * m.cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
 }
 
-void mat_show(const Mat_32S m)
+void mat_show(const Mat_32S& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 32S" << std::endl;
 
@@ -643,13 +572,13 @@ void mat_show(const Mat_32S m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			std::cout << m.data[j*m.cols + i] << ", ";
+			std::cout << m.data[j * m.cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
 }
 
-void mat_show(const Mat_32F m)
+void mat_show(const Mat_32F& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 32F" << std::endl;
 
@@ -657,13 +586,13 @@ void mat_show(const Mat_32F m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			std::cout << m.data[j*m.cols + i] << ", ";
+			std::cout << m.data[j * m.cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
 }
 
-void mat_show(const Mat_64F m)
+void mat_show(const Mat_64F& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 64F" << std::endl;
 
@@ -671,7 +600,7 @@ void mat_show(const Mat_64F m)
 	{
 		for (int i = 0; i < m.cols; i++)
 		{
-			std::cout << m.data[j*m.cols + i] << ", ";
+			std::cout << m.data[j * m.cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
