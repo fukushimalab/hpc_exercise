@@ -3,6 +3,11 @@
 #include <vector>
 #include <time.h>
 
+#ifdef _MSC_VER
+#define NOMINMAX
+#include <windows.h>
+#endif
+
 //Mat util functions
 //init (zero)
 void mat_zero(Mat_8U& m);
@@ -75,6 +80,7 @@ float rand_32f(const float rand_min, const float rand_max);
 double rand_64f(const double rand_min, const double rand_max);
 
 //timer
+#ifdef __GNUC__
 struct CalcTime
 {
 	std::vector<double> que;
@@ -87,3 +93,20 @@ struct CalcTime
 	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
 	double getLastTime();
 };
+#elif _MSC_VER
+struct CalcTime
+{
+	std::vector<double> que;
+	LARGE_INTEGER s;
+	LARGE_INTEGER e;
+
+	LARGE_INTEGER frequency;
+	void start();
+	void end();
+	void clear();
+
+	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
+	double getLastTime();
+	CalcTime();
+};
+#endif

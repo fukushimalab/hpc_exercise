@@ -680,30 +680,32 @@ void mat_show(const Mat_64F m)
 //rand
 unsigned char rand_8u(const unsigned char rand_min, const unsigned char rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min + 1) / (1 + RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
 short rand_16s(const short rand_min, const short rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min + 1) / (1 + RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
 int rand_32s(const int rand_min, const int rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min + 1) / (1 + RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
 float rand_32f(const float rand_min, const float rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
 double rand_64f(const double rand_min, const double rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min + 1.0) / (1.0 + RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
+
 //timer
+#ifdef __GNUC__
 void CalcTime::start()
 {
 	clock_gettime(CLOCK_REALTIME, &s);
@@ -713,7 +715,7 @@ void CalcTime::start()
 void CalcTime::end()
 {
 	clock_gettime(CLOCK_REALTIME, &e);
-	que.push_back((double)(e.tv_sec-s.tv_sec)*1e3 + (double)(e.tv_nsec-s.tv_nsec)*1e-6); //ms
+	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
 	return;
 }
 
@@ -727,12 +729,12 @@ double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
 {
 	double count = 0;
 	double time = 0;
-	if((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
+	if ((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
 	{
 		return -1;
 	}
 	std::vector<double>::iterator it = que.begin();
-	if(dropFirstMeasure)
+	if (dropFirstMeasure)
 	{
 		it++;
 	}
@@ -741,19 +743,81 @@ double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
 		time += *it;
 		count++;
 	}
-	if(isClear)
+	if (isClear)
 	{
 		que.clear();
 	}
-	return time/count;
+	return time / count;
 }
 
 double CalcTime::getLastTime()
 {
-	if(que.size() == 0)
+	if (que.size() == 0)
 	{
 		return -1;
 	}
 	return que.back();
 }
+#elif _MSC_VER
 
+CalcTime::CalcTime()
+{
+	QueryPerformanceFrequency(&frequency);
+}
+
+void CalcTime::start()
+{
+	QueryPerformanceCounter(&s);
+	return;
+}
+
+void CalcTime::end()
+{
+	QueryPerformanceCounter(&e);
+	LONGLONG span = e.QuadPart - s.QuadPart;
+	double sec = (double)span / (double)frequency.QuadPart;
+
+	que.push_back(sec * 1000.0); //msec
+	return;
+}
+
+void CalcTime::clear()
+{
+	que.clear();
+	return;
+}
+
+double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
+{
+	double count = 0;
+	double time = 0;
+	if ((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
+	{
+		return -1;
+	}
+	std::vector<double>::iterator it = que.begin();
+	if (dropFirstMeasure)
+	{
+		it++;
+	}
+	for (; it != que.end(); ++it)
+	{
+		time += *it;
+		count++;
+	}
+	if (isClear)
+	{
+		que.clear();
+	}
+	return time / count;
+}
+
+double CalcTime::getLastTime()
+{
+	if (que.size() == 0)
+	{
+		return -1;
+	}
+	return que.back();
+}
+#endif

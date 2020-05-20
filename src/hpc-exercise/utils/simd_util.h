@@ -1,5 +1,9 @@
 #pragma once
+#ifdef __GNUC__
 #include <x86intrin.h>
+#elif _MSC_VER
+#include <intrin.h>
+#endif
 #include <iostream>
 
 void print_m256(const __m256 a)
