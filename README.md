@@ -2,3 +2,6 @@
 名古屋工業大学 情報工学科 ネットワーク系分野 3年後期 ネットワーク系演習II：ハイパフォーマンスコンピューティングの演習資料です．
 
 [ドキュメントURL](https://fukushimalab.github.io/hpc_exercise/)
+
+下記のファイルはVisual Studio 2019用のファイルです．必要ない人は無視してください．
+`*.sln` `*.vcxproj*`
