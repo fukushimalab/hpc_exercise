@@ -423,8 +423,8 @@ int main(const int argc, const char** argv)
 		const int row = 64;
 		const int col = 64;
 		Mat_64F x(row, col);
-		mat_rand(x, 0, 100);
-		Mat_32F ret(row, col);
+		mat_rand(x, 0.0, 100.0);
+		Mat_64F ret(row, col);
 		mat_zero(ret);
 
 		CalcTime t;
@@ -1041,7 +1041,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
-			LUT[i] = sqrt(i);// 以下の課題ようのヒントのために，埋めてあります．
+			LUT[i] = (float)sqrt(i);// 以下の課題ようのヒントのために，埋めてあります．
 		}
 		for (int k = 0; k < loop; k++)
 		{
@@ -1334,7 +1334,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "row-col: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		const int size = 64;
+		const int size = 128;
 		float a[size][size];
 		float b[size][size];
 		float c[size][size];
@@ -1472,18 +1472,20 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 15" << std::endl;
-		const int loop = 100;
-		const int size = 1024;
+		const int loop = 1000;
+		const int size = 65535;
+
+		CalcTime t;
+
 		float x[size], y[size];
-		float a = 2.f;
-		float b = 1.f;
+		const float a = 2.f;
+		const float b = 1.f;
 
 		for (int i = 0; i < size; i++)
 		{
-			x[i] = rand_32f(0, 100);
+			x[i] = rand_32f(0.f, 100.f);
 		}
 
-		CalcTime t;
 		//unrolling 1
 		for (int j = 0; j < loop; j++)
 		{
