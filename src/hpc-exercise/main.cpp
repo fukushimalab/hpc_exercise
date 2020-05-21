@@ -185,6 +185,89 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+	//課題4.5
+	//浮動小数点と整数の加算と積の変換：多くのCPUで効果ないので没．SIMD化などが必要なのと，演算強度が足りない
+	if (false)
+	{
+		std::cout << "exercise 4.5" << std::endl;
+		const int loop = 100000000;
+		const int row = 64;
+		const int col = 64;
+		Mat_32F x(row, col);
+		mat_rand(x, 0, 100);
+		Mat_32F ret(row, col);
+		mat_zero(ret);
+
+		CalcTime t;
+
+		//float演算
+		for (int k = 0; k < loop; k++)
+		{
+			//浮動小数点の乗算
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i += 8)
+			{
+				//計算
+				ret.data[i] = 2.f * x.data[i];
+			}
+
+			t.end();
+		}
+		std::cout << "float mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//浮動小数点の加算
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = x.data[i] + x.data[i];
+			}
+			t.end();
+		}
+		std::cout << "float add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//int演算
+		Mat_32S xi(row, col);
+		mat_rand(xi, 0, 100);
+		Mat_32S reti(row, col);
+		mat_zero(reti);
+
+		for (int k = 0; k < loop; k++)
+		{
+			//整数の乗算
+			t.start();
+			const int size = xi.rows * xi.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				reti.data[i] = 2 * xi.data[i];
+			}
+
+			t.end();
+		}
+		std::cout << "int   mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//浮動小数点の加算
+			t.start();
+			const int size = xi.rows * xi.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				reti.data[i] = xi.data[i] + xi.data[i];
+			}
+			t.end();
+		}
+		std::cout << "int   add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		return 0;
+	}
+
 	//課題5
 	//小さな行列に対して，各要素を3.141592で除算する計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
 	//大きな行列で行うと，効果が少ない可能性があるため注意すること．
@@ -825,50 +908,85 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題11
-	//floatの行列への定数値の四則演算と，`sin, cos, exp, log, sqrt`関数の適用した場合と計算時間を比較せよ．
+	//floatの行列への定数値(3.141592f)の四則演算(加算，乗算，除算)と，`sqrt sin, cos, exp, log`関数の適用した場合と計算時間を比較せよ．
 	//また，`sin, cos, exp, log, sqrt`計算はテーブル参照も作成した場合についても比較せよ．
 	//なお，環境によっては，演算したほうが速い演算もある可能性がある．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 11" << std::endl;
-		const int loop = 100;
-		const int row = 50;
-		const int col = 50;
-		Mat_8U x_8u(row, col);
-		mat_rand(x_8u, 0, 255);
+		const int loop = 10000;
+		const int row = 128;
+		const int col = 128;
 
-		Mat_32F x_32f(x_8u);
+		CalcTime t;
+
+		Mat_32F x_32f(row, col);
+		mat_rand(x_32f, 0.f, 255.f);
 		Mat_32F ret_32f(row, col);
 		mat_zero(ret_32f);
 
 		//四則演算
-		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
-			//四則演算
+			//加算
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "arithmetic: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "add: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		for (int k = 0; k < loop; k++)
+		{
+			//乗算
+			t.start();
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//除算
+			t.start();
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//sqrt
+		for (int k = 0; k < loop; k++)
+		{
+			//sqrt関数
+			t.start();
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "sqr: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sin
 		for (int k = 0; k < loop; k++)
 		{
 			//sin関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -879,12 +997,10 @@ int main(const int argc, const char** argv)
 		{
 			//cos関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -895,12 +1011,10 @@ int main(const int argc, const char** argv)
 		{
 			//exp関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -911,36 +1025,38 @@ int main(const int argc, const char** argv)
 		{
 			//log関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
 		std::cout << "log: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		//sqrt
+		std::cout << std::endl;
+
+		float LUT[256];
+		//sqrt LUT
+		for (int i = 0; i < 256; i++)
+		{
+			//LUT作成
+			LUT[i] = sqrt(i);// 以下の課題ようのヒントのために，埋めてあります．
+		}
 		for (int k = 0; k < loop; k++)
 		{
-			//sqrt関数
+			//sqrt LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				ret_32f.data[i] = LUT[(int)x_32f.data[i]];// 以下の課題ようのヒントのために，埋めてあります．
 			}
 			t.end();
 		}
-		std::cout << "sqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "sqr LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		std::cout << std::endl;
 		//sin LUT
-		float LUT[256];
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
@@ -950,12 +1066,10 @@ int main(const int argc, const char** argv)
 		{
 			t.start();
 			//sin LUT
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					ret_32f.data[j * ret_32f.cols + i] = LUT[(int)x_32f.data[j * ret_32f.cols + i]];
-				}
+				//XXXX				
 			}
 			t.end();
 		}
@@ -971,12 +1085,10 @@ int main(const int argc, const char** argv)
 		{
 			//cos LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -992,12 +1104,10 @@ int main(const int argc, const char** argv)
 		{
 			//exp LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -1013,37 +1123,14 @@ int main(const int argc, const char** argv)
 		{
 			//log LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
 		std::cout << "log LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
-		//sqrt LUT
-		for (int i = 0; i < 256; i++)
-		{
-			//LUT作成
-			//XXXX
-		}
-		for (int k = 0; k < loop; k++)
-		{
-			//sqrt LUT
-			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
-			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
-			}
-			t.end();
-		}
-		std::cout << "sqrt LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
