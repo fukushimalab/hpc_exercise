@@ -1248,58 +1248,46 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 13" << std::endl;
-		const int loop = 10000;
-		const int row = 3;
-		const int col = 3;
-		//c = a x b
-		{
-			Mat_64F c(row, col);
-			mat_zero(c);
+		const int loop = 500;
+		const int row = 1024;
+		const int col = 1024;
 
-			CalcTime t;
-			for (int k = 0; k < loop; k++)
+		CalcTime t;
+
+		Mat_64F a(row, col);
+		mat_rand(a, 0, 100);
+		Mat_64F b(row, col);
+		mat_rand(b, 0, 100);
+		Mat_64F c(row, col);
+		mat_zero(c);
+
+		//c = a x b
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			//C=A*B
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
 			{
-				t.start();
-				//C=A*B
-				Mat_64F a(row, col);
-				mat_rand(a, 0, 100);
-				Mat_64F b(row, col);
-				mat_rand(b, 0, 100);
-				for (int j = 0; j < a.rows; j++)
-				{
-					for (int i = 0; i < a.cols; i++)
-					{
-						//XXXX
-					}
-				}
-				t.end();
+				//XXXX
 			}
-			std::cout << "c=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+			t.end();
 		}
+		std::cout << "c=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//a = a x b
+		for (int k = 0; k < loop; k++)
 		{
-
-			CalcTime t;
-			for (int k = 0; k < loop; k++)
+			t.start();
+			//A=AxB
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
 			{
-				t.start();
-				//A=AxB
-				Mat_64F a(row, col);
-				mat_rand(a, 0, 100);
-				Mat_64F b(row, col);
-				mat_rand(b, 0, 100);
-				for (int j = 0; j < a.rows; j++)
-				{
-					for (int i = 0; i < a.cols; i++)
-					{
-						//XXXX
-					}
-				}
-				t.end();
+				//XXXX
 			}
-			std::cout << "a=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+			t.end();
 		}
+		std::cout << "a=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
