@@ -1763,17 +1763,54 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題17
-	//上記のコードで，計算時間を比較せよ．
-	//なお，必ずしも差がでるとは限らない（配列の大きさを変更すると差が出やすい）．
-	if (false)
+	//Mat_32Sの配同士の加算をループつぶしをするか否かで計算時間を比較せよ．
+	//if (false)
 	{
 		std::cout << "exercise 17" << std::endl;
-		const int loop = 100;
-		const int width = 768;
-		const int height = 512;
-		float a[height][width];
+		const int loop = 100000;
+		const int width = 128;
+		const int height = 128;
+		//heightとwidthを大きくする場合は，注意すること．
+		//下記にa[height][width]という宣言があり，大きすぎる配列はヒープ領域からメモリを取ってこれないため．
 
 		CalcTime t;
+
+		Mat_32S ma(height, width);
+		Mat_32S mb(height, width);
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int j = 0; j < height; j++)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					ma.data[j * width + i] = ma.data[j * width + i] + mb.data[j * width + i];
+				}
+			}
+			t.end();
+		}
+		std::cout << "mat before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//下記の2次元配列の場合のサンプルを参考にするとよい．
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			const int size = width * height;
+			//XXXXXXX
+			//XXXXXXX
+			for (int i = 0; i < size; i++)
+			{
+				//XXXXXXX
+			}
+			t.end();
+		}
+		std::cout << "mat after : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//2次元配列の場合のsample code
+		//以下はコード記述済み．コンパイル時最適化のせいで，おそらく違いはない．興味がある人はgcc main.cpp -sでアセンブラ出力して確認すること．
+		int a[height][width];
+		int b[height][width];
 		// before
 		for (int k = 0; k < loop; k++)
 		{
@@ -1782,25 +1819,27 @@ int main(const int argc, const char** argv)
 			{
 				for (int i = 0; i < width; i++)
 				{
-					a[j][i] = 0.f;
+					a[j][i] = a[j][i] + b[j][i];
 				}
 			}
 			t.end();
 		}
-		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "array before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//after
 		const int size = width * height;
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
-			float* p = &a[0][0];
-			for (int i = 0; i < size; i++) {
-				*p++ = 0.f;
+			int* pa = &a[0][0];
+			int* pb = &b[0][0];
+			for (int i = 0; i < size; i++)
+			{
+				*pa++ = *pa + *pb++;
 			}
 			t.end();
 		}
-		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "array after : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
