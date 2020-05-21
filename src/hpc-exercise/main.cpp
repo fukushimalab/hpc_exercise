@@ -911,7 +911,7 @@ int main(const int argc, const char** argv)
 	//floatの行列への定数値(3.141592f)の四則演算(加算，乗算，除算)と，`sqrt sin, cos, exp, log`関数の適用した場合と計算時間を比較せよ．
 	//また，`sin, cos, exp, log, sqrt`計算はテーブル参照も作成した場合についても比較せよ．
 	//なお，環境によっては，演算したほうが速い演算もある可能性がある．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 11" << std::endl;
 		const int loop = 10000;
@@ -1135,6 +1135,55 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+	//課題(省略可)
+	//ループ構造変換の課題にあるので省略した
+	if (false)
+	{
+		std::cout << "exercise (省略可1)" << std::endl;
+		CalcTime t;
+		const int loop = 1000;
+		const int size = 64;
+		float A[size][size];
+		float B[size][size];
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int j = 0; j < size; j++)
+			{
+				for (int i = 0; i < size; i++)
+				{
+					if (i == j)
+						A[j][i] = 1.0f;
+					else
+						A[j][i] = B[j][i];
+				}
+			}
+			t.end();
+		}
+		std::cout << "simple loop: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int j = 0; j < size; j++)
+			{
+				for (int i = 0; i < size; i++)
+				{
+					A[j][i] = B[j][i];
+				}
+			}
+			for (int i = 0; i < size; i++)
+			{
+				A[i][i] = 1.0f;
+			}
+			t.end();
+		}
+
+		std::cout << "loop unswitching: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		return 0;
+	}
 
 	//課題12
 	//小さな行列A,Bの各要素を任意のradianだけ回転させて，x,yにして格納するプログラムを記述し，inline展開の有無で速度がどのように変わるか計測せよ．
@@ -1149,34 +1198,48 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "exercise 12" << std::endl;
 		const int loop = 10000;
-		const int row = 3;
-		const int col = 3;
-		Mat_64F a(row, col);
-		mat_rand(a, 0, 100);
-		Mat_64F b(row, col);
-		mat_rand(b, 0, 100);
+		const int row = 64;
+		const int col = 64;
 
+		CalcTime t;
+
+		Mat_64F a(row, col);
+		mat_rand(a, 0.0, 100.0);
+		Mat_64F b(row, col);
+		mat_rand(b, 0.0, 100.0);
 		Mat_64F x(row, col);
 		mat_zero(x);
 		Mat_64F y(row, col);
 		mat_zero(y);
 
 		const float radian = 2.2f;
-		CalcTime t;
+
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
-			for (int j = 0; j < a.rows; j++)
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < a.cols; i++)
-				{
-					//rot
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "func time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//べた書き（関数の中身をループないに書く）
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "loop time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
 		return 0;
 	}
 
@@ -2052,7 +2115,7 @@ int main(const int argc, const char** argv)
 		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
-	}
+		}
 
 
 	//課題24
@@ -2110,7 +2173,7 @@ int main(const int argc, const char** argv)
 			//XXXX
 			//XXXX
 			t.end();
-		}
+	}
 		std::cout << "dp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
