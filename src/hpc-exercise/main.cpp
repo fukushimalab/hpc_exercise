@@ -1248,46 +1248,48 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 13" << std::endl;
-		const int loop = 500;
-		const int row = 1024;
-		const int col = 1024;
-
-		CalcTime t;
-
-		Mat_64F a(row, col);
-		mat_rand(a, 0, 100);
-		Mat_64F b(row, col);
-		mat_rand(b, 0, 100);
-		Mat_64F c(row, col);
-		mat_zero(c);
-
+		const int loop = 10000;
+		const int row = 64;
+		const int col = 64;
 		//c = a x b
-		for (int k = 0; k < loop; k++)
 		{
-			t.start();
-			//C=A*B
-			const int size = a.cols * a.rows;
-			for (int i = 0; i < size; i++)
+			CalcTime t;
+			for (int k = 0; k < loop; k++)
 			{
-				//XXXX
+				t.start();
+				//C=A*B
+				Mat_64F a(row, col);
+				Mat_64F b(row, col);
+				Mat_64F c(row, col);
+				const int size = a.rows * a.cols;
+				for (int i = 0; i < size; i++)
+				{
+					//XXXX
+				}
+				t.end();
 			}
-			t.end();
+			std::cout << "c=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		}
-		std::cout << "c=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//a = a x b
-		for (int k = 0; k < loop; k++)
 		{
-			t.start();
-			//A=AxB
-			const int size = a.cols * a.rows;
-			for (int i = 0; i < size; i++)
+
+			CalcTime t;
+			for (int k = 0; k < loop; k++)
 			{
-				//XXXX
+				t.start();
+				//A=AxB
+				Mat_64F a(row, col);
+				Mat_64F b(row, col);
+				const int size = a.rows * a.cols;
+				for (int i = 0; i < size; i++)
+				{
+					//XXXX
+				}
+				t.end();
 			}
-			t.end();
+			std::cout << "a=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		}
-		std::cout << "a=a*b: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
 	}
@@ -1706,17 +1708,19 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "exercise 16" << std::endl;
 		const int loop = 100;
-		const int size = 1024;
-		int x[size], y[size];
+		const int size = 65535;
+		float x[size], y[size];
 
+		CalcTime t;
+
+		//init
 		for (int i = 0; i < size; i++)
 		{
 			x[i] = rand_32f(0, 100);
 			y[i] = rand_32f(0, 100);
 		}
 
-		CalcTime t;
-		//original
+		//Original
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -1724,15 +1728,15 @@ int main(const int argc, const char** argv)
 			{
 				if (i == 0)
 				{
-					y[i] = (x[i] + x[i + 1]) / 2;
+					y[i] = (x[i] + x[i + 1]) / 2.f;
 				}
 				else if (i == size - 1)
 				{
-					y[i] = (x[i - 1] + x[i]) / 2;
+					y[i] = (x[i - 1] + x[i]) / 2.f;
 				}
 				else
 				{
-					y[i] = (x[i - 1] + x[i] + x[i + 1]) / 3;
+					y[i] = (x[i - 1] + x[i] + x[i + 1]) / 3.f;
 				}
 			}
 			t.end();
