@@ -1,6 +1,12 @@
-#include <stdlib.h>
 #include "mat_util.h"
+#include <stdlib.h>
 #include <iostream>
+
+#ifdef __GNUC__
+#include <x86intrin.h>
+#elif _MSC_VER
+#include <intrin.h>
+#endif
 
 //Mat util functions
 ////////////////////////////
@@ -8,57 +14,32 @@
 ////////////////////////////
 void mat_zero(Mat_8U& m)
 {
-	for (int j = 0; j < m.rows; j++)
-	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 0;
-		}
-	}
+	const int size = m.cols * m.rows;
+	memset(m.data, sizeof(unsigned char) * size, 0);
 }
 
 void mat_zero(Mat_16S& m)
 {
-	for (int j = 0; j < m.rows; j++)
-	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 0;
-		}
-	}
+	const int size = m.cols * m.rows;
+	memset(m.data, sizeof(short) * size, 0);
 }
 
 void mat_zero(Mat_32S& m)
 {
-	for (int j = 0; j < m.rows; j++)
-	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 0;
-		}
-	}
+	const int size = m.cols * m.rows;
+	memset(m.data, sizeof(int) * size, 0);
 }
 
 void mat_zero(Mat_32F& m)
 {
-	for (int j = 0; j < m.rows; j++)
-	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 0;
-		}
-	}
+	const int size = m.cols * m.rows;
+	memset(m.data, sizeof(float) * size, 0);
 }
 
 void mat_zero(Mat_64F& m)
 {
-	for (int j = 0; j < m.rows; j++)
-	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 0;
-		}
-	}
+	const int size = m.cols * m.rows;
+	memset(m.data, sizeof(double) * size, 0);
 }
 
 
@@ -67,56 +48,51 @@ void mat_zero(Mat_64F& m)
 ////////////////////////////
 void mat_one(Mat_8U& m)
 {
-	for (int j = 0; j < m.rows; j++)
-	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 1;
-		}
-	}
+	const int size = m.cols * m.rows;
+	memset(m.data, sizeof(unsigned char) * size, 1);
 }
 
 void mat_one(Mat_16S& m)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.cols * m.rows;
+	short* ptr = m.data;
+	for (int i = 0; i < size; i += 16)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 1;
-		}
+		_mm256_store_si256((__m256i*)ptr, _mm256_set1_epi16(1));
+		ptr += 16;
 	}
 }
 
 void mat_one(Mat_32S& m)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.cols * m.rows;
+	int* ptr = m.data;
+	for (int i = 0; i < size; i += 8)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 1;
-		}
+		_mm256_store_si256((__m256i*)ptr, _mm256_set1_epi32(1));
+		ptr += 8;
 	}
 }
 
 void mat_one(Mat_32F& m)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.cols * m.rows;
+	float* ptr = m.data;
+	for (int i = 0; i < size; i += 8)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 1.f;
-		}
+		_mm256_store_ps(ptr, _mm256_set1_ps(1.f));
+		ptr += 8;
 	}
 }
 
 void mat_one(Mat_64F& m)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.cols * m.rows;
+	double* ptr = m.data;
+	for (int i = 0; i < size; i += 4)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = 1.0;
-		}
+		_mm256_store_pd(ptr, _mm256_set1_pd(1.0));
+		ptr += 4;
 	}
 }
 
@@ -126,56 +102,61 @@ void mat_one(Mat_64F& m)
 ////////////////////////////
 void mat_rand(Mat_8U& m, const unsigned char rand_min, const unsigned char rand_max)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.rows * m.cols;
+
+	unsigned char* ptr = m.data;
+	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
-		}
+		*ptr++ = rand_min + (unsigned char)(rand() * v);
 	}
 }
 
 void mat_rand(Mat_16S& m, const short rand_min, const short rand_max)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.rows * m.cols;
+
+	short* ptr = m.data;
+	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
-		}
+		*ptr++ = rand_min + (short)(rand() * v);
 	}
 }
 
 void mat_rand(Mat_32S& m, const int rand_min, const int rand_max)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.rows * m.cols;
+
+	int* ptr = m.data;
+	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
-		}
+		*ptr++ = rand_min + (int)(rand() * v);
 	}
 }
 
 void mat_rand(Mat_32F& m, const float rand_min, const float rand_max)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.rows * m.cols;
+
+	float* ptr = m.data;
+	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0f) / (1.0f + RAND_MAX));
-		}
+		*ptr++ = rand_min + (rand() * v);
 	}
 }
 
 void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 {
-	for (int j = 0; j < m.rows; j++)
+	const int size = m.rows * m.cols;
+
+	double* ptr = m.data;
+	const double v = (double)(rand_max - rand_min) / (RAND_MAX);
+	for (int i = 0; i < size; i++)
 	{
-		for (int i = 0; i < m.cols; i++)
-		{
-			m.data[j * m.cols + i] = rand_min + (rand() * (rand_max - rand_min + 1.0) / (1.0 + RAND_MAX));
-		}
+		*ptr++ = rand_min + (rand() * v);
 	}
 }
 
@@ -483,7 +464,7 @@ Mat_8U mat_div(const Mat_8U& m, const unsigned char v)
 	const int size = m.cols * m.rows;
 	for (int i = 0; i < size; i++)
 	{
-		dest.data[i] = m.data[i] /v;
+		dest.data[i] = m.data[i] / v;
 	}
 	return dest;
 }

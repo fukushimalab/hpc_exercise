@@ -37,11 +37,10 @@ Mat_8U::Mat_8U(const Mat_16S& m)
 {
 	const int size = type * rows * cols;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (unsigned char)m.data[j];
 	}
-	memcpy((void*)this->data, (void*)m.data, size);
 }
 
 Mat_8U::Mat_8U(const Mat_32S& m)
@@ -49,9 +48,9 @@ Mat_8U::Mat_8U(const Mat_32S& m)
 {
 	const int size = type * rows * cols;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (unsigned char)m.data[j];
 	}
 }
 
@@ -60,9 +59,9 @@ Mat_8U::Mat_8U(const Mat_32F& m)
 {
 	const int size = type * rows * cols;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (unsigned char)m.data[j];
 	}
 }
 
@@ -71,9 +70,9 @@ Mat_8U::Mat_8U(const Mat_64F& m)
 {
 	const int size = type * rows * cols;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (unsigned char)m.data[j];
 	}
 }
 
@@ -109,7 +108,7 @@ void Mat_8U::show() const
 	{
 		for (int i = 0; i < cols; i++)
 		{
-			std::cout << (int)data[j*cols + i] << ", ";
+			std::cout << (int)data[j * cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -144,9 +143,9 @@ Mat_16S::Mat_16S(const Mat_8U& m)
 {
 	const int size = type * rows * cols;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = m.data[j];
 	}
 }
 
@@ -155,9 +154,9 @@ Mat_16S::Mat_16S(const Mat_32S& m)
 {
 	const int size = type * rows * cols;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = m.data[j];
 	}
 }
 
@@ -166,9 +165,9 @@ Mat_16S::Mat_16S(const Mat_32F& m)
 {
 	const int size = type * rows * cols;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (short)m.data[j];
 	}
 }
 
@@ -177,9 +176,9 @@ Mat_16S::Mat_16S(const Mat_64F& m)
 {
 	const int size = type * rows * cols;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols;j++)
+	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (short)m.data[j];
 	}
 }
 
@@ -215,7 +214,7 @@ void Mat_16S::show() const
 	{
 		for (int i = 0; i < cols; i++)
 		{
-			std::cout << (int)data[j*cols + i] << ", ";
+			std::cout << (int)data[j * cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -247,47 +246,47 @@ Mat_32S::Mat_32S(const Mat_32S& m)
 }
 
 Mat_32S::Mat_32S(const Mat_8U& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(int))
+	: rows(m.rows), cols(m.cols), type(sizeof(int))
 {
-        const int size = type * rows * cols;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_32S::Mat_32S(const Mat_16S& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(int))
+	: rows(m.rows), cols(m.cols), type(sizeof(int))
 {
-        const int size = type * rows * cols;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_32S::Mat_32S(const Mat_32F& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(int))
+	: rows(m.rows), cols(m.cols), type(sizeof(int))
 {
-        const int size = type * rows * cols;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (int)m.data[j];
+	}
 }
 
 Mat_32S::Mat_32S(const Mat_64F& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(int))
+	: rows(m.rows), cols(m.cols), type(sizeof(int))
 {
-        const int size = type * rows * cols;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (int)m.data[j];
+	}
 }
 
 Mat_32S::~Mat_32S()
@@ -322,7 +321,7 @@ void Mat_32S::show() const
 	{
 		for (int i = 0; i < cols; i++)
 		{
-			std::cout << (int)data[j*cols + i] << ", ";
+			std::cout << (int)data[j * cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -340,7 +339,7 @@ Mat_32F::Mat_32F(const float* data, const int rows, const int cols)
 Mat_32F::Mat_32F(const int rows, const int cols)
 	: type(sizeof(float)), rows(rows), cols(cols)
 {
-	const int size = type * rows * cols; 
+	const int size = type * rows * cols;
 	this->data = (float*)_mm_malloc(size, 32);
 }
 
@@ -353,47 +352,47 @@ Mat_32F::Mat_32F(const Mat_32F& m)
 }
 
 Mat_32F::Mat_32F(const Mat_8U& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(float))
+	: rows(m.rows), cols(m.cols), type(sizeof(float))
 {
-        const int size = type * rows * cols;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_32F::Mat_32F(const Mat_16S& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(float))
+	: rows(m.rows), cols(m.cols), type(sizeof(float))
 {
-        const int size = type * rows * cols;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_32F::Mat_32F(const Mat_32S& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(float))
+	: rows(m.rows), cols(m.cols), type(sizeof(float))
 {
-        const int size = type * rows * cols;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (float)m.data[j];
+	}
 }
 
 Mat_32F::Mat_32F(const Mat_64F& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(float))
+	: rows(m.rows), cols(m.cols), type(sizeof(float))
 {
-        const int size = type * rows * cols;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (float)m.data[j];
+	}
 }
 
 Mat_32F::~Mat_32F()
@@ -413,7 +412,7 @@ Mat_32F& Mat_32F::operator=(const Mat_32F& m)
 		{
 			_mm_free(this->data);
 		}
-		const int size = type * rows * cols; 
+		const int size = type * rows * cols;
 		this->data = (float*)_mm_malloc(size, 32);
 		memcpy((void*)this->data, (void*)m.data, size);
 	}
@@ -428,7 +427,7 @@ void Mat_32F::show() const
 	{
 		for (int i = 0; i < cols; i++)
 		{
-			std::cout << data[j*cols + i] << ", ";
+			std::cout << data[j * cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -446,7 +445,7 @@ Mat_64F::Mat_64F(const double* data, const int rows, const int cols)
 Mat_64F::Mat_64F(const int rows, const int cols)
 	: type(sizeof(double)), rows(rows), cols(cols)
 {
-	const int size = type * rows * cols; 
+	const int size = type * rows * cols;
 	this->data = (double*)_mm_malloc(size, 32);
 }
 
@@ -459,47 +458,47 @@ Mat_64F::Mat_64F(const Mat_64F& m)
 }
 
 Mat_64F::Mat_64F(const Mat_8U& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(double))
+	: rows(m.rows), cols(m.cols), type(sizeof(double))
 {
-        const int size = type * rows * cols;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_64F::Mat_64F(const Mat_16S& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(double))
+	: rows(m.rows), cols(m.cols), type(sizeof(double))
 {
-        const int size = type * rows * cols;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_64F::Mat_64F(const Mat_32S& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(double))
+	: rows(m.rows), cols(m.cols), type(sizeof(double))
 {
-        const int size = type * rows * cols;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_64F::Mat_64F(const Mat_32F& m)
-        : rows(m.rows), cols(m.cols), type(sizeof(double))
+	: rows(m.rows), cols(m.cols), type(sizeof(double))
 {
-        const int size = type * rows * cols;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_64F::~Mat_64F()
@@ -519,7 +518,7 @@ Mat_64F& Mat_64F::operator=(const Mat_64F& m)
 		{
 			_mm_free(this->data);
 		}
-		const int size = type * rows * cols; 
+		const int size = type * rows * cols;
 		this->data = (double*)_mm_malloc(size, 32);
 		memcpy((void*)this->data, (void*)m.data, size);
 	}
@@ -534,7 +533,7 @@ void Mat_64F::show() const
 	{
 		for (int i = 0; i < cols; i++)
 		{
-			std::cout << data[j*cols + i] << ", ";
+			std::cout << data[j * cols + i] << ", ";
 		}
 		std::cout << std::endl;
 	}

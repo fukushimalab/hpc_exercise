@@ -1763,8 +1763,8 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題17
-	//Mat_32Sの配同士の加算をループつぶしをするか否かで計算時間を比較せよ．
-	//if (false)
+	//Mat_32Sの配同士の加算(a=a+b)をループつぶしをするか否かで計算時間を比較せよ．
+	if (false)
 	{
 		std::cout << "exercise 17" << std::endl;
 		const int loop = 100000;
@@ -1863,7 +1863,7 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 19" << std::endl;
-		//並列化なし
+		//並列化なし（逐次実行）
 		std::cout << "no parallelization" << std::endl;
 		for (int j = 0; j < 10; j++)
 		{
@@ -1910,18 +1910,20 @@ int main(const int argc, const char** argv)
 		std::cout << "exercise 20" << std::endl;
 		const int loop = 1000;
 		const int size = 128;
+
+		CalcTime t;
+
 		Mat_32F a(size, size);
 		mat_rand(a, 0, 100);
 		Mat_32F b(size, size);
 		mat_rand(b, 0, 100);
 		Mat_32F c(size, size);
 
-		CalcTime t;
 		for (int l = 0; l < loop; l++)
 		{
 			mat_zero(c);
 			t.start();
-			//omp num_threads(n)で並列化，nを入れる
+			//#pragma omp parallel for num_threads(n)で並列化，nに任意の整数を入れる
 			//XXXX
 			for (int i = 0; i < size; ++i)
 			{
@@ -1929,7 +1931,7 @@ int main(const int argc, const char** argv)
 				{
 					for (int j = 0; j < size; ++j)
 					{
-						c.data[i * c.cols + j] = c.data[i * c.cols + j] + a.data[i * a.cols + k] * b.data[k * b.cols + j];
+						c.data[i * c.cols + j] = a.data[i * a.cols + k] * b.data[k * b.cols + j];
 					}
 				}
 			}
@@ -2090,7 +2092,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//divを使って
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -2107,7 +2109,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//rcpをつかって
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -2124,7 +2126,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//sqrtを使って
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -2141,14 +2143,14 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//rsqrtを使って
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
 		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
-		}
+	}
 
 
 	//課題24
@@ -2206,7 +2208,7 @@ int main(const int argc, const char** argv)
 			//XXXX
 			//XXXX
 			t.end();
-	}
+		}
 		std::cout << "dp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		return 0;
