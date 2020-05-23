@@ -2070,7 +2070,7 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
-	//課題22----ok
+	//課題22
 	//配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，FMAが速くなることを示せ．
 	//なお，上記の関数は以下に等しい．
 	//a=_mm256_fmadd_ps(a,b,c);
@@ -2150,10 +2150,12 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "fma    : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		std::cout << "=====\GFLOPS====\"" << std::endl;
+		std::cout <<"======"<<std::endl;
+		std::cout <<"GFLOPS"<<std::endl;
+		std::cout <<"======"<<std::endl;
 		//FLOPS計算
+		int simdsize = size / 8;
 		//1次
-		const int simdsize = size / 8;
 		int n = 1;
 		for (int j = 0; j < loop; j++)
 		{

@@ -1,5 +1,6 @@
 #include "mat_util.h"
 #include <stdlib.h>
+#include <cstring>
 #include <iostream>
 
 #ifdef __GNUC__
