@@ -79,6 +79,13 @@ int rand_32s(const int rand_min, const int rand_max);
 float rand_32f(const float rand_min, const float rand_max);
 double rand_64f(const double rand_min, const double rand_max);
 
+//diff
+int mat_diff(Mat_8U& src1, Mat_8U& src2);
+int mat_diff(Mat_16S& src1, Mat_16S& src2);
+int mat_diff(Mat_32S& src1, Mat_32S& src2);
+double mat_diff(Mat_32F& src1, Mat_32F& src2);
+double mat_diff(Mat_64F& src1, Mat_64F& src2);
+
 //timer
 #ifdef __GNUC__
 struct CalcTime

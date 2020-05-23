@@ -185,6 +185,89 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+	//課題4.5
+	//浮動小数点と整数の加算と積の変換：多くのCPUで効果ないので没．SIMD化などが必要なのと，演算強度が足りない
+	if (false)
+	{
+		std::cout << "exercise 4.5" << std::endl;
+		const int loop = 100000000;
+		const int row = 64;
+		const int col = 64;
+		Mat_32F x(row, col);
+		mat_rand(x, 0, 100);
+		Mat_32F ret(row, col);
+		mat_zero(ret);
+
+		CalcTime t;
+
+		//float演算
+		for (int k = 0; k < loop; k++)
+		{
+			//浮動小数点の乗算
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i += 8)
+			{
+				//計算
+				ret.data[i] = 2.f * x.data[i];
+			}
+
+			t.end();
+		}
+		std::cout << "float mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//浮動小数点の加算
+			t.start();
+			const int size = x.rows * x.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				ret.data[i] = x.data[i] + x.data[i];
+			}
+			t.end();
+		}
+		std::cout << "float add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//int演算
+		Mat_32S xi(row, col);
+		mat_rand(xi, 0, 100);
+		Mat_32S reti(row, col);
+		mat_zero(reti);
+
+		for (int k = 0; k < loop; k++)
+		{
+			//整数の乗算
+			t.start();
+			const int size = xi.rows * xi.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				reti.data[i] = 2 * xi.data[i];
+			}
+
+			t.end();
+		}
+		std::cout << "int   mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//浮動小数点の加算
+			t.start();
+			const int size = xi.rows * xi.cols;
+			for (int i = 0; i < size; i++)
+			{
+				//計算
+				reti.data[i] = xi.data[i] + xi.data[i];
+			}
+			t.end();
+		}
+		std::cout << "int   add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		return 0;
+	}
+
 	//課題5
 	//小さな行列に対して，各要素を3.141592で除算する計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
 	//大きな行列で行うと，効果が少ない可能性があるため注意すること．
@@ -340,8 +423,8 @@ int main(const int argc, const char** argv)
 		const int row = 64;
 		const int col = 64;
 		Mat_64F x(row, col);
-		mat_rand(x, 0, 100);
-		Mat_32F ret(row, col);
+		mat_rand(x, 0.0, 100.0);
+		Mat_64F ret(row, col);
 		mat_zero(ret);
 
 		CalcTime t;
@@ -477,7 +560,6 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
-
 	//課題8
 	//2つの行列の和を`unsigned char, short, int, float, double`で計算しそれぞれ比較せよ．
 	//なお，大きい行列サイズでないと，効果がでない場合がある．
@@ -583,7 +665,6 @@ int main(const int argc, const char** argv)
 
 		return 0;
 	}
-
 
 	//課題9
 	//intの行列を整数で2倍，浮動小数点で2.f倍,整数を１ビットだけビットシフトすることで2倍する場合の計算速度を比較せよ．
@@ -825,50 +906,85 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題11
-	//floatの行列への定数値の四則演算と，`sin, cos, exp, log, sqrt`関数の適用した場合と計算時間を比較せよ．
+	//floatの行列への定数値(3.141592f)の四則演算(加算，乗算，除算)と，`sqrt sin, cos, exp, log`関数の適用した場合と計算時間を比較せよ．
 	//また，`sin, cos, exp, log, sqrt`計算はテーブル参照も作成した場合についても比較せよ．
 	//なお，環境によっては，演算したほうが速い演算もある可能性がある．
 	if (false)
 	{
 		std::cout << "exercise 11" << std::endl;
-		const int loop = 100;
-		const int row = 50;
-		const int col = 50;
-		Mat_8U x_8u(row, col);
-		mat_rand(x_8u, 0, 255);
+		const int loop = 10000;
+		const int row = 128;
+		const int col = 128;
 
-		Mat_32F x_32f(x_8u);
+		CalcTime t;
+
+		Mat_32F x_32f(row, col);
+		mat_rand(x_32f, 0.f, 255.f);
 		Mat_32F ret_32f(row, col);
 		mat_zero(ret_32f);
 
 		//四則演算
-		CalcTime t;
 		for (int k = 0; k < loop; k++)
 		{
-			//四則演算
+			//加算
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "arithmetic: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "add: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		for (int k = 0; k < loop; k++)
+		{
+			//乗算
+			t.start();
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			//除算
+			t.start();
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//sqrt
+		for (int k = 0; k < loop; k++)
+		{
+			//sqrt関数
+			t.start();
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "sqr: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sin
 		for (int k = 0; k < loop; k++)
 		{
 			//sin関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -879,12 +995,10 @@ int main(const int argc, const char** argv)
 		{
 			//cos関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -895,12 +1009,10 @@ int main(const int argc, const char** argv)
 		{
 			//exp関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -911,36 +1023,38 @@ int main(const int argc, const char** argv)
 		{
 			//log関数
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
 		std::cout << "log: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		//sqrt
+		std::cout << std::endl;
+
+		float LUT[256];
+		//sqrt LUT
+		for (int i = 0; i < 256; i++)
+		{
+			//LUT作成
+			LUT[i] = (float)sqrt(i);// 以下の課題ようのヒントのために，埋めてあります．
+		}
 		for (int k = 0; k < loop; k++)
 		{
-			//sqrt関数
+			//sqrt LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				ret_32f.data[i] = LUT[(int)x_32f.data[i]];// 以下の課題ようのヒントのために，埋めてあります．
 			}
 			t.end();
 		}
-		std::cout << "sqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "sqr LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		std::cout << std::endl;
 		//sin LUT
-		float LUT[256];
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
@@ -950,12 +1064,10 @@ int main(const int argc, const char** argv)
 		{
 			t.start();
 			//sin LUT
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					ret_32f.data[j * ret_32f.cols + i] = LUT[(int)x_32f.data[j * ret_32f.cols + i]];
-				}
+				//XXXX				
 			}
 			t.end();
 		}
@@ -971,12 +1083,10 @@ int main(const int argc, const char** argv)
 		{
 			//cos LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -992,12 +1102,10 @@ int main(const int argc, const char** argv)
 		{
 			//exp LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
@@ -1013,41 +1121,67 @@ int main(const int argc, const char** argv)
 		{
 			//log LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			const int size = x_32f.cols * x_32f.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
-				{
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
 		std::cout << "log LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		//sqrt LUT
-		for (int i = 0; i < 256; i++)
-		{
-			//LUT作成
-			//XXXX
-		}
+		return 0;
+	}
+
+	//課題(省略可)
+	//ループ構造変換の課題にあるので省略した
+	if (false)
+	{
+		std::cout << "exercise (省略可1)" << std::endl;
+		CalcTime t;
+		const int loop = 1000;
+		const int size = 1024;
+		Mat_32F a(size, size);
+		Mat_32F b(size, size);
+
 		for (int k = 0; k < loop; k++)
 		{
-			//sqrt LUT
 			t.start();
-			for (int j = 0; j < ret_32f.rows; j++)
+			for (int j = 0; j < size; j++)
 			{
-				for (int i = 0; i < ret_32f.cols; i++)
+				for (int i = 0; i < size; i++)
 				{
-					//XXXX
+					if (i == j)
+						a.data[size * j + i] = 1.f;
+					else
+						a.data[size * j + i] = b.data[size * j + i];
 				}
 			}
 			t.end();
 		}
-		std::cout << "sqrt LUT: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "simple loop: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int j = 0; j < size; j++)
+			{
+				for (int i = 0; i < size; i++)
+				{
+					a.data[size * j + i] = b.data[size * j + i];
+				}
+			}
+			for (int i = 0; i < size; i++)
+			{
+				a.data[size * i + i] = 1.f;
+			}
+			t.end();
+		}
+
+		std::cout << "loop unswitching: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		return 0;
 	}
-
 
 	//課題12
 	//小さな行列A,Bの各要素を任意のradianだけ回転させて，x,yにして格納するプログラムを記述し，inline展開の有無で速度がどのように変わるか計測せよ．
@@ -1062,34 +1196,48 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "exercise 12" << std::endl;
 		const int loop = 10000;
-		const int row = 3;
-		const int col = 3;
-		Mat_64F a(row, col);
-		mat_rand(a, 0, 100);
-		Mat_64F b(row, col);
-		mat_rand(b, 0, 100);
+		const int row = 64;
+		const int col = 64;
 
+		CalcTime t;
+
+		Mat_64F a(row, col);
+		mat_rand(a, 0.0, 100.0);
+		Mat_64F b(row, col);
+		mat_rand(b, 0.0, 100.0);
 		Mat_64F x(row, col);
 		mat_zero(x);
 		Mat_64F y(row, col);
 		mat_zero(y);
 
 		const float radian = 2.2f;
-		CalcTime t;
+
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
-			for (int j = 0; j < a.rows; j++)
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
 			{
-				for (int i = 0; i < a.cols; i++)
-				{
-					//rot
-					//XXXX
-				}
+				//XXXX
 			}
 			t.end();
 		}
-		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "func time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//べた書き（関数の中身をループないに書く）
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXX
+				//XXXX
+			}
+			t.end();
+		}
+		std::cout << "loop time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
 		return 0;
 	}
 
@@ -1099,28 +1247,22 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "exercise 13" << std::endl;
 		const int loop = 10000;
-		const int row = 3;
-		const int col = 3;
+		const int row = 64;
+		const int col = 64;
 		//c = a x b
 		{
-			Mat_64F c(row, col);
-			mat_zero(c);
-
 			CalcTime t;
 			for (int k = 0; k < loop; k++)
 			{
 				t.start();
 				//C=A*B
 				Mat_64F a(row, col);
-				mat_rand(a, 0, 100);
 				Mat_64F b(row, col);
-				mat_rand(b, 0, 100);
-				for (int j = 0; j < a.rows; j++)
+				Mat_64F c(row, col);
+				const int size = a.rows * a.cols;
+				for (int i = 0; i < size; i++)
 				{
-					for (int i = 0; i < a.cols; i++)
-					{
-						//XXXX
-					}
+					//XXXX
 				}
 				t.end();
 			}
@@ -1136,15 +1278,11 @@ int main(const int argc, const char** argv)
 				t.start();
 				//A=AxB
 				Mat_64F a(row, col);
-				mat_rand(a, 0, 100);
 				Mat_64F b(row, col);
-				mat_rand(b, 0, 100);
-				for (int j = 0; j < a.rows; j++)
+				const int size = a.rows * a.cols;
+				for (int i = 0; i < size; i++)
 				{
-					for (int i = 0; i < a.cols; i++)
-					{
-						//XXXX
-					}
+					//XXXX
 				}
 				t.end();
 			}
@@ -1157,24 +1295,28 @@ int main(const int argc, const char** argv)
 	//課題14
 	//上記の0で初期化するコードをループの順序を変えてどちらが速いか計測して検証せよ．
 	//また，行列積のコードのループの順序を変えてどれが速いか計測して検証せよ．
+	//なお，行列積のコードは記述済みであり，どれも違いがないことを正解との差分の二乗和（MSE）で評価している．
 	if (false)
 	{
 		std::cout << "exercise 14" << std::endl;
 		const int loop = 1000;
-		const int width = 64;
-		const int height = 64;
-		float x[width][height];
+		const int row = 128;
+		const int col = 128;
 
 		CalcTime t;
+
+		Mat_32F x(row, col);
+
 		//col, row
 		for (int k = 0; k < loop; k++)
 		{
+			int i = 0, j = 0;
 			t.start();
-			for (int i = 0; i < width; ++i)
+			//xxxxxx	hint: i loop row
 			{
-				for (int j = 0; j < height; ++j)
+				//xxxxxx hint:j loop col
 				{
-					x[i][j] = 0.0f;
+					x.data[col * i + j] = 0.f;
 				}
 			}
 			t.end();
@@ -1184,44 +1326,61 @@ int main(const int argc, const char** argv)
 		//row, col
 		for (int k = 0; k < loop; k++)
 		{
+			int i = 0, j = 0;
 			t.start();
-			for (int i = 0; i < width; ++i)
+			//xxxxxx hint:j loop col
 			{
-				for (int j = 0; j < height; ++j)
+				//xxxxxx	hint: i loop row
 				{
-					x[i][j] = 0.0f;
+					x.data[col * i + j] = 0.f;
 				}
 			}
 			t.end();
 		}
 		std::cout << "row-col: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		const int size = 64;
-		float a[size][size];
-		float b[size][size];
-		float c[size][size];
-		//init
-		for (int j = 0; j < size; j++)
+
+		//行列積
+		const int size = 128;
+		Mat_32F a(size, size);
+		Mat_32F b(size, size);
+		Mat_32F c(size, size);
+		Mat_32F ans(size, size);
+		mat_rand(a, 0, 10);
+		mat_rand(b, 0, 10);
+
+		//for anser
+		mat_zero(ans);
+		for (int i = 0; i < size; ++i)
 		{
-			for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; ++j)
 			{
-				a[j][i] = rand_32f(0, 100);
-				b[j][i] = rand_32f(0, 100);
-				c[j][i] = 0;
+				for (int k = 0; k < size; ++k)
+				{
+					//ans[i][j] += a[i][k] * b[k][j];
+					ans.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+				}
 			}
 		}
 
 		//i, j, k
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int i = 0; i < size; ++i)
 			{
+				float* pc = c.data + i * size;
+				float* pa = a.data + i * size;
 				for (int j = 0; j < size; ++j)
 				{
+					float* pb = b.data + j;
+					float* pcj = &pc[j];
 					for (int k = 0; k < size; ++k)
 					{
-						c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c[i][j] += a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						*pcj += pa[k] * pb[k * size];
 					}
 				}
 			}
@@ -1229,18 +1388,27 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "i-j-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//i, k, j
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int i = 0; i < size; ++i)
 			{
+				float* pc = c.data + i * size;
+				float* pa = a.data + i * size;
 				for (int k = 0; k < size; ++k)
 				{
+					float* pb = b.data + k * size;
+					const float pak = pa[k];
 					for (int j = 0; j < size; ++j)
 					{
-						//XXXX
+						//c[i][j] += a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						//pc[j] += (pak * pb[j]);//コンパイラ最適化でfmaがかかる
+						pc[j] += pa[k] * pb[j];
 					}
 				}
 			}
@@ -1248,18 +1416,25 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "i-k-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//j, i, k
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int j = 0; j < size; ++j)
 			{
+				float* pb = b.data + j;
 				for (int i = 0; i < size; ++i)
 				{
+					float* pc = c.data + i * size;
+					float* pa = a.data + i * size;
 					for (int k = 0; k < size; ++k)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						pc[j] += pa[k] * pb[k * size];
 					}
 				}
 			}
@@ -1267,18 +1442,26 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "j-i-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//j, k, i
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int j = 0; j < size; ++j)
 			{
+				float* pc = c.data + j;
+				float* pb = b.data + j;
 				for (int k = 0; k < size; ++k)
 				{
+					float* pa = a.data + k;
+					const float pbj = pb[k * size];
 					for (int i = 0; i < size; ++i)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						pc[i * size] += pa[i * size] * pbj;
 					}
 				}
 			}
@@ -1286,18 +1469,27 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "j-k-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//k, i, j
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int k = 0; k < size; ++k)
 			{
+				float* pb = b.data + k * size;
 				for (int i = 0; i < size; ++i)
 				{
+					float* pc = c.data + i * size;
+					float* pa = a.data + i * size;
+					const float pak = pa[k];
 					for (int j = 0; j < size; ++j)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						//pc[j] += pak * pb[j];//コンパイル最適化でFMAがかかる
+						pc[j] += pa[k] * pb[j];
 					}
 				}
 			}
@@ -1305,18 +1497,26 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "k-i-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//k, j, i
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int k = 0; k < size; ++k)
 			{
+				float* pa = a.data + k;
+				float* pb = b.data + k * size;
 				for (int j = 0; j < size; ++j)
 				{
+					float* pc = c.data + j;
+					const float pbj = pb[j];
 					for (int i = 0; i < size; ++i)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						pc[i * size] += pa[i * size] * pbj;
 					}
 				}
 			}
@@ -1324,28 +1524,31 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "k-j-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		return 0;
 	}
-
 
 	//課題15
 	//アンローリングの段数を2,4,8,16,32,...と変更することで，速度がどのように変わるか計測せよ．
 	if (false)
 	{
 		std::cout << "exercise 15" << std::endl;
-		const int loop = 100;
-		const int size = 1024;
-		float x[size], y[size];
-		float a = 2.f;
-		float b = 1.f;
+		const int loop = 1000;
+		const int size = 65535;
+
+		CalcTime t;
+
+		float* x = new float[size];
+		float* y = new float[size];
+		const float a = 2.f;
+		const float b = 1.f;
 
 		for (int i = 0; i < size; i++)
 		{
-			x[i] = rand_32f(0, 100);
+			x[i] = rand_32f(0.f, 100.f);
 		}
 
-		CalcTime t;
 		//unrolling 1
 		for (int j = 0; j < loop; j++)
 		{
@@ -1556,7 +1759,8 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "unrolling 64: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
+		delete[] x;
+		delete[] y;
 		return 0;
 	}
 
@@ -1566,17 +1770,20 @@ int main(const int argc, const char** argv)
 	{
 		std::cout << "exercise 16" << std::endl;
 		const int loop = 100;
-		const int size = 1024;
-		int x[size], y[size];
+		const int size = 65535;
+		float* x = new float[size];
+		float* y = new float[size];
 
+		CalcTime t;
+
+		//init
 		for (int i = 0; i < size; i++)
 		{
 			x[i] = rand_32f(0, 100);
 			y[i] = rand_32f(0, 100);
 		}
 
-		CalcTime t;
-		//original
+		//Original
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -1584,15 +1791,15 @@ int main(const int argc, const char** argv)
 			{
 				if (i == 0)
 				{
-					y[i] = (x[i] + x[i + 1]) / 2;
+					y[i] = (x[i] + x[i + 1]) / 2.f;
 				}
 				else if (i == size - 1)
 				{
-					y[i] = (x[i - 1] + x[i]) / 2;
+					y[i] = (x[i - 1] + x[i]) / 2.f;
 				}
 				else
 				{
-					y[i] = (x[i - 1] + x[i] + x[i + 1]) / 3;
+					y[i] = (x[i - 1] + x[i] + x[i + 1]) / 3.f;
 				}
 			}
 			t.end();
@@ -1615,21 +1822,61 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "loop peeling: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
+		delete[] x;
+		delete[] y;
 		return 0;
 	}
 
 	//課題17
-	//上記のコードで，計算時間を比較せよ．
-	//なお，必ずしも差がでるとは限らない（配列の大きさを変更すると差が出やすい）．
+	//Mat_32Sの配同士の加算(a=a+b)をループつぶしをするか否かで計算時間を比較せよ．
 	if (false)
 	{
 		std::cout << "exercise 17" << std::endl;
-		const int loop = 100;
-		const int width = 768;
-		const int height = 512;
-		float a[height][width];
+		const int loop = 100000;
+		const int width = 128;
+		const int height = 128;
+		//heightとwidthを大きくする場合は，注意すること．
+		//下記にa[height][width]という宣言があり，大きすぎる配列はヒープ領域からメモリを取ってこれないため．
 
 		CalcTime t;
+
+		Mat_32S ma(height, width);
+		Mat_32S mb(height, width);
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int j = 0; j < height; j++)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					ma.data[j * width + i] = ma.data[j * width + i] + mb.data[j * width + i];
+				}
+			}
+			t.end();
+		}
+		std::cout << "mat before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//下記の2次元配列の場合のサンプルを参考にするとよい．
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			const int size = width * height;
+			//XXXXXXX
+			//XXXXXXX
+			for (int i = 0; i < size; i++)
+			{
+				//XXXXXXX
+			}
+			t.end();
+		}
+		std::cout << "mat after : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		/*
+		//2次元配列の場合のsample code
+		//以下はコード記述済み．コンパイル時最適化のせいで，おそらく違いはない．興味がある人はgcc main.cpp -sでアセンブラ出力して確認すること．
+		int a[height][width];
+		int b[height][width];
 		// before
 		for (int k = 0; k < loop; k++)
 		{
@@ -1638,26 +1885,28 @@ int main(const int argc, const char** argv)
 			{
 				for (int i = 0; i < width; i++)
 				{
-					a[j][i] = 0.f;
+					a[j][i] = a[j][i] + b[j][i];
 				}
 			}
 			t.end();
 		}
-		std::cout << "before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "array before: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//after
 		const int size = width * height;
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
-			float* p = &a[0][0];
-			for (int i = 0; i < size; i++) {
-				*p++ = 0.f;
+			int* pa = &a[0][0];
+			int* pb = &b[0][0];
+			for (int i = 0; i < size; i++)
+			{
+				*pa++ = *pa + *pb++;
 			}
 			t.end();
 		}
-		std::cout << "after: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
+		std::cout << "array after : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		*/
 		return 0;
 	}
 
@@ -1680,7 +1929,7 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 19" << std::endl;
-		//並列化なし
+		//並列化なし（逐次実行）
 		std::cout << "no parallelization" << std::endl;
 		for (int j = 0; j < 10; j++)
 		{
@@ -1722,23 +1971,27 @@ int main(const int argc, const char** argv)
 
 	//課題20
 	//二つの行列の各要素の積を計算するコードで，スレッド数を変更して，計算時間がどのように推移するのかを確認せよ．
+	//なお，スレッド数は，計算機のコア数以上の物まで指定せよ．
+	//8コア16スレッドのPCでは，16コアよりも大きいスレッド数（例えば32までなど）までを指定せよ．
 	if (false)
 	{
 		std::cout << "exercise 20" << std::endl;
 		const int loop = 1000;
 		const int size = 128;
+
+		CalcTime t;
+
 		Mat_32F a(size, size);
 		mat_rand(a, 0, 100);
 		Mat_32F b(size, size);
 		mat_rand(b, 0, 100);
 		Mat_32F c(size, size);
 
-		CalcTime t;
 		for (int l = 0; l < loop; l++)
 		{
 			mat_zero(c);
 			t.start();
-			//omp num_threads(n)で並列化，nを入れる
+			//#pragma omp parallel for num_threads(n)で並列化，nに任意の整数を入れる
 			//XXXX
 			for (int i = 0; i < size; ++i)
 			{
@@ -1746,7 +1999,7 @@ int main(const int argc, const char** argv)
 				{
 					for (int j = 0; j < size; ++j)
 					{
-						c.data[i * c.cols + j] = c.data[i * c.cols + j] + a.data[i * a.cols + k] * b.data[k * b.cols + j];
+						c.data[i * c.cols + j] = a.data[i * a.cols + k] * b.data[k * b.cols + j];
 					}
 				}
 			}
@@ -1764,33 +2017,60 @@ int main(const int argc, const char** argv)
 		std::cout << "exercise 21" << std::endl;
 		const __m256 a = _mm256_set_ps(7, 6, 5, 4, 3, 2, 1, 0);
 		const __m256 b = _mm256_set_ps(15, 14, 13, 12, 11, 10, 9, 8);
+		//逆順で入力(setr)こちらのほうが使いやすい
+		const __m256 c = _mm256_setr_ps(0, 1, 2, 3, 4, 5, 6, 7);
+		const __m256 d = _mm256_setr_ps(8, 9, 10, 11, 12, 13, 14, 15);
+		__m256 e = _mm256_setzero_ps();
+		//e = a + b
+		//XXXXXX
+		std::cout << "add a b: ";
+		print_m256(e);
+		//e = c + d
+		//XXXXXX
+		std::cout << "add c d: ";
+		print_m256(e);//出力は上と同じのはず．
 
-		__m256 c;
-		//加算
-		//XXXX
-		std::cout << "add: ";
-		print_m256(c);
+		//print_m256の関数を使わない場合はこうやって出力
+		float temp[8];
+		_mm256_store_ps(&temp[0], e);
+		std::cout << "cout ex: ";
+		for (int i = 0; i < 8; i++) std::cout << temp[i] << ", ";
+		std::cout << std::endl;
 
 		//減算
-		//XXXX
-		std::cout << "sub: ";
-		print_m256(c);
+		//e = a - b
+		//XXXXXX
+		std::cout << "sub a b: ";
+		print_m256(e);
+		//e = c - d
+		//XXXXXX
+		std::cout << "sub c d: ";
+		print_m256(e);
 
 		//乗算
-		//XXXX
-		std::cout << "mul: ";
-		print_m256(c);
+		//e = a * b
+		//XXXXXX
+		std::cout << "mul a b: ";
+		print_m256(e);
+		//e = c * d
+		//XXXXXX
+		std::cout << "mul c d: ";
+		print_m256(e);
 
 		//除算
-		//XXXX
-		std::cout << "div: ";
-		print_m256(c);
+		//e = a / b
+		//XXXXXX
+		std::cout << "div a b: ";
+		print_m256(e);
+		//e = c / d
+		//XXXXXX
+		std::cout << "div c d: ";
+		print_m256(e);
 
 		return 0;
 	}
 
-
-	//課題22
+	//課題22----ok
 	//配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，FMAが速くなることを示せ．
 	//なお，上記の関数は以下に等しい．
 	//a=_mm256_fmadd_ps(a,b,c);
@@ -1798,81 +2078,536 @@ int main(const int argc, const char** argv)
 	//a=_mm256_fmadd_ps(a,b,c);
 	//a=_mm256_fmadd_ps(a,b,c);
 	//これは，単純にFMAが1度だとメモリで律速するこのコードでは計算速度の差が出にくいためである．差が小さければ，より演算を増やせば良い．
-	if (false)
+	//また，シングルコアのGFLOPSと演算強度[FLOPS/BYTE]をFMA命令で計算するサンプルが書いてある．これをプロットし，グラフとして図示せよ．
+	//if (false)
 	{
 		std::cout << "exercise 22" << std::endl;
-		const int loop = 1000;
-		const int size = 1024;
-#ifdef __GNUC__
-		float __attribute__((aligned(32))) a[size];
-		float __attribute__((aligned(32))) x[size];
-		float __attribute__((aligned(32))) b[size];
-		float __attribute__((aligned(32))) c[size];
-#elif _MSC_VER
-		float __declspec(align(32)) a[size];
-		float __declspec(align(32)) x[size];
-		float __declspec(align(32)) b[size];
-		float __declspec(align(32)) c[size];
-#endif
-
-		//init
-		for (int i = 0; i < size; i++)
-		{
-			a[i] = rand_32f(0, 100);
-			x[i] = rand_32f(0, 100);
-			b[i] = rand_32f(0, 100);
-			c[i] = 0;
-		}
+		const int loop = 10000000;
+		const int col = 32;
+		const int row = 32;
+		const int size = col * row;
 
 		CalcTime t;
+
+		Mat_32F a(row, col);
+		Mat_32F x(row, col);
+		Mat_32F b(row, col);
+		Mat_32F c(row, col);
+		mat_rand(a, 0, 1);
+		mat_rand(b, 0, 1);
+		mat_rand(x, 0, 1);
+		mat_zero(c);
+
 		//mul, add
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
 			for (int i = 0; i < size; i += 8)
 			{
-				const __m256 ma = _mm256_load_ps(a + i);
-				const __m256 mx = _mm256_load_ps(x + i);
-				const __m256 mb = _mm256_load_ps(b + i);
+				const __m256 ma = _mm256_load_ps(pa + i);
+				const __m256 mx = _mm256_load_ps(px + i);
+				const __m256 mb = _mm256_load_ps(pb + i);
 
 				//mul,addを使って
 				__m256 temp;
-				//XXXX
-				//XXXX
-				//XXXX
-				//XXXX
-				_mm256_store_ps(c + i, temp);
+				temp = _mm256_add_ps(_mm256_mul_ps(ma, mx), mb);
+				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
+				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
+				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
+				_mm256_store_ps(pc + i, temp);
 			}
 			t.end();
 		}
 		std::cout << "mul-add: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-
 		//fma
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
 			for (int i = 0; i < size; i += 8)
 			{
-				const __m256 ma = _mm256_load_ps(a + i);
-				const __m256 mx = _mm256_load_ps(x + i);
-				const __m256 mb = _mm256_load_ps(b + i);
+				const __m256 ma = _mm256_load_ps(pa + i);
+				const __m256 mx = _mm256_load_ps(px + i);
+				const __m256 mb = _mm256_load_ps(pb + i);
 
 				//fmaを使って
 				__m256 temp;
-				//XXXX
-				//XXXX
-				//XXXX
-				//XXXX
-				_mm256_store_ps(c + i, temp);
+				temp = _mm256_fmadd_ps(ma, mx, mb);
+				temp = _mm256_fmadd_ps(temp, mx, mb);
+				temp = _mm256_fmadd_ps(temp, mx, mb);
+				temp = _mm256_fmadd_ps(temp, mx, mb);
+				_mm256_store_ps(pc + i, temp);
 			}
 			t.end();
 		}
-		std::cout << "fma: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "fma    : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		std::cout << "=====\GFLOPS====\"" << std::endl;
+		//FLOPS計算
+		//1次
+		const int simdsize = size / 8;
+		int n = 1;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//1次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 2;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//2次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 3;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//3次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3			
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 4;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//4次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 5;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//5次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 6;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//6次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 7;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//7次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 8;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//8次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+				ret = _mm256_fmadd_ps(ret, mx, mb);//8
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 9;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//9次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+				ret = _mm256_fmadd_ps(ret, mx, mb);//8
+				ret = _mm256_fmadd_ps(ret, mx, mb);//9
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 10;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//10次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+				ret = _mm256_fmadd_ps(ret, mx, mb);//8
+				ret = _mm256_fmadd_ps(ret, mx, mb);//9
+				ret = _mm256_fmadd_ps(ret, mx, mb);//10
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 11;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//11次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+				ret = _mm256_fmadd_ps(ret, mx, mb);//8
+				ret = _mm256_fmadd_ps(ret, mx, mb);//9
+				ret = _mm256_fmadd_ps(ret, mx, mb);//10
+				ret = _mm256_fmadd_ps(ret, mx, mb);//11
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		n = 12;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//12次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+				ret = _mm256_fmadd_ps(ret, mx, mb);//8
+				ret = _mm256_fmadd_ps(ret, mx, mb);//9
+				ret = _mm256_fmadd_ps(ret, mx, mb);//10
+				ret = _mm256_fmadd_ps(ret, mx, mb);//11
+				ret = _mm256_fmadd_ps(ret, mx, mb);//12
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		//n=...
+		std::cout << "..." << std::endl;
+		n = 20;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* pa = a.data;
+			float* px = x.data;
+			float* pb = b.data;
+			float* pc = c.data;
+			for (int i = simdsize; i != 0; i--)
+			{
+				const __m256 ma = _mm256_load_ps(pa);
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mb = _mm256_load_ps(pb);
+
+				//20次
+				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				ret = _mm256_fmadd_ps(ret, mx, mb);//2
+				ret = _mm256_fmadd_ps(ret, mx, mb);//3
+				ret = _mm256_fmadd_ps(ret, mx, mb);//4
+				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				ret = _mm256_fmadd_ps(ret, mx, mb);//7
+				ret = _mm256_fmadd_ps(ret, mx, mb);//8
+				ret = _mm256_fmadd_ps(ret, mx, mb);//9
+				ret = _mm256_fmadd_ps(ret, mx, mb);//10
+				ret = _mm256_fmadd_ps(ret, mx, mb);//11
+				ret = _mm256_fmadd_ps(ret, mx, mb);//12
+				ret = _mm256_fmadd_ps(ret, mx, mb);//13
+				ret = _mm256_fmadd_ps(ret, mx, mb);//14
+				ret = _mm256_fmadd_ps(ret, mx, mb);//15
+				ret = _mm256_fmadd_ps(ret, mx, mb);//16
+				ret = _mm256_fmadd_ps(ret, mx, mb);//17
+				ret = _mm256_fmadd_ps(ret, mx, mb);//18
+				ret = _mm256_fmadd_ps(ret, mx, mb);//19
+				ret = _mm256_fmadd_ps(ret, mx, mb);//20
+
+				_mm256_store_ps(pc, ret);
+
+				pa += 8;
+				px += 8;
+				pb += 8;
+				pc += 8;
+			}
+			t.end();
+		}
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
 
 		return 0;
 	}
-
 
 	//課題23
 	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
@@ -1907,7 +2642,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//divを使って
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -1924,7 +2659,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//rcpをつかって
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -1941,7 +2676,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//sqrtを使って
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -1958,7 +2693,7 @@ int main(const int argc, const char** argv)
 
 				__m256 temp;
 				//rsqrtを使って
-//XXXX
+				//XXXX
 			}
 			t.end();
 		}

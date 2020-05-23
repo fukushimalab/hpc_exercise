@@ -120,4 +120,3 @@ struct Mat_64F
 		return row*cols + col;
 	}
 };
-

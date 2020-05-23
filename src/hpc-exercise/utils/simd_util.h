@@ -339,4 +339,3 @@ void print_m256i_u64(const __m256i a)
 		<< a.m256i_u64[3] << std::endl;
 #endif
 }
-
