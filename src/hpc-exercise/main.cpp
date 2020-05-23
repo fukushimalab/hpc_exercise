@@ -9,8 +9,950 @@
 void inline _mm256_transpose_8x8_ps(__m256* dst, const __m256* src);
 void inline rot(double a, double b, double& x, double& y, double radian);
 
+void loofline_test(const int size, const int iteration)
+{
+	//FLOPS計算
+	//x+1: (1*x+1)
+	//x*x+x+1: x*(x+1)+1
+	//x*x*x+x*x+x+1: x*(x*(x+1))+1
+
+	std::cout << "loofline test" << std::endl;
+	const int loop = iteration;
+
+	CalcTime t;
+
+	Mat_32F x(1, size);
+	Mat_32F y(1, size);
+	mat_rand(x, 1.f, 2.f);
+	mat_zero(y);
+
+	int simdsize8 = size / 8;
+	int simdsize16 = size / 16;
+
+	printf("size %d, iteration\n", iteration);
+	printf("order, GFLOPS, FLOPS/BYTE\n");
+
+	int n = 0;
+
+	//---------------------------------------------
+	n = 1;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 2;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	
+	//---------------------------------------------
+	n = 3;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 4;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 5;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 6;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 7;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 8;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 9;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 10;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 11;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 12;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret = _mm256_fmadd_ps(mx, ret, mones);//12
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+			ret = _mm256_fmadd_ps(mx, ret, mones);//12
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 14;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret = _mm256_fmadd_ps(mx, ret, mones);//12
+			ret = _mm256_fmadd_ps(mx, ret, mones);//13
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+			ret = _mm256_fmadd_ps(mx, ret, mones);//12
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+			ret = _mm256_fmadd_ps(mx, ret, mones);//13
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+	//---------------------------------------------
+	n = 14;
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize8; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret = _mm256_fmadd_ps(mx, ret, mones);//12
+			ret = _mm256_fmadd_ps(mx, ret, mones);//13
+
+			_mm256_store_ps(py, ret);
+
+			px += 8;
+			py += 8;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	for (int j = 0; j < loop; j++)
+	{
+		t.start();
+		float* px = x.data;
+		float* py = y.data;
+		const __m256 mones = _mm256_set1_ps(1.f);
+		for (int i = simdsize16; i != 0; i--)
+		{
+			const __m256 mx = _mm256_load_ps(px);
+			const __m256 mx2 = _mm256_load_ps(px + 8);
+
+			__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+			__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+			ret = _mm256_fmadd_ps(mx, ret, mones);//2
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+			ret = _mm256_fmadd_ps(mx, ret, mones);//3
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+			ret = _mm256_fmadd_ps(mx, ret, mones);//4
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+			ret = _mm256_fmadd_ps(mx, ret, mones);//5
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+			ret = _mm256_fmadd_ps(mx, ret, mones);//6
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+			ret = _mm256_fmadd_ps(mx, ret, mones);//7
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+			ret = _mm256_fmadd_ps(mx, ret, mones);//8
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+			ret = _mm256_fmadd_ps(mx, ret, mones);//9
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+			ret = _mm256_fmadd_ps(mx, ret, mones);//10
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+			ret = _mm256_fmadd_ps(mx, ret, mones);//11
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+			ret = _mm256_fmadd_ps(mx, ret, mones);//12
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+			ret = _mm256_fmadd_ps(mx, ret, mones);//13
+			ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+
+			_mm256_store_ps(py, ret);
+			_mm256_store_ps(py + 8, ret2);
+
+			px += 16;
+			py += 16;
+		}
+		t.end();
+	}
+	printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+}
+
 int main(const int argc, const char** argv)
 {
+	loofline_test(16*1024, 100000); return 0;
 	//課題1
 	//行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 	if (false)
@@ -2098,6 +3040,7 @@ int main(const int argc, const char** argv)
 		mat_rand(x, 0, 1);
 		mat_zero(c);
 
+		/*
 		//mul, add
 		for (int j = 0; j < loop; j++)
 		{
@@ -2149,464 +3092,223 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "fma    : time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
-		std::cout <<"======"<<std::endl;
-		std::cout <<"GFLOPS"<<std::endl;
-		std::cout <<"======"<<std::endl;
+		*/
+		std::cout << "======" << std::endl;
+		std::cout << "GFLOPS" << std::endl;
+		std::cout << "======" << std::endl;
 		//FLOPS計算
+		//x+1: (1*x+1)
+		//x*x+x+1: x*(x+1)+1
+		//x*x*x+x*x+x+1: x*(x*(x+1))+1
 		int simdsize = size / 8;
-		//1次
+
+		//n=...
+		std::cout << "..." << std::endl;
 		int n = 1;
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			float* pa = a.data;
 			float* px = x.data;
-			float* pb = b.data;
 			float* pc = c.data;
+			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize; i != 0; i--)
 			{
-				const __m256 ma = _mm256_load_ps(pa);
 				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
 
 				//1次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
 
 				_mm256_store_ps(pc, ret);
 
-				pa += 8;
 				px += 8;
-				pb += 8;
 				pc += 8;
 			}
 			t.end();
 		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x.data;
+			float* pc = c.data;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize / 2; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				//1次
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+
+				_mm256_store_ps(pc, ret);
+				_mm256_store_ps(pc + 8, ret2);
+
+				px += 16;
+				pc += 16;
+			}
+			t.end();
+		}
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
 
 		n = 2;
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			float* pa = a.data;
 			float* px = x.data;
-			float* pb = b.data;
 			float* pc = c.data;
+			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize; i != 0; i--)
 			{
-				const __m256 ma = _mm256_load_ps(pa);
 				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
 
-				//2次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-
+				//1次
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
 				_mm256_store_ps(pc, ret);
 
-				pa += 8;
 				px += 8;
-				pb += 8;
 				pc += 8;
 			}
 			t.end();
 		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 3;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//3次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3			
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 4;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//4次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
 
 		n = 5;
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			float* pa = a.data;
 			float* px = x.data;
-			float* pb = b.data;
 			float* pc = c.data;
+			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize; i != 0; i--)
 			{
-				const __m256 ma = _mm256_load_ps(pa);
 				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
 
-				//5次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
+				//20次
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
 
 				_mm256_store_ps(pc, ret);
 
-				pa += 8;
 				px += 8;
-				pb += 8;
 				pc += 8;
 			}
 			t.end();
 		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
 
-		n = 6;
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			float* pa = a.data;
 			float* px = x.data;
-			float* pb = b.data;
 			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize / 2; i != 0; i--)
 			{
-				const __m256 ma = _mm256_load_ps(pa);
 				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
 
-				//6次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
+				//20次
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
 
 				_mm256_store_ps(pc, ret);
+				_mm256_store_ps(pc + 8, ret2);
 
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
+				px += 16;
+				pc += 16;
 			}
 			t.end();
 		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 7;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//7次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 8;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//8次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-				ret = _mm256_fmadd_ps(ret, mx, mb);//8
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 9;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//9次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-				ret = _mm256_fmadd_ps(ret, mx, mb);//8
-				ret = _mm256_fmadd_ps(ret, mx, mb);//9
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma  " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
 
 		n = 10;
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			float* pa = a.data;
 			float* px = x.data;
-			float* pb = b.data;
 			float* pc = c.data;
+			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize; i != 0; i--)
 			{
-				const __m256 ma = _mm256_load_ps(pa);
 				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//10次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-				ret = _mm256_fmadd_ps(ret, mx, mb);//8
-				ret = _mm256_fmadd_ps(ret, mx, mb);//9
-				ret = _mm256_fmadd_ps(ret, mx, mb);//10
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 11;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//11次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-				ret = _mm256_fmadd_ps(ret, mx, mb);//8
-				ret = _mm256_fmadd_ps(ret, mx, mb);//9
-				ret = _mm256_fmadd_ps(ret, mx, mb);//10
-				ret = _mm256_fmadd_ps(ret, mx, mb);//11
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 12;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
-
-				//12次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-				ret = _mm256_fmadd_ps(ret, mx, mb);//8
-				ret = _mm256_fmadd_ps(ret, mx, mb);//9
-				ret = _mm256_fmadd_ps(ret, mx, mb);//10
-				ret = _mm256_fmadd_ps(ret, mx, mb);//11
-				ret = _mm256_fmadd_ps(ret, mx, mb);//12
-
-				_mm256_store_ps(pc, ret);
-
-				pa += 8;
-				px += 8;
-				pb += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		//n=...
-		std::cout << "..." << std::endl;
-		n = 20;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* pa = a.data;
-			float* px = x.data;
-			float* pb = b.data;
-			float* pc = c.data;
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 ma = _mm256_load_ps(pa);
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mb = _mm256_load_ps(pb);
 
 				//20次
-				__m256 ret = _mm256_fmadd_ps(ma, mx, mb);//1
-				ret = _mm256_fmadd_ps(ret, mx, mb);//2
-				ret = _mm256_fmadd_ps(ret, mx, mb);//3
-				ret = _mm256_fmadd_ps(ret, mx, mb);//4
-				ret = _mm256_fmadd_ps(ret, mx, mb);//5
-				ret = _mm256_fmadd_ps(ret, mx, mb);//6
-				ret = _mm256_fmadd_ps(ret, mx, mb);//7
-				ret = _mm256_fmadd_ps(ret, mx, mb);//8
-				ret = _mm256_fmadd_ps(ret, mx, mb);//9
-				ret = _mm256_fmadd_ps(ret, mx, mb);//10
-				ret = _mm256_fmadd_ps(ret, mx, mb);//11
-				ret = _mm256_fmadd_ps(ret, mx, mb);//12
-				ret = _mm256_fmadd_ps(ret, mx, mb);//13
-				ret = _mm256_fmadd_ps(ret, mx, mb);//14
-				ret = _mm256_fmadd_ps(ret, mx, mb);//15
-				ret = _mm256_fmadd_ps(ret, mx, mb);//16
-				ret = _mm256_fmadd_ps(ret, mx, mb);//17
-				ret = _mm256_fmadd_ps(ret, mx, mb);//18
-				ret = _mm256_fmadd_ps(ret, mx, mb);//19
-				ret = _mm256_fmadd_ps(ret, mx, mb);//20
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
 
 				_mm256_store_ps(pc, ret);
 
-				pa += 8;
 				px += 8;
-				pb += 8;
 				pc += 8;
 			}
 			t.end();
 		}
 		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
 
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x.data;
+			float* pc = c.data;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize / 2; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				//20次
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+
+				_mm256_store_ps(pc, ret);
+				_mm256_store_ps(pc + 8, ret2);
+
+				px += 16;
+				pc += 16;
+			}
+			t.end();
+		}
+		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
 
 		return 0;
 	}
