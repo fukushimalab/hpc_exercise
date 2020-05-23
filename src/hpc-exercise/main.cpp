@@ -1297,24 +1297,28 @@ int main(const int argc, const char** argv)
 	//課題14
 	//上記の0で初期化するコードをループの順序を変えてどちらが速いか計測して検証せよ．
 	//また，行列積のコードのループの順序を変えてどれが速いか計測して検証せよ．
-	if (false)
+	//なお，行列積のコードは記述済みであり，どれも違いがないことを正解との差分の二乗和（MSE）で評価している．
+	//if (false)
 	{
 		std::cout << "exercise 14" << std::endl;
 		const int loop = 1000;
-		const int width = 64;
-		const int height = 64;
-		float x[width][height];
+		const int row = 128;
+		const int col = 128;
 
 		CalcTime t;
+
+		Mat_32F x(row, col);
+
 		//col, row
 		for (int k = 0; k < loop; k++)
 		{
+			int i = 0, j = 0;
 			t.start();
-			for (int i = 0; i < width; ++i)
+			//xxxxxx	hint: i loop row
 			{
-				for (int j = 0; j < height; ++j)
+				//xxxxxx hint:j loop col
 				{
-					x[i][j] = 0.0f;
+					x.data[col * i + j] = 0.f;
 				}
 			}
 			t.end();
@@ -1324,44 +1328,61 @@ int main(const int argc, const char** argv)
 		//row, col
 		for (int k = 0; k < loop; k++)
 		{
+			int i = 0, j = 0;
 			t.start();
-			for (int i = 0; i < width; ++i)
+			//xxxxxx hint:j loop col
 			{
-				for (int j = 0; j < height; ++j)
+				//xxxxxx	hint: i loop row
 				{
-					x[i][j] = 0.0f;
+					x.data[col * i + j] = 0.f;
 				}
 			}
 			t.end();
 		}
 		std::cout << "row-col: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
+
+		//行列積
 		const int size = 128;
-		float a[size][size];
-		float b[size][size];
-		float c[size][size];
-		//init
-		for (int j = 0; j < size; j++)
+		Mat_32F a(size, size);
+		Mat_32F b(size, size);
+		Mat_32F c(size, size);
+		Mat_32F ans(size, size);
+		mat_rand(a, 0, 10);
+		mat_rand(b, 0, 10);
+
+		//for anser
+		mat_zero(ans);
+		for (int i = 0; i < size; ++i)
 		{
-			for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; ++j)
 			{
-				a[j][i] = rand_32f(0, 100);
-				b[j][i] = rand_32f(0, 100);
-				c[j][i] = 0;
+				for (int k = 0; k < size; ++k)
+				{
+					//ans[i][j] += a[i][k] * b[k][j];
+					ans.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+				}
 			}
 		}
 
 		//i, j, k
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int i = 0; i < size; ++i)
 			{
+				float* pc = c.data + i * size;
+				float* pa = a.data + i * size;
 				for (int j = 0; j < size; ++j)
 				{
+					float* pb = b.data + j;
+					float* pcj = &pc[j];
 					for (int k = 0; k < size; ++k)
 					{
-						c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c[i][j] += a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						*pcj += pa[k] * pb[k * size];
 					}
 				}
 			}
@@ -1369,18 +1390,27 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "i-j-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//i, k, j
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int i = 0; i < size; ++i)
 			{
+				float* pc = c.data + i * size;
+				float* pa = a.data + i * size;
 				for (int k = 0; k < size; ++k)
 				{
+					float* pb = b.data + k * size;
+					const float pak = pa[k];
 					for (int j = 0; j < size; ++j)
 					{
-						//XXXX
+						//c[i][j] += a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						//pc[j] += (pak * pb[j]);//コンパイラ最適化でfmaがかかる
+						pc[j] += pa[k] * pb[j];
 					}
 				}
 			}
@@ -1388,18 +1418,25 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "i-k-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//j, i, k
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int j = 0; j < size; ++j)
 			{
+				float* pb = b.data + j;
 				for (int i = 0; i < size; ++i)
 				{
+					float* pc = c.data + i * size;
+					float* pa = a.data + i * size;
 					for (int k = 0; k < size; ++k)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						pc[j] += pa[k] * pb[k * size];
 					}
 				}
 			}
@@ -1407,18 +1444,26 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "j-i-k: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//j, k, i
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int j = 0; j < size; ++j)
 			{
+				float* pc = c.data + j;
+				float* pb = b.data + j;
 				for (int k = 0; k < size; ++k)
 				{
+					float* pa = a.data + k;
+					const float pbj = pb[k * size];
 					for (int i = 0; i < size; ++i)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						pc[i * size] += pa[i * size] * pbj;
 					}
 				}
 			}
@@ -1426,18 +1471,27 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "j-k-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//k, i, j
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int k = 0; k < size; ++k)
 			{
+				float* pb = b.data + k * size;
 				for (int i = 0; i < size; ++i)
 				{
+					float* pc = c.data + i * size;
+					float* pa = a.data + i * size;
+					const float pak = pa[k];
 					for (int j = 0; j < size; ++j)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						//pc[j] += pak * pb[j];//コンパイル最適化でFMAがかかる
+						pc[j] += pa[k] * pb[j];
 					}
 				}
 			}
@@ -1445,18 +1499,26 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "k-i-j: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		//k, j, i
 		for (int l = 0; l < loop; l++)
 		{
+			mat_zero(c);
 			t.start();
 			for (int k = 0; k < size; ++k)
 			{
+				float* pa = a.data + k;
+				float* pb = b.data + k * size;
 				for (int j = 0; j < size; ++j)
 				{
+					float* pc = c.data + j;
+					const float pbj = pb[j];
 					for (int i = 0; i < size; ++i)
 					{
-						//XXXX
+						//c[i][j] = c[i][j] + a[i][k] * b[k][j];
+						//c.data[i * size + j] += a.data[i * size + k] * b.data[k * size + j];
+						pc[i * size] += pa[i * size] * pbj;
 					}
 				}
 			}
@@ -1464,6 +1526,7 @@ int main(const int argc, const char** argv)
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
 		std::cout << "k-j-i: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
 		return 0;
 	}
@@ -1479,7 +1542,8 @@ int main(const int argc, const char** argv)
 
 		CalcTime t;
 
-		float x[size], y[size];
+		float* x = new float[size];
+		float* y = new float[size];
 		const float a = 2.f;
 		const float b = 1.f;
 
@@ -1698,7 +1762,8 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "unrolling 64: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
+		delete[] x;
+		delete[] y;
 		return 0;
 	}
 
@@ -1709,7 +1774,8 @@ int main(const int argc, const char** argv)
 		std::cout << "exercise 16" << std::endl;
 		const int loop = 100;
 		const int size = 65535;
-		float x[size], y[size];
+		float* x = new float[size];
+		float* y = new float[size];
 
 		CalcTime t;
 
@@ -1759,6 +1825,8 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "loop peeling: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
+		delete[] x;
+		delete[] y;
 		return 0;
 	}
 

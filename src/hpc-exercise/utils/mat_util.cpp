@@ -33,13 +33,33 @@ void mat_zero(Mat_32S& m)
 void mat_zero(Mat_32F& m)
 {
 	const int size = m.cols * m.rows;
-	memset(m.data, sizeof(float) * size, 0);
+	const int simdsize = (size / 8);
+	float* ptr = m.data;
+	for (int i = 0; i < simdsize; i++)
+	{
+		_mm256_store_ps(ptr, _mm256_setzero_ps());
+		ptr += 8;
+	}
+	for (int i = simdsize * 8; i < size; i++)
+	{
+		m.data[i] = 0.f;
+	}
 }
 
 void mat_zero(Mat_64F& m)
 {
 	const int size = m.cols * m.rows;
-	memset(m.data, sizeof(double) * size, 0);
+	const int simdsize = (size / 4);
+	double* ptr = m.data;
+	for (int i = 0; i < simdsize; i++)
+	{
+		_mm256_store_pd(ptr, _mm256_setzero_pd());
+		ptr += 4;
+	}
+	for (int i = simdsize * 4; i < size; i++)
+	{
+		m.data[i] = 0.0;
+	}
 }
 
 
@@ -55,44 +75,64 @@ void mat_one(Mat_8U& m)
 void mat_one(Mat_16S& m)
 {
 	const int size = m.cols * m.rows;
+	const int simdsize = (size / 16);
 	short* ptr = m.data;
-	for (int i = 0; i < size; i += 16)
+	for (int i = 0; i < simdsize; i++)
 	{
 		_mm256_store_si256((__m256i*)ptr, _mm256_set1_epi16(1));
 		ptr += 16;
+	}
+	for (int i = simdsize * 16; i < size; i++)
+	{
+		m.data[i] = 1;
 	}
 }
 
 void mat_one(Mat_32S& m)
 {
 	const int size = m.cols * m.rows;
+	const int simdsize = (size / 8);
 	int* ptr = m.data;
-	for (int i = 0; i < size; i += 8)
+	for (int i = 0; i < simdsize; i++)
 	{
 		_mm256_store_si256((__m256i*)ptr, _mm256_set1_epi32(1));
 		ptr += 8;
+	}
+	for (int i = simdsize * 8; i < size; i++)
+	{
+		m.data[i] = 1;
 	}
 }
 
 void mat_one(Mat_32F& m)
 {
 	const int size = m.cols * m.rows;
+	const int simdsize = (size / 8);
 	float* ptr = m.data;
-	for (int i = 0; i < size; i += 8)
+	for (int i = 0; i < simdsize; i++)
 	{
 		_mm256_store_ps(ptr, _mm256_set1_ps(1.f));
 		ptr += 8;
+	}
+	for (int i = simdsize * 8; i < size; i++)
+	{
+		m.data[i] = 1.f;
 	}
 }
 
 void mat_one(Mat_64F& m)
 {
 	const int size = m.cols * m.rows;
+	const int simdsize = (size / 4);
 	double* ptr = m.data;
-	for (int i = 0; i < size; i += 4)
+	for (int i = 0; i < simdsize; i++)
 	{
 		_mm256_store_pd(ptr, _mm256_set1_pd(1.0));
 		ptr += 4;
+	}
+	for (int i = simdsize * 4; i < size; i++)
+	{
+		m.data[i] = 1.0;
 	}
 }
 
@@ -613,6 +653,94 @@ double rand_64f(const double rand_min, const double rand_max)
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
+int mat_diff(Mat_8U& src1, Mat_8U& src2)
+{
+	if (src1.rows != src2.cols)
+	{
+		std::cout << "invalid mat size (mat mul)" << std::endl;
+		exit(-1);
+	}
+
+	int ret = 0;
+	const int size = src1.cols * src1.rows;
+
+	for (int i = 0; i < size; i++)
+	{
+		ret += ((int)(src1.data[i] - src2.data[i]) * (int)(src1.data[i] - src2.data[i]));
+	}
+	return ret;
+}
+
+int mat_diff(Mat_16S& src1, Mat_16S& src2)
+{
+	if (src1.rows != src2.cols)
+	{
+		std::cout << "invalid mat size (mat mul)" << std::endl;
+		exit(-1);
+	}
+
+	int ret = 0;
+	const int size = src1.cols * src1.rows;
+
+	for (int i = 0; i < size; i++)
+	{
+		ret += ((int)(src1.data[i] - src2.data[i]) * (int)(src1.data[i] - src2.data[i]));
+	}
+	return ret;
+}
+int mat_diff(Mat_32S& src1, Mat_32S& src2)
+{
+	if (src1.rows != src2.cols)
+	{
+		std::cout << "invalid mat size (mat mul)" << std::endl;
+		exit(-1);
+	}
+
+	int ret = 0;
+	const int size = src1.cols * src1.rows;
+
+	for (int i = 0; i < size; i++)
+	{
+		ret += ((src1.data[i] - src2.data[i]) * (src1.data[i] - src2.data[i]));
+	}
+	return ret;
+}
+
+double mat_diff(Mat_32F& src1, Mat_32F& src2)
+{
+	if (src1.rows != src2.cols)
+	{
+		std::cout << "invalid mat size (mat mul)" << std::endl;
+		exit(-1);
+	}
+
+	double ret = 0.0;
+	const int size = src1.cols * src1.rows;
+
+	for (int i = 0; i < size; i++)
+	{
+		ret += (double)((src1.data[i] - src2.data[i]) * (src1.data[i] - src2.data[i]));
+	}
+	return ret;
+}
+
+double mat_diff(Mat_64F& src1, Mat_64F& src2)
+{
+	if (src1.rows != src2.cols)
+	{
+		std::cout << "invalid mat size (mat mul)" << std::endl;
+		exit(-1);
+	}
+
+	double ret = 0.0;
+	const int size = src1.cols * src1.rows;
+
+	for (int i = 0; i < size; i++)
+	{
+		ret += ((src1.data[i] - src2.data[i]) * (src1.data[i] - src2.data[i]));
+	}
+	return ret;
+}
 
 //timer
 #ifdef __GNUC__
