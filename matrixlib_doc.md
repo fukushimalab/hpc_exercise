@@ -96,15 +96,15 @@ Mat_8U a(data, row, col);
 答え：
 ```cpp
 Mat_64F a(5, 5);
-	for (int j = 0; j < a.rows; j++)
+for (int j = 0; j < a.rows; j++)
+{
+	for (int i = 0; i < a.cols; i++)
 	{
-		for (int i = 0; i < a.cols; i++)
-		{
-			if (i == j) a.data[j * a.cols + i] = 1.0;
-			else a.data[j * a.cols + i] = 0.0;
-		}
+		if (i == j) a.data[j * a.cols + i] = 1.0;
+		else a.data[j * a.cols + i] = 0.0;
 	}
-	a.show();
+}
+a.show();
 ```
 ### チュートリアル課題3
 3x3 の１バイトの符号なし整数(unsigned char)の行列を確保し，自分でループを書いてすべてが255となるようにして，showメソッドで中身を確認せよ．
@@ -112,24 +112,25 @@ Mat_64F a(5, 5);
 答え：
 ```cpp
 Mat_8U a(3, 3);
-	for (int j = 0; j < a.rows; j++)
+for (int j = 0; j < a.rows; j++)
+{
+	for (int i = 0; i < a.cols; i++)
 	{
-		for (int i = 0; i < a.cols; i++)
-		{
-			a.data[j * a.cols + i] = 255;
-		}
+		a.data[j * a.cols + i] = 255;
 	}
+}
+a.show();
 ```
 
 なお，すべての要素に対して，行と列が関係ないような関数は以下のようにループを１重にできる．
 ```cpp
 Mat_8U a(3, 3);
-	const int size = a.cols * a.rows;
-	for (int i = 0; i < size; i++)
-	{
-		a.data[i] = 255;
-	}
-	a.show();
+const int size = a.cols * a.rows;
+for (int i = 0; i < size; i++)
+{
+	a.data[i] = 255;
+}
+a.show();
 ```
 もし，演習で実行時間に差がないような場合，この形式にすると差が見えるようになる可能性がある．
 なぜなら，行列へのアクセスのために`j*cols+i`をしたり，添え字の`i++,j++`をしたりするからである．  

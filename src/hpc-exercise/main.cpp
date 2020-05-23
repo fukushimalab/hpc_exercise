@@ -1905,6 +1905,8 @@ int main(const int argc, const char** argv)
 
 	//課題20
 	//二つの行列の各要素の積を計算するコードで，スレッド数を変更して，計算時間がどのように推移するのかを確認せよ．
+	//なお，スレッド数は，計算機のコア数以上の物まで指定せよ．
+	//8コア16スレッドのPCでは，16コアよりも大きいスレッド数（例えば32までなど）までを指定せよ．
 	if (false)
 	{
 		std::cout << "exercise 20" << std::endl;
@@ -1949,27 +1951,55 @@ int main(const int argc, const char** argv)
 		std::cout << "exercise 21" << std::endl;
 		const __m256 a = _mm256_set_ps(7, 6, 5, 4, 3, 2, 1, 0);
 		const __m256 b = _mm256_set_ps(15, 14, 13, 12, 11, 10, 9, 8);
+		//逆順で入力(setr)こちらのほうが使いやすい
+		const __m256 c = _mm256_setr_ps(0, 1, 2, 3, 4, 5, 6, 7);
+		const __m256 d = _mm256_setr_ps(8, 9, 10, 11, 12, 13, 14, 15);
+		__m256 e = _mm256_setzero_ps();
+		//e = a + b
+		//XXXXXX
+		std::cout << "add a b: ";
+		print_m256(e);
+		//e = c + d
+		//XXXXXX
+		std::cout << "add c d: ";
+		print_m256(e);//出力は上と同じのはず．
 
-		__m256 c;
-		//加算
-		//XXXX
-		std::cout << "add: ";
-		print_m256(c);
+		//print_m256の関数を使わない場合はこうやって出力
+		float temp[8];
+		_mm256_store_ps(&temp[0], e);
+		std::cout << "cout ex: ";
+		for (int i = 0; i < 8; i++) std::cout << temp[i] << ", ";
+		std::cout << std::endl;
 
 		//減算
-		//XXXX
-		std::cout << "sub: ";
-		print_m256(c);
+		//e = a - b
+		//XXXXXX
+		std::cout << "sub a b: ";
+		print_m256(e);
+		//e = c - d
+		//XXXXXX
+		std::cout << "sub c d: ";
+		print_m256(e);
 
 		//乗算
-		//XXXX
-		std::cout << "mul: ";
-		print_m256(c);
+		//e = a * b
+		//XXXXXX
+		std::cout << "mul a b: ";
+		print_m256(e);
+		//e = c * d
+		//XXXXXX
+		std::cout << "mul c d: ";
+		print_m256(e);
 
 		//除算
-		//XXXX
-		std::cout << "div: ";
-		print_m256(c);
+		//e = a / b
+		//XXXXXX
+		std::cout << "div a b: ";
+		print_m256(e);
+		//e = c / d
+		//XXXXXX
+		std::cout << "div c d: ";
+		print_m256(e);
 
 		return 0;
 	}
