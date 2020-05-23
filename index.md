@@ -710,7 +710,12 @@ y=x/4.0 -> y=x*0.25
 ### 乗算を避ける
 `x*2`は`x+x`で表現できる．乗算よりも加算のほうが軽いため，こちらのほうが速い．
 ただし，現代のアーキテクチャだと，浮動小数点演算は乗算も加算もコストは変わらないため効果はほぼない．
-整数演算の場合は変わる可能性がある．
+整数演算の場合は，加算が乗算に比べて軽い．
+
+
+[浮動小数点加算命令のレイテンシーとスループット](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=AVX,AVX2&expand=136,136&cats=Arithmetic)
+[浮動小数点乗算命令のレイテンシーとスループット](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=AVX,AVX2&expand=3931&cats=Arithmetic)
+
 
 ### 除算を減らす
 除算は重たいため，少しでも減らすべきである．
