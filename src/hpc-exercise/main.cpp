@@ -2433,7 +2433,7 @@ int main(const int argc, const char** argv)
 	//課題26
 	//上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
 	//ただし，ベクトル化していないコードのほうが速い可能性が高い．これは，これくらい単純なコードは，自動ベクトル化によってコードが最適化されるため．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 26" << std::endl;
 		const int loop = 100000;
@@ -2677,59 +2677,179 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題27
-	//上の関数を用いて，データ構造の相互変換を確認せよ． ４ｘ４のdouble型データの転置を手書きで考えてみよ．
-	//この問題は，自力で答えを埋めると時間がかかり過ぎるためプログラムの答えはすでに埋めてある．
-	//そのため，この動作を追って転置ができていることを手書きで確認するだけで良い．
+	//上の関数を用いた4x4のfloatの転置の動作を確認せよ．また，4x4のdouble型データの転置を作成せよ．．
+	//難しいと思った場合は，効率を無視して，set命令やstoreしてスカラで書くなどすれば書ける．
 	if (false)
 	{
 		std::cout << "exercise 27" << std::endl;
-		const int size = 64;
+		{
+			std::cout << "float 8x8" << std::endl;
+			const int size = 64;
 #ifdef __GNUC__
-		__attribute__((aligned(32))) float a[size];
-		__attribute__((aligned(32))) float b[size];
+			__attribute__((aligned(32))) float a[size];
+			__attribute__((aligned(32))) float b[size];
 #elif _MSC_VER
-		__declspec(align(32)) float a[size];
-		__declspec(align(32)) float b[size];
+			__declspec(align(32)) float a[size];
+			__declspec(align(32)) float b[size];
 #endif
-		for (int i = 0; i < size; i++)
-		{
-			a[i] = i;
-			b[i] = 0;
-		}
-		__m256 ma[8], mb[8];
-		for (int i = 0; i < 8; i++)
-		{
-			ma[i] = _mm256_load_ps((float*)(&a[i * 8]));
-			mb[i] = _mm256_setzero_ps();
-		}
+			for (int i = 0; i < size; i++)
+			{
+				a[i] = i;
+				b[i] = 0;
+			}
+			__m256 ma[8], mb[8];
+			for (int i = 0; i < 8; i++)
+			{
+				ma[i] = _mm256_load_ps((float*)(&a[i * 8]));
+				mb[i] = _mm256_setzero_ps();
+			}
 
-		for (int i = 0; i < 8; i++)
-		{
-			print_m256(ma[i]);
-		}
+			for (int i = 0; i < 8; i++)
+			{
+				print_m256(ma[i]);
+			}
 
-		//転置
-//XXXX
+			//転置
+			_mm256_transpose_8x8_ps(mb, ma);
 
-		for (int i = 0; i < 8; i++)
+			std::cout << "transpose" << std::endl;
+			for (int i = 0; i < 8; i++)
+			{
+				print_m256(mb[i]);
+			}
+	}
 		{
-			print_m256(mb[i]);
+			std::cout << "double 4x4" << std::endl;
+			const int size = 16;
+#ifdef __GNUC__
+			__attribute__((aligned(32))) double a[size];
+			__attribute__((aligned(32))) double b[size];
+#elif _MSC_VER
+			__declspec(align(32)) double a[size];
+			__declspec(align(32)) double b[size];
+#endif
+			for (int i = 0; i < size; i++)
+			{
+				a[i] = i;
+				b[i] = 0;
+			}
+			__m256d ma[4], mb[4];
+			for (int i = 0; i < 4; i++)
+			{
+				ma[i] = _mm256_load_pd((double*)(&a[i * 4]));
+				mb[i] = _mm256_setzero_pd();
+			}
+
+			for (int i = 0; i < 4; i++)
+			{
+				print_m256d(ma[i]);
+			}
+
+			//転置
+			//作成する
+			//XXXX
+
+			std::cout << "transpose" << std::endl;
+			for (int i = 0; i < 4; i++)
+			{
+				print_m256d(mb[i]);
+			}
 		}
 		return 0;
 	}
 
 	//課題28
 	//__m256i（int）型を_m256（float）型に変換せよ．
-	if (false)
+	//また，unsigned char型をfloat型に変換せよ．
+	//更に，16個の`int`型を`short`型に変換する処理をSSEとAVXで実装せよ．
+	//if (false)
 	{
 		std::cout << "exercise 28" << std::endl;
-		__m256i m32i = _mm256_set_epi32(7, 6, 5, 4, 3, 2, 1, 0);
-		__m256 m32f = _mm256_setzero_ps();
 
+		//int ->float
+		__m256i m32i = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+		__m256 m32f = _mm256_setzero_ps();
+		std::cout << "before convert" << std::endl;
 		print_m256(m32f);
+
 		//cvtを使って
-//XXXX
+		//XXXX
+		
+		std::cout << "after convert" << std::endl;
 		print_m256(m32f);
+
+		//unsigne char->float
+		unsigned char* a = (unsigned char*)_mm_malloc(sizeof(char) * 32, 32);
+		float* b = (float*)_mm_malloc(sizeof(float) * 32, 32);
+		for (int i = 0; i < 32; i++)
+		{
+			a[i] = i;
+			b[i] = 0.f;
+		}
+		std::cout << "input data: " << std::endl;
+		for (int i = 0; i < 32; i++)std::cout << (float)a[i] << " ";
+		std::cout << std::endl;
+
+		std::cout << "before convert: b" << std::endl;
+		for (int i = 0; i < 32; i++)std::cout << b[i] << " ";
+		std::cout << std::endl;
+
+		//aをfloatにキャストしてbへ書き込み
+		for (int i = 0; i < 32; i += 8)
+		{
+			//XXXX
+			//XXXX
+			//XXXX
+		}
+
+		std::cout << "after convert: b" << std::endl;
+		for (int i = 0; i < 32; i++)std::cout << b[i] << " ";
+		std::cout << std::endl;
+
+		//int->short
+		int* c = (int*)_mm_malloc(sizeof(char) * 16, 32);
+		short* d = (short*)_mm_malloc(sizeof(short) * 16, 32);
+
+		for (int i = 0; i < 16; i++)
+		{
+			c[i] = i;
+			d[i] = 0;
+		}
+		std::cout << "input data: " << std::endl;
+		for (int i = 0; i < 16; i++)std::cout << c[i] << " ";
+		std::cout << std::endl;
+
+		std::cout << "before convert: d" << std::endl;
+		for (int i = 0; i < 16; i++)std::cout << d[i] << " ";
+		std::cout << std::endl;
+
+		//SSEでの実装 cを入力として，dに書き込み
+		//ヒント：前半8個と後半8個に分けて8回処理する．packs_epi16で半分のサイズできる
+		//ヒント：下記のAVXの作りかけもヒントになる．
+		//XXXX 行数は任意
+		
+		std::cout << "after convert: d (SSE)" << std::endl;
+		for (int i = 0; i < 16; i++)std::cout << d[i] << " ";
+		std::cout << std::endl;
+
+		//AVXでの実装
+		__m256i mc2560 = _mm256_load_si256((__m256i*)c);
+		__m256i mc2561 = _mm256_load_si256((__m256i*)(c + 8));
+		__m256i temp256 = _mm256_packs_epi16(mc2560, mc2561);
+		//permuteをしていないため結果がおかしい
+		//XXXX permute
+		_mm256_store_si256((__m256i*)d, temp256);
+
+		std::cout << "after convert: d (AVX)" << std::endl;
+		for (int i = 0; i < 16; i++)std::cout << d[i] << " ";
+		std::cout << std::endl;
+
+		_mm_free(a);
+		_mm_free(b);
+		_mm_free(c);
+		_mm_free(d);
+
+		return 0;
 	}
 
 
