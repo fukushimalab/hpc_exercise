@@ -2100,7 +2100,7 @@ int main(const int argc, const char** argv)
 		mat_rand(x, 0, 1);
 		mat_zero(c);
 
-		
+
 		//mul, add
 		for (int j = 0; j < loop; j++)
 		{
@@ -2152,9 +2152,9 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 		std::cout << "fma    : time (avg): " << t.getAvgTime() << " ms" << std::endl << std::endl;
-		
+
 		//loofline
-		std::cout << "plot loofline"<< std::endl;
+		std::cout << "plot loofline" << std::endl;
 
 		const int loofline_size = 16 * 1024 / sizeof(float);//16KByte
 		const int iteration = 1000000;
@@ -2168,12 +2168,12 @@ int main(const int argc, const char** argv)
 
 	//課題23
 	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
-	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
-	//if (false)
+	//また，絶対値の計算をandによる実装とmaxによる実装を比較せよ．
+	if (false)
 	{
 		std::cout << "exercise 23" << std::endl;
-		const int loop = 10000;
-		const int size = 1024 * 1024;
+		const int loop = 1000000;
+		const int size = 8 * 1024;
 		Mat_32F a(1, size);
 		Mat_32F b(1, size);
 		Mat_32F c(1, size);
@@ -2257,66 +2257,120 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "rsqrt: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
+		//abs(subとmaxを使って)
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			for (int i = 0; i < size; i += 8)
+			{
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
+
+				__m256 temp;
+				//subとmaxを使って
+				//XXXXXX
+				temp = _mm256_max_ps(_mm256_sub_ps(ma, mb), _mm256_sub_ps(mb, ma));
+
+				_mm256_store_ps(c.data + i, temp);
+			}
+			t.end();
+		}
+		std::cout << "abs submax: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		//abs(subとnotを使って)
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			const __declspec(align(32)) int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+			const __m256 absmask = *(const __m256*)(&v32f_absmask[0]);
+			for (int i = 0; i < size; i += 8)
+			{
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
+
+				__m256 temp;
+				//subとnotを使って．notのマスクはabsmask
+				//XXXXXXX
+
+				_mm256_store_ps(c.data + i, temp);
+			}
+			t.end();
+		}
+		std::cout << "abs subnot: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
 		return 0;
 	}
 
 	//課題24
 	//haddとdpで要素の総和を取るプログラムを作成せよ．
 	//また，それぞれの計算時間を比較せよ ．
+	//なお，正解を計算結果を比較するために，非ベクトル化コードが実装されている．
 	//（この課題は，後にリダクションの最適化でもう一度登場します．）
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 24" << std::endl;
 		const int loop = 100000;
-#ifdef __GNUC__
-		float __attribute__((aligned(32))) a[8];
-		float __attribute__((aligned(32))) b[8];
-#elif _MSC_VER
-		__declspec(align(32)) float a[8];
-		__declspec(align(32)) float b[8];
-#endif
+		const int size = 256 * 256;
 
-		for (int i = 0; i < 8; i++)
-		{
-			a[i] = rand_32f(0, 100);
-			b[i] = rand_32f(0, 100);
-		}
+		Mat_32F a(1, size);
+		mat_rand(a, 0, 1);
 
 		CalcTime t;
+
+		//ベクトル化無し（自動ベクトル化されている可能性もある）
+		//全て埋めてある
+		float ans = 0.f;
+		for (int i = 0; i < loop; i++)
+		{
+			t.start();
+			float sum = 0.f;
+			for (int i = 0; i < size; i++)
+			{
+				sum += a.data[i];
+			}
+			t.end();
+			ans = sum;
+		}
+		std::cout << "c++ : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "total: " << ans << std::endl;
+
 		//hadd
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
-			__m256 ma = _mm256_load_ps(a);
-			//haddを使って
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
+			float sum = 0.f;
+			for (int i = 0; i < size; i += 8)
+			{
+				__m256 ma = _mm256_load_ps(a.data + i);
+				//haddを使って
+				//xxxx
+				//xxxx
+				//hint sum+= xxxx
+			}
 			t.end();
+			ans = sum;
 		}
 		std::cout << "hadd: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "total: " << ans << std::endl;
 
-
-		const __m256 one = _mm256_set1_ps(1);
 		//dp
+		const __m256 one = _mm256_set1_ps(1.f);
 		for (int i = 0; i < loop; i++)
 		{
 			t.start();
-			__m256 mb = _mm256_load_ps(b);
-			//dpを使って
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
-			//XXXX
+			float sum = 0.f;
+			for (int i = 0; i < size; i += 8)
+			{
+				__m256 ma = _mm256_load_ps(a.data + i);
+				//dpを使って
+				//xxxx
+				//hint: sum+=xxxx
+			}
 			t.end();
+			ans = sum;
 		}
-		std::cout << "dp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "dp  : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "total: " << ans << std::endl;
 
 		return 0;
 	}
@@ -2721,7 +2775,7 @@ int main(const int argc, const char** argv)
 
 	std::cout << "no select" << std::endl;
 	return 0;
-}
+	}
 
 //課題12用
 inline void rot(double a, double b, double& x, double& y, double radian)
