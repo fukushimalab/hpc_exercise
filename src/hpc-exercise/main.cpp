@@ -2432,44 +2432,49 @@ int main(const int argc, const char** argv)
 
 	//課題26
 	//上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 26" << std::endl;
-		const int loop = 1000;
-		const int size = 1024 * 3;
-#ifdef __GNUC__
-		__attribute__((aligned(32))) float a[size];
-		__attribute__((aligned(32))) float b[size];
-		__attribute__((aligned(32))) float c[size];
-#elif _MSC_VER
-		__declspec(align(32)) float a[size];
-		__declspec(align(32)) float b[size];
-		__declspec(align(32)) float c[size];
-#endif
+		const int loop = 100000;
+		const int size = 16 * 1024;
 
-		//init
-		for (int i = 0; i < size; i++)
-		{
-			a[i] = rand_32f(0, 100);
-			b[i] = rand_32f(0, 100);
-			c[i] = 0;
-		}
+		Mat_32F a(1, size);
+		Mat_32F b(1, size);
+		Mat_32F c(1, size);
+		Mat_32F ans(1, size);
+		mat_rand(a, 0, 100);
+		mat_rand(b, 0, 100);
 
 		CalcTime t;
-		// unrolling 8
+
+		// unrolling 1: 埋めてある
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			// unrolling 1
+			for (int i = 0; i < size; i++)
+			{
+				ans.data[i] = (a.data[i] - b.data[i]) * (a.data[i] - b.data[i]);
+			}
+			t.end();
+		}
+		std::cout << "  1: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		// unrolling 8: 埋めてある
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
 			// unrolling 8
 			for (int i = 0; i < size; i += 8)
 			{
-				__m256 ma = _mm256_load_ps(a + i);
-				__m256 mb = _mm256_load_ps(b + i);
-				_mm256_store_ps(c + i, _mm256_add_ps(ma, mb));
+				__m256 ma = _mm256_load_ps(a.data + i);
+				__m256 mb = _mm256_load_ps(b.data + i);
+				__m256 temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
-		std::cout << "  8: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "  8: time (avg): " << t.getAvgTime() << " ms" << ": check diff " << mat_diff(ans, c) << std::endl;
 
 		// unrolling 16
 		for (int j = 0; j < loop; j++)
@@ -2478,17 +2483,19 @@ int main(const int argc, const char** argv)
 			// unrolling 16
 			for (int i = 0; i < size; i += 16)
 			{
-				__m256 ma = _mm256_load_ps(a + i);
-				__m256 mb = _mm256_load_ps(b + i);
-				//XXXX
+				__m256 ma = _mm256_load_ps(a.data + i);
+				__m256 mb = _mm256_load_ps(b.data + i);
+				__m256 temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 8);
+				mb = _mm256_load_ps(b.data + i + 8);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
-		std::cout << " 16: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << " 16: time (avg): " << t.getAvgTime() << " ms" << ": check diff " << mat_diff(ans, c) << std::endl;
 
 		// unrolling 32
 		for (int j = 0; j < loop; j++)
@@ -2497,25 +2504,29 @@ int main(const int argc, const char** argv)
 			// unrolling 32
 			for (int i = 0; i < size; i += 32)
 			{
-				__m256 ma = _mm256_load_ps(a + i);
-				__m256 mb = _mm256_load_ps(b + i);
-				//XXXX
+				__m256 ma = _mm256_load_ps(a.data + i);
+				__m256 mb = _mm256_load_ps(b.data + i);
+				__m256 temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 8);
+				mb = _mm256_load_ps(b.data + i + 8);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 16);
+				mb = _mm256_load_ps(b.data + i + 16);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 24);
+				mb = _mm256_load_ps(b.data + i + 24);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
-		std::cout << " 32: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << " 32: time (avg): " << t.getAvgTime() << " ms" << ": check diff " << mat_diff(ans, c) << std::endl;
 
 		// unrolling 64
 		for (int j = 0; j < loop; j++)
@@ -2524,41 +2535,49 @@ int main(const int argc, const char** argv)
 			// unrolling 64
 			for (int i = 0; i < size; i += 64)
 			{
-				__m256 ma = _mm256_load_ps(a + i);
-				__m256 mb = _mm256_load_ps(b + i);
-				//XXXX
+				__m256 ma = _mm256_load_ps(a.data + i);
+				__m256 mb = _mm256_load_ps(b.data + i);
+				__m256 temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 8);
+				mb = _mm256_load_ps(b.data + i + 8);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 16);
+				mb = _mm256_load_ps(b.data + i + 16);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 24);
+				mb = _mm256_load_ps(b.data + i + 24);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 32);
+				mb = _mm256_load_ps(b.data + i + 32);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 32, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 40);
+				mb = _mm256_load_ps(b.data + i + 40);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 40, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 48);
+				mb = _mm256_load_ps(b.data + i + 48);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 48, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 56);
+				mb = _mm256_load_ps(b.data + i + 56);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 56, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
-		std::cout << " 64: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << " 64: time (avg): " << t.getAvgTime() << " ms" << ": check diff " << mat_diff(ans, c) << std::endl;
 
 		// unrolling 128
 		for (int j = 0; j < loop; j++)
@@ -2567,73 +2586,89 @@ int main(const int argc, const char** argv)
 			// unrolling 128
 			for (int i = 0; i < size; i += 128)
 			{
-				__m256 ma = _mm256_load_ps(a + i);
-				__m256 mb = _mm256_load_ps(b + i);
-				//XXXX
+				__m256 ma = _mm256_load_ps(a.data + i);
+				__m256 mb = _mm256_load_ps(b.data + i);
+				__m256 temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 8);
+				mb = _mm256_load_ps(b.data + i + 8);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 16);
+				mb = _mm256_load_ps(b.data + i + 16);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 24);
+				mb = _mm256_load_ps(b.data + i + 24);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 32);
+				mb = _mm256_load_ps(b.data + i + 32);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 32, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 40);
+				mb = _mm256_load_ps(b.data + i + 40);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 40, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 48);
+				mb = _mm256_load_ps(b.data + i + 48);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 48, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 56);
+				mb = _mm256_load_ps(b.data + i + 56);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 56, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 64);
+				mb = _mm256_load_ps(b.data + i + 64);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 64, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 72);
+				mb = _mm256_load_ps(b.data + i + 72);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 72, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 80);
+				mb = _mm256_load_ps(b.data + i + 80);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 80, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 88);
+				mb = _mm256_load_ps(b.data + i + 88);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 88, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 96);
+				mb = _mm256_load_ps(b.data + i + 96);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 96, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 104);
+				mb = _mm256_load_ps(b.data + i + 104);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 104, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 112);
+				mb = _mm256_load_ps(b.data + i + 112);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 112, _mm256_mul_ps(temp, temp));
 
-				//XXXX
-				//XXXX
-				//XXXX
+				ma = _mm256_load_ps(a.data + i + 120);
+				mb = _mm256_load_ps(b.data + i + 120);
+				temp = _mm256_sub_ps(ma, mb);
+				_mm256_store_ps(c.data + i + 120, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
-		std::cout << "128: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "128: time (avg): " << t.getAvgTime() << " ms" << ": check diff " << mat_diff(ans, c) << std::endl;
 
 		return 0;
 	}
