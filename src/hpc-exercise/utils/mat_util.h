@@ -117,3 +117,7 @@ struct CalcTime
 	CalcTime();
 };
 #endif
+
+void loofline_test(const int size, const int iteration);
+void loofline_test_omp(const int size, const int iteration, const int num_thread = -1);
+void loofline_test_omp2(const int size, const int iteration, const int num_thread = -1);
