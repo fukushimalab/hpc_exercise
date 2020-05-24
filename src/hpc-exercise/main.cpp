@@ -14,9 +14,8 @@ int main(const int argc, const char** argv)
 {
 	const int loofline_size = 16 * 1024 / sizeof(float);//8KByte
 	const int iteration = 1000000;
+	loofline_test<loofline_size>(iteration, 1);
 	loofline_test<loofline_size>(iteration);
-	loofline_test_omp<loofline_size>(iteration);
-	loofline_test_omp2<loofline_size>(iteration);
 	return 0;
 
 	//課題1
