@@ -989,19 +989,18 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 
 	CalcTime t;
 
-	float* x = (float*)_mm_malloc(sizeof(float) * size, 32);
+	float* x = (float*)_mm_malloc(sizeof(float) * size * thread_max, 32);
 	float* y = (float*)_mm_malloc(sizeof(float) * size * thread_max, 32);
 
 	float* ptr = x;
 	const float rand_max = 1.f;
 	const float rand_min = 0.f;
 	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < size * thread_max; i++)
 	{
 		*ptr++ = rand_min + (rand() * v);
 	}
 
-	int simdsize8 = size / 8;
 	int simdsize16 = size / 16;
 
 	printf("size %d KBYTE, iteration %d\n", size * (int)(sizeof(float)) / 1024, iteration);
@@ -1016,7 +1015,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 		for (int j = 0; j < loop; j++)
 		{
 			int v = omp_get_thread_num();
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1043,7 +1042,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1073,7 +1072,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1104,7 +1103,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1137,7 +1136,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1172,7 +1171,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1209,7 +1208,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1248,7 +1247,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1289,7 +1288,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1332,7 +1331,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1377,7 +1376,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1424,7 +1423,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1473,7 +1472,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1524,7 +1523,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1577,7 +1576,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1632,7 +1631,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1689,7 +1688,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1748,7 +1747,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1809,7 +1808,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
@@ -1872,7 +1871,7 @@ void loofline_test_omp(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x;
+			float* px = x + omp_get_thread_num() * size;
 			float* py = y + omp_get_thread_num() * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = simdsize16; i != 0; i--)
