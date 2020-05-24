@@ -973,6 +973,945 @@ void loofline_test_omp(const int size, const int iteration, const int num_thread
 	_mm_free(y);
 }
 
+void loofline_test_omp2(const int size, const int iteration, const int num_thread = -1)
+{
+	const int thread_max = (num_thread == -1) ? omp_get_max_threads() : num_thread;
+	omp_set_num_threads(thread_max);
+
+	//FLOPS計算
+	//x+1: (1*x+1)
+	//x*x+x+1: x*(x+1)+1
+	//x*x*x+x*x+x+1: x*(x*(x+1))+1
+
+	std::cout << "loofline test" << std::endl;
+	const int loop = iteration;
+	int simdsize8 = size / 8;
+	int simdsize16 = size / 16;
+
+	printf("size %d, iteration\n", iteration);
+	printf("order, GFLOPS, FLOPS/BYTE\n");
+
+#pragma omp parallel for
+	for (int th = 0; th < thread_max; th++)
+	{
+		CalcTime t;
+		float* x = (float*)_mm_malloc(sizeof(float) * size, 32);
+		float* y = (float*)_mm_malloc(sizeof(float) * size, 32);
+
+		float* ptr = x;
+		const float rand_max = 1.f;
+		const float rand_min = 0.f;
+		const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+		for (int i = 0; i < size; i++)
+		{
+			*ptr++ = rand_min + (rand() * v);
+		}
+
+		int n = 0;
+		//---------------------------------------------
+		n = 1;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 2;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 3;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 4;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 5;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 6;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 7;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 8;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 9;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 10;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 11;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 12;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 13;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 14;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 15;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+				ret = _mm256_fmadd_ps(mx, ret, mones);//15
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//15
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 16;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+				ret = _mm256_fmadd_ps(mx, ret, mones);//15
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//15
+				ret = _mm256_fmadd_ps(mx, ret, mones);//16
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//16
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 17;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+				ret = _mm256_fmadd_ps(mx, ret, mones);//15
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//15
+				ret = _mm256_fmadd_ps(mx, ret, mones);//16
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//16
+				ret = _mm256_fmadd_ps(mx, ret, mones);//17
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//17
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 18;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+				ret = _mm256_fmadd_ps(mx, ret, mones);//15
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//15
+				ret = _mm256_fmadd_ps(mx, ret, mones);//16
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//16
+				ret = _mm256_fmadd_ps(mx, ret, mones);//17
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//17
+				ret = _mm256_fmadd_ps(mx, ret, mones);//18
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//18
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 19;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+				ret = _mm256_fmadd_ps(mx, ret, mones);//15
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//15
+				ret = _mm256_fmadd_ps(mx, ret, mones);//16
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//16
+				ret = _mm256_fmadd_ps(mx, ret, mones);//17
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//17
+				ret = _mm256_fmadd_ps(mx, ret, mones);//18
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//18
+				ret = _mm256_fmadd_ps(mx, ret, mones);//19
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//19
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 20;
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			float* px = x;
+			float* py = y;
+			const __m256 mones = _mm256_set1_ps(1.f);
+			for (int i = simdsize16; i != 0; i--)
+			{
+				const __m256 mx = _mm256_load_ps(px);
+				const __m256 mx2 = _mm256_load_ps(px + 8);
+
+				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
+				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
+				ret = _mm256_fmadd_ps(mx, ret, mones);//2
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
+				ret = _mm256_fmadd_ps(mx, ret, mones);//3
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
+				ret = _mm256_fmadd_ps(mx, ret, mones);//4
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
+				ret = _mm256_fmadd_ps(mx, ret, mones);//5
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
+				ret = _mm256_fmadd_ps(mx, ret, mones);//6
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
+				ret = _mm256_fmadd_ps(mx, ret, mones);//7
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
+				ret = _mm256_fmadd_ps(mx, ret, mones);//8
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
+				ret = _mm256_fmadd_ps(mx, ret, mones);//9
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
+				ret = _mm256_fmadd_ps(mx, ret, mones);//10
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
+				ret = _mm256_fmadd_ps(mx, ret, mones);//11
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//11
+				ret = _mm256_fmadd_ps(mx, ret, mones);//12
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//12
+				ret = _mm256_fmadd_ps(mx, ret, mones);//13
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//13
+				ret = _mm256_fmadd_ps(mx, ret, mones);//14
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//14
+				ret = _mm256_fmadd_ps(mx, ret, mones);//15
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//15
+				ret = _mm256_fmadd_ps(mx, ret, mones);//16
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//16
+				ret = _mm256_fmadd_ps(mx, ret, mones);//17
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//17
+				ret = _mm256_fmadd_ps(mx, ret, mones);//18
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//18
+				ret = _mm256_fmadd_ps(mx, ret, mones);//19
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//19
+				ret = _mm256_fmadd_ps(mx, ret, mones);//20
+				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//20
+
+				_mm256_store_ps(py, ret);
+				_mm256_store_ps(py + 8, ret2);
+
+				px += 16;
+				py += 16;
+			}
+			t.end();
+		}
+		if (omp_get_thread_num() == 0)printf("%02d, %f, %f\n", n, thread_max * n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		_mm_free(x);
+		_mm_free(y);
+	}
+}
+
 void loofline_test(const int size, const int iteration)
 {
 	//FLOPS計算
@@ -1006,7 +1945,6 @@ void loofline_test(const int size, const int iteration)
 	int n = 0;
 
 	bool isUnroll2 = true;
-	omp_set_num_threads(8);
 	if (isUnroll2)
 	{
 		//---------------------------------------------
@@ -2568,7 +3506,7 @@ void loofline_test(const int size, const int iteration)
 
 int main(const int argc, const char** argv)
 {
-	loofline_test_omp(8 * 1024 / sizeof(float), 1000000); return 0;
+	loofline_test_omp2(8 * 1024 / sizeof(float), 1000000); return 0;
 	//課題1
 	//行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 	if (false)
