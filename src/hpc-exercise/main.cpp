@@ -15,7 +15,7 @@ int main(const int argc, const char** argv)
 	
 	const int loofline_size = 16 * 1024 / sizeof(float);//8KByte
 	const int iteration = 1000000;
-	timer_test<loofline_size>(iteration, 1);
+	timer_test<loofline_size>(iteration*20, 1);
 	return 0;
 	loofline_test<loofline_size>(iteration, 1);
 	loofline_test<loofline_size>(iteration);

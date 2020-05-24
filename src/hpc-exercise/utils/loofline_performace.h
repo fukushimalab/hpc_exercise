@@ -1070,7 +1070,7 @@ void timer_test(const int iteration, const int num_thread = -1)
 
 		}
 		t.end();
-		printf("%f sec \n", t.getLastTime() * 1000);
+		printf("%f sec \n", t.getLastTime() / 1000);
 		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
 	}
 
