@@ -2282,7 +2282,7 @@ int main(const int argc, const char** argv)
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			const __declspec(align(32)) int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+			const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
 			const __m256 absmask = *(const __m256*)(&v32f_absmask[0]);
 			for (int i = 0; i < size; i += 8)
 			{

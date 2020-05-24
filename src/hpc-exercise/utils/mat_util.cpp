@@ -1,6 +1,7 @@
 #include "mat_util.h"
 #include <stdlib.h>
 #include <iostream>
+#include <cstring>
 
 #ifdef __GNUC__
 #include <x86intrin.h>
