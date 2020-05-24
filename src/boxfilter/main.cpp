@@ -85,8 +85,8 @@ int main(const int argc, const char** argv)
 		Image_8U src_8u;
 		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
-		Image_32F dest_32f_pixel_parallel_y;
-		Image_32F dest_32f_pixel_parallel_x;
+		Image_32F dest_32f_pixel_parallel_y(src_8u);
+		Image_32F dest_32f_pixel_parallel_x(src_8u);
 
 		//pixel parallel y
 		//各自実装せよ
@@ -131,9 +131,9 @@ int main(const int argc, const char** argv)
 		Image_8U src_8u;
 		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
-		Image_32F dest_32f_scalar;
-		Image_32F dest_32f_kernel_unrolling;
-		Image_32F dest_32f_pixel_unrolling;
+		Image_32F dest_32f_scalar(src_8u);
+		Image_32F dest_32f_kernel_unrolling(src_8u);
+		Image_32F dest_32f_pixel_unrolling(src_8u);
 		
 		//scalar
 		//演習2で実装
@@ -191,10 +191,10 @@ int main(const int argc, const char** argv)
 		Image_8U src_8u;
 		readPXM("img/lena.ppm", src_8u);
 		Image_32F src_32f(src_8u);
-		Image_32F dest_32f_scalar;
-		Image_32F dest_32f_simd;
-		Image_32F dest_32f_scalar_separable;
-		Image_32F dest_32f_simd_separable;
+		Image_32F dest_32f_scalar(src_8u);
+		Image_32F dest_32f_simd(src_8u);
+		Image_32F dest_32f_scalar_separable(src_8u);
+		Image_32F dest_32f_simd_separable(src_8u);
 
 		//scalar
 		//演習2で実装
@@ -278,7 +278,7 @@ void boxFilter_scalar_AoS_32F(const Image_32F& src, Image_32F& dest, const int r
 	//出力画像作成
 	dest = Image_32F(src.rows, src.cols, src.channels);
 	//重み合計
-	const float wsum = (2*r+1)*(2*r+1);
+	const float wsum = (float)((2*r+1)*(2*r+1));
 
 	if (src.channels == 3)
 	{
@@ -320,7 +320,7 @@ void boxFilter_scalar_SoA_32F(const Image_32F& src, Image_32F& dest, const int r
 	copyMakeBorder(src, temp_32f, r, r, r, r);
 
 	//重み合計
-	const float wsum = (2*r+1)*(2*r+1);
+	const float wsum = (float)((2*r+1)*(2*r+1));
 
 	if (src.channels == 3)
 	{
@@ -381,7 +381,7 @@ void boxFilter_simd_SoA_32F_pixelParallel_kernelUnrolling(const Image_32F& src, 
 	copyMakeBorder(src, temp_32f, r, r, r, r);
 
 	//重み合計
-	const float wsum = (2*r+1)*(2*r+1);
+	const float wsum = (float)((2*r+1)*(2*r+1));
 	const int residualNum = (2*r+1)%8;
 
 	if (src.channels == 3)
@@ -453,7 +453,7 @@ void boxFilter_simd_SoA_32F_pixelParallel_pixelUnrolling(const Image_32F& src, I
 	copyMakeBorder(src, temp_32f, r, r, r, r);
 
 	//重み合計
-	const float wsum = (2*r+1)*(2*r+1);
+	const float wsum = (float)((2*r+1)*(2*r+1));
 	const __m256 mwsum = _mm256_set1_ps(wsum);
 	const __m256 offset = _mm256_set1_ps(0.5f);
 	const int residualNum = temp_32f.cols%8;
@@ -521,7 +521,7 @@ void boxFilter_simd_SoA_32F_pixelParallel_pixelUnrolling(const Image_32F& src, I
 void boxFilter_scalar_SoA_32F_pixelParallel_separable(const Image_32F& src, Image_32F& dest, const int r)
 {
 	//重み合計
-	const float wsum = (2*r+1)*(2*r+1);
+	const float wsum = (float)((2*r+1)*(2*r+1));
 
 	if (src.channels == 3)
 	{
@@ -587,7 +587,7 @@ void boxFilter_scalar_SoA_32F_pixelParallel_separable(const Image_32F& src, Imag
 void boxFilter_simd_SoA_32F_pixelParallel_pixelUnrolling_separable(const Image_32F& src, Image_32F& dest, const int r)
 {
 	//重み合計
-	const float wsum = (2*r+1)*(2*r+1);
+	const float wsum = (float)((2*r+1)*(2*r+1));
 
 	if (src.channels == 3)
 	{
