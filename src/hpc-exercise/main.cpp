@@ -2490,7 +2490,7 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 				//XXXX
-				
+
 				//XXXX
 				//XXXX
 				//XXXX
@@ -2694,8 +2694,8 @@ int main(const int argc, const char** argv)
 #endif
 			for (int i = 0; i < size; i++)
 			{
-				a[i] = i;
-				b[i] = 0;
+				a[i] = (float)i;
+				b[i] = 0.f;
 			}
 			__m256 ma[8], mb[8];
 			for (int i = 0; i < 8; i++)
@@ -2717,7 +2717,7 @@ int main(const int argc, const char** argv)
 			{
 				print_m256(mb[i]);
 			}
-	}
+		}
 		{
 			std::cout << "double 4x4" << std::endl;
 			const int size = 16;
@@ -2762,7 +2762,7 @@ int main(const int argc, const char** argv)
 	//__m256i（int）型を_m256（float）型に変換せよ．
 	//また，unsigned char型をfloat型に変換せよ．
 	//更に，16個の`int`型を`short`型に変換する処理をSSEとAVXで実装せよ．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 28" << std::endl;
 
@@ -2774,7 +2774,7 @@ int main(const int argc, const char** argv)
 
 		//cvtを使って
 		//XXXX
-		
+
 		std::cout << "after convert" << std::endl;
 		print_m256(m32f);
 
@@ -2827,7 +2827,7 @@ int main(const int argc, const char** argv)
 		//ヒント：前半8個と後半8個に分けて8回処理する．packs_epi16で半分のサイズできる
 		//ヒント：下記のAVXの作りかけもヒントになる．
 		//XXXX 行数は任意
-		
+
 		std::cout << "after convert: d (SSE)" << std::endl;
 		for (int i = 0; i < 16; i++)std::cout << d[i] << " ";
 		std::cout << std::endl;
@@ -2852,15 +2852,13 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
-
 	//課題29
-	//上記のコードを実行し，計算時間を計測せよ．
-	//また，スカラ実装，スカラ実装＋並列化，SIMD実装のみを作成し，計算時間を比較せよ．
+	//上記のコードのスカラ実装，スカラ実装＋並列化，SIMDのみ，SIMD＋並列化を作成し，計算時間を比較せよ．
 	if (false)
 	{
 		std::cout << "exercise 29" << std::endl;
-		const int loop = 1000;
-		const int size = 128;
+		const int loop = 10000;
+		const int size = 256;
 		Mat_32F a(size, size);
 		Mat_32F b(size, size);
 		Mat_32F c(size, size);
@@ -2946,7 +2944,7 @@ int main(const int argc, const char** argv)
 
 	std::cout << "no select" << std::endl;
 	return 0;
-	}
+}
 
 //課題12用
 inline void rot(double a, double b, double& x, double& y, double radian)
