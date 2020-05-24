@@ -2169,6 +2169,7 @@ int main(const int argc, const char** argv)
 	//課題23
 	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
 	//また，絶対値の計算をandによる実装とmaxによる実装を比較せよ．
+	//なお，mulとrcpの組み合わせは，計算機によってはdivよりも遅い可能性があり，また，ビット演算による絶対値計算も，演算強度とレジスタ数の関係からmaxとsubの演算よりも遅い場合も遅い可能性がある．
 	if (false)
 	{
 		std::cout << "exercise 23" << std::endl;
@@ -2306,7 +2307,7 @@ int main(const int argc, const char** argv)
 	//また，それぞれの計算時間を比較せよ ．
 	//なお，正解を計算結果を比較するために，非ベクトル化コードが実装されている．
 	//（この課題は，後にリダクションの最適化でもう一度登場します．）
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 24" << std::endl;
 		const int loop = 100000;
@@ -2381,39 +2382,51 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "exercise 25" << std::endl;
-		const int size = 8;
-		const float th = 50;
+		const int loop = 100000;
+		const int size = 8 * 1024;
+		const float threshold = 4.f;
 
-#ifdef __GNUC__
-		float __attribute__((aligned(32))) a[size];
-#elif _MSC_VER
-		__declspec(align(32)) float a[size];
-#endif
+		Mat_32F a(1, size);
+		Mat_32F ans(1, size);
+		Mat_32F b(1, size);
+		mat_rand(a, 0, 100);
 
-		for (int i = 0; i < size; i++)
+		CalcTime t;
+
+		//C++：埋めてある
+		for (int i = 0; i < loop; i++)
 		{
-			a[i] = rand_32f(0, 100);
+			t.start();
+			for (int i = 0; i < size; i++)
+			{
+				if (a.data[i] >= threshold) ans.data[i] = a.data[i] * a.data[i] * a.data[i];
+				else ans.data[i] = a.data[i];
+			}
+			t.end();
 		}
+		std::cout << "c++ : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		const __m256 mth = _mm256_set1_ps(th);
-		for (int i = 0; i < size; i += 8)
+		for (int i = 0; i < loop; i++)
 		{
-			const __m256 ma = _mm256_load_ps(a + i);
+			t.start();
+			const __m256 mth = _mm256_set1_ps(threshold);
+			for (int i = 0; i < size; i += 8)
+			{
+				const __m256 ma = _mm256_load_ps(a.data + i);
 
-			__m256 temp;
-			//cmp, mul, blendvを使って
-			//XXXX
-			//XXXX
-			//XXXX
-			_mm256_store_ps(a + i, temp);
+				__m256 temp;
+				//cmp, mul, blendvを使って
+				//XXXX
+				//XXXX
+				//XXXX
+
+				_mm256_store_ps(b.data + i, temp);
+			}
+			t.end();
 		}
-		for (int i = 0; i < size; i++)
-		{
-			std::cout << a[i] << ", ";
-			if (i != 0 && i % size == 0)
-				std::cout << std::endl;
-		}
-		std::cout << std::endl;
+		std::cout << "avx : time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "diff: " << mat_diff(ans, b) << std::endl;
+
 		return 0;
 	}
 

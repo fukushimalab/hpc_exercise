@@ -1,6 +1,5 @@
 #include "mat_util.h"
 #include <stdlib.h>
-#include <cstring>
 #include <iostream>
 
 #ifdef __GNUC__
@@ -656,9 +655,9 @@ double rand_64f(const double rand_min, const double rand_max)
 
 int mat_diff(Mat_8U& src1, Mat_8U& src2)
 {
-	if (src1.rows != src2.cols)
+	if (src1.rows * src1.cols != src2.cols * src2.rows)
 	{
-		std::cout << "invalid mat size (mat mul)" << std::endl;
+		std::cout << "invalid mat size (mat diff)" << std::endl;
 		exit(-1);
 	}
 
@@ -674,9 +673,9 @@ int mat_diff(Mat_8U& src1, Mat_8U& src2)
 
 int mat_diff(Mat_16S& src1, Mat_16S& src2)
 {
-	if (src1.rows != src2.cols)
+	if (src1.rows * src1.cols != src2.cols * src2.rows)
 	{
-		std::cout << "invalid mat size (mat mul)" << std::endl;
+		std::cout << "invalid mat size (mat diff)" << std::endl;
 		exit(-1);
 	}
 
@@ -691,9 +690,9 @@ int mat_diff(Mat_16S& src1, Mat_16S& src2)
 }
 int mat_diff(Mat_32S& src1, Mat_32S& src2)
 {
-	if (src1.rows != src2.cols)
+	if (src1.rows * src1.cols != src2.cols * src2.rows)
 	{
-		std::cout << "invalid mat size (mat mul)" << std::endl;
+		std::cout << "invalid mat size (mat diff)" << std::endl;
 		exit(-1);
 	}
 
@@ -709,9 +708,9 @@ int mat_diff(Mat_32S& src1, Mat_32S& src2)
 
 double mat_diff(Mat_32F& src1, Mat_32F& src2)
 {
-	if (src1.rows != src2.cols)
+	if (src1.rows * src1.cols != src2.cols * src2.rows)
 	{
-		std::cout << "invalid mat size (mat mul)" << std::endl;
+		std::cout << "invalid mat size (mat diff)" << std::endl;
 		exit(-1);
 	}
 
@@ -727,9 +726,9 @@ double mat_diff(Mat_32F& src1, Mat_32F& src2)
 
 double mat_diff(Mat_64F& src1, Mat_64F& src2)
 {
-	if (src1.rows != src2.cols)
+	if (src1.rows* src1.cols != src2.cols*src2.rows)
 	{
-		std::cout << "invalid mat size (mat mul)" << std::endl;
+		std::cout << "invalid mat size (mat diff)" << std::endl;
 		exit(-1);
 	}
 
