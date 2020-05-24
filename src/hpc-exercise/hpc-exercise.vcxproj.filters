@@ -35,5 +35,8 @@
     <ClInclude Include="utils\simd_util.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="utils\loofline_performace.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

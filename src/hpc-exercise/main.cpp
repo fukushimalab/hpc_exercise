@@ -1,6 +1,7 @@
 #include "utils/mat.h"
 #include "utils/mat_util.h"
 #include "utils/simd_util.h"
+#include "utils/loofline_performace.h"
 #ifdef _MSC_VER
 #define _USE_MATH_DEFINES
 #endif
@@ -11,10 +12,11 @@ void inline rot(double a, double b, double& x, double& y, double radian);
 
 int main(const int argc, const char** argv)
 {
-	const int loofline_size = 8 * 1024 / sizeof(float);
-	loofline_test(loofline_size, 1000000); //8KByte
-	loofline_test_omp(loofline_size, 1000000); //8KByte
-	loofline_test_omp2(loofline_size, 1000000); //8KByte
+	const int loofline_size = 8 * 1024 / sizeof(float);//8KByte
+	const int iteration = 1000000;
+	loofline_test<loofline_size>(iteration);
+	loofline_test_omp<loofline_size>(iteration);
+	loofline_test_omp2<loofline_size>(iteration);
 	return 0;
 
 	//課題1

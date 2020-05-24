@@ -148,6 +148,7 @@
     <ClCompile Include="utils\mat_util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils\loofline_performace.h" />
     <ClInclude Include="utils\mat.h" />
     <ClInclude Include="utils\mat_util.h" />
     <ClInclude Include="utils\simd_util.h" />
