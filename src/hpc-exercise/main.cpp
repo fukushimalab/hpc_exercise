@@ -2432,6 +2432,7 @@ int main(const int argc, const char** argv)
 
 	//課題26
 	//上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
+	//ただし，ベクトル化していないコードのほうが速い可能性が高い．これは，これくらい単純なコードは，自動ベクトル化によってコードが最適化されるため．
 	//if (false)
 	{
 		std::cout << "exercise 26" << std::endl;
@@ -2444,6 +2445,8 @@ int main(const int argc, const char** argv)
 		Mat_32F ans(1, size);
 		mat_rand(a, 0, 100);
 		mat_rand(b, 0, 100);
+		mat_zero(c);
+		mat_zero(ans);
 
 		CalcTime t;
 
@@ -2483,15 +2486,15 @@ int main(const int argc, const char** argv)
 			// unrolling 16
 			for (int i = 0; i < size; i += 16)
 			{
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
+				
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -2504,25 +2507,25 @@ int main(const int argc, const char** argv)
 			// unrolling 32
 			for (int i = 0; i < size; i += 32)
 			{
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 16);
-				mb = _mm256_load_ps(b.data + i + 16);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 24);
-				mb = _mm256_load_ps(b.data + i + 24);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -2535,45 +2538,45 @@ int main(const int argc, const char** argv)
 			// unrolling 64
 			for (int i = 0; i < size; i += 64)
 			{
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 16);
-				mb = _mm256_load_ps(b.data + i + 16);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 24);
-				mb = _mm256_load_ps(b.data + i + 24);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 32);
-				mb = _mm256_load_ps(b.data + i + 32);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 32, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 40);
-				mb = _mm256_load_ps(b.data + i + 40);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 40, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 48);
-				mb = _mm256_load_ps(b.data + i + 48);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 48, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 56);
-				mb = _mm256_load_ps(b.data + i + 56);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 56, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 			}
 			t.end();
 		}
@@ -2586,85 +2589,85 @@ int main(const int argc, const char** argv)
 			// unrolling 128
 			for (int i = 0; i < size; i += 128)
 			{
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 16);
-				mb = _mm256_load_ps(b.data + i + 16);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 24);
-				mb = _mm256_load_ps(b.data + i + 24);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 32);
-				mb = _mm256_load_ps(b.data + i + 32);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 32, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 40);
-				mb = _mm256_load_ps(b.data + i + 40);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 40, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 48);
-				mb = _mm256_load_ps(b.data + i + 48);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 48, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 56);
-				mb = _mm256_load_ps(b.data + i + 56);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 56, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 64);
-				mb = _mm256_load_ps(b.data + i + 64);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 64, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 72);
-				mb = _mm256_load_ps(b.data + i + 72);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 72, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 80);
-				mb = _mm256_load_ps(b.data + i + 80);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 80, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 88);
-				mb = _mm256_load_ps(b.data + i + 88);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 88, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 96);
-				mb = _mm256_load_ps(b.data + i + 96);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 96, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 104);
-				mb = _mm256_load_ps(b.data + i + 104);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 104, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 112);
-				mb = _mm256_load_ps(b.data + i + 112);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 112, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 
-				ma = _mm256_load_ps(a.data + i + 120);
-				mb = _mm256_load_ps(b.data + i + 120);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 120, _mm256_mul_ps(temp, temp));
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 			}
 			t.end();
 		}
