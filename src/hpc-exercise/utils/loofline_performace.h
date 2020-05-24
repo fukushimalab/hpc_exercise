@@ -12,7 +12,7 @@
 template<int size>
 void loofline_test(const int iteration, const int num_thread = -1)
 {
-	const int thread_max = (num_thread == -1) ? omp_get_max_threads() : num_thread;
+	const int thread_max = (num_thread == -1) ? omp_get_num_procs() : num_thread;
 	omp_set_num_threads(thread_max);
 
 	//FLOPSŒvZ
@@ -971,6 +971,3 @@ void loofline_test(const int iteration, const int num_thread = -1)
 	_mm_free(x);
 	_mm_free(y);
 }
-
-
-
