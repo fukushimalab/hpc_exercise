@@ -11,12 +11,10 @@ void inline rot(double a, double b, double& x, double& y, double radian);
 
 int main(const int argc, const char** argv)
 {
-	std::cout << "single" << std::endl;
-	loofline_test(8 * 1024 / sizeof(float), 1000000); //8KByte
-	std::cout << "parallel fine-grained" << std::endl;
-	loofline_test_omp2(8 * 1024 / sizeof(float), 1000000); //8KByte
-	std::cout << "parallel coarse-grained" << std::endl;
-	loofline_test_omp2(8 * 1024 / sizeof(float), 1000000); //8KByte
+	const int loofline_size = 8 * 1024 / sizeof(float);
+	loofline_test(loofline_size, 1000000); //8KByte
+	loofline_test_omp(loofline_size, 1000000); //8KByte
+	loofline_test_omp2(loofline_size, 1000000); //8KByte
 	return 0;
 
 	//課題1
