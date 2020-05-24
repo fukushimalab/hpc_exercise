@@ -166,7 +166,7 @@ int main(const int argc, const char** argv)
 		//また，人間の目で50dB以上の画像を区別するのはほぼ不可能．
 		std::cout << "PSNR: " << calcPSNR(reference, dest)<<"dB" << std::endl;
 
-		writePXM("img/gamma.ppm", dest);
+		writePXM("img/gauss.ppm", dest);
 		return 0;
 	}
 
