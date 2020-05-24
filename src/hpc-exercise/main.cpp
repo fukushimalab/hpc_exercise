@@ -12,15 +12,6 @@ void inline rot(double a, double b, double& x, double& y, double radian);
 
 int main(const int argc, const char** argv)
 {
-	
-	const int loofline_size = 16 * 1024 / sizeof(float);//8KByte
-	const int iteration = 1000000;
-	timer_test<loofline_size>(iteration*20, 1);
-	return 0;
-	loofline_test<loofline_size>(iteration, 1);
-	loofline_test<loofline_size>(iteration);
-	
-
 	//課題1
 	//行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 	if (false)
@@ -2088,8 +2079,9 @@ int main(const int argc, const char** argv)
 	//a=_mm256_fmadd_ps(a,b,c);
 	//a=_mm256_fmadd_ps(a,b,c);
 	//これは，単純にFMAが1度だとメモリで律速するこのコードでは計算速度の差が出にくいためである．差が小さければ，より演算を増やせば良い．
-	//また，シングルコアのGFLOPSと演算強度[FLOPS/BYTE]をFMA命令で計算するサンプルが書いてある．これをプロットし，グラフとして図示せよ．
-	//if (false)
+	//なお，現在のg++では，最適化によってmul - addの命令はおそらくFMAに自動的に最適化されている．コンパイラオプション等で抑制して様子を見るとよい．
+	//また，GFLOPSと演算強度[FLOPS / BYTE]をFMA命令で計算する関数`loofline_test`を使って，フールラインのグラフとして図示せよ．
+	if (false)
 	{
 		std::cout << "exercise 22" << std::endl;
 		const int loop = 10000000;
@@ -2108,7 +2100,7 @@ int main(const int argc, const char** argv)
 		mat_rand(x, 0, 1);
 		mat_zero(c);
 
-		/*
+		
 		//mul, add
 		for (int j = 0; j < loop; j++)
 		{
@@ -2125,10 +2117,10 @@ int main(const int argc, const char** argv)
 
 				//mul,addを使って
 				__m256 temp;
-				temp = _mm256_add_ps(_mm256_mul_ps(ma, mx), mb);
-				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
-				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
-				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 				_mm256_store_ps(pc + i, temp);
 			}
 			t.end();
@@ -2151,256 +2143,42 @@ int main(const int argc, const char** argv)
 
 				//fmaを使って
 				__m256 temp;
-				temp = _mm256_fmadd_ps(ma, mx, mb);
-				temp = _mm256_fmadd_ps(temp, mx, mb);
-				temp = _mm256_fmadd_ps(temp, mx, mb);
-				temp = _mm256_fmadd_ps(temp, mx, mb);
+				//XXXX
+				//XXXX
+				//XXXX
+				//XXXX
 				_mm256_store_ps(pc + i, temp);
 			}
 			t.end();
 		}
-		std::cout << "fma    : time (avg): " << t.getAvgTime() << " ms" << std::endl;
-		*/
-		std::cout << "======" << std::endl;
-		std::cout << "GFLOPS" << std::endl;
-		std::cout << "======" << std::endl;
-		//FLOPS計算
-		//x+1: (1*x+1)
-		//x*x+x+1: x*(x+1)+1
-		//x*x*x+x*x+x+1: x*(x*(x+1))+1
-		int simdsize = size / 8;
+		std::cout << "fma    : time (avg): " << t.getAvgTime() << " ms" << std::endl << std::endl;
+		
+		//loofline
+		std::cout << "plot loofline"<< std::endl;
 
-		//n=...
-		std::cout << "..." << std::endl;
-		int n = 1;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-
-				//1次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-
-				_mm256_store_ps(pc, ret);
-
-				px += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize / 2; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mx2 = _mm256_load_ps(px + 8);
-
-				//1次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
-
-				_mm256_store_ps(pc, ret);
-				_mm256_store_ps(pc + 8, ret2);
-
-				px += 16;
-				pc += 16;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 2;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-
-				//1次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-				ret = _mm256_fmadd_ps(mx, ret, mones);//2
-				_mm256_store_ps(pc, ret);
-
-				px += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 5;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-
-				//20次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-				ret = _mm256_fmadd_ps(mx, ret, mones);//2
-				ret = _mm256_fmadd_ps(mx, ret, mones);//3
-				ret = _mm256_fmadd_ps(mx, ret, mones);//4
-				ret = _mm256_fmadd_ps(mx, ret, mones);//5
-
-				_mm256_store_ps(pc, ret);
-
-				px += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize / 2; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mx2 = _mm256_load_ps(px + 8);
-
-				//20次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
-				ret = _mm256_fmadd_ps(mx, ret, mones);//2
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
-				ret = _mm256_fmadd_ps(mx, ret, mones);//3
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
-				ret = _mm256_fmadd_ps(mx, ret, mones);//4
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
-				ret = _mm256_fmadd_ps(mx, ret, mones);//5
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
-
-				_mm256_store_ps(pc, ret);
-				_mm256_store_ps(pc + 8, ret2);
-
-				px += 16;
-				pc += 16;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		n = 10;
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-
-				//20次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-				ret = _mm256_fmadd_ps(mx, ret, mones);//2
-				ret = _mm256_fmadd_ps(mx, ret, mones);//3
-				ret = _mm256_fmadd_ps(mx, ret, mones);//4
-				ret = _mm256_fmadd_ps(mx, ret, mones);//5
-				ret = _mm256_fmadd_ps(mx, ret, mones);//6
-				ret = _mm256_fmadd_ps(mx, ret, mones);//7
-				ret = _mm256_fmadd_ps(mx, ret, mones);//8
-				ret = _mm256_fmadd_ps(mx, ret, mones);//9
-				ret = _mm256_fmadd_ps(mx, ret, mones);//10
-
-				_mm256_store_ps(pc, ret);
-
-				px += 8;
-				pc += 8;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
-
-		for (int j = 0; j < loop; j++)
-		{
-			t.start();
-			float* px = x.data;
-			float* pc = c.data;
-			const __m256 mones = _mm256_set1_ps(1.f);
-			for (int i = simdsize / 2; i != 0; i--)
-			{
-				const __m256 mx = _mm256_load_ps(px);
-				const __m256 mx2 = _mm256_load_ps(px + 8);
-
-				//20次
-				__m256 ret = _mm256_fmadd_ps(mones, mx, mones);//1
-				__m256 ret2 = _mm256_fmadd_ps(mones, mx2, mones);//1
-				ret = _mm256_fmadd_ps(mx, ret, mones);//2
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//2
-				ret = _mm256_fmadd_ps(mx, ret, mones);//3
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//3
-				ret = _mm256_fmadd_ps(mx, ret, mones);//4
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//4
-				ret = _mm256_fmadd_ps(mx, ret, mones);//5
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//5
-				ret = _mm256_fmadd_ps(mx, ret, mones);//6
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//6
-				ret = _mm256_fmadd_ps(mx, ret, mones);//7
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//7
-				ret = _mm256_fmadd_ps(mx, ret, mones);//8
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//8
-				ret = _mm256_fmadd_ps(mx, ret, mones);//9
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//9
-				ret = _mm256_fmadd_ps(mx, ret, mones);//10
-				ret2 = _mm256_fmadd_ps(mx2, ret2, mones);//10
-
-				_mm256_store_ps(pc, ret);
-				_mm256_store_ps(pc + 8, ret2);
-
-				px += 16;
-				pc += 16;
-			}
-			t.end();
-		}
-		std::cout << "fma " << n << "th, " << n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000) << ", GFLOPS, " << n * 2.0 / (4 * 4) << ", FLOPS/BYTE" << std::endl;
+		const int loofline_size = 16 * 1024 / sizeof(float);//16KByte
+		const int iteration = 1000000;
+		//single core performance
+		loofline_test<loofline_size>(iteration, 1);
+		//multi core performance
+		loofline_test<loofline_size>(iteration);
 
 		return 0;
 	}
 
 	//課題23
 	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
-	if (false)
+	//divとrcp,sqrtとrsqrtの実行速度を比較せよ．
+	//if (false)
 	{
 		std::cout << "exercise 23" << std::endl;
 		const int loop = 10000;
-		const int size = 1024;
-#ifdef __GNUC__
-		float __attribute__((aligned(32))) a[size];
-		float __attribute__((aligned(32))) b[size];
-#elif _MSC_VER
-		__declspec(align(32)) float a[size];
-		__declspec(align(32)) float b[size];
-#endif
-
-		for (int i = 0; i < size; i++)
-		{
-			a[i] = rand_32f(0, 100);
-			b[i] = rand_32f(0, 100);
-		}
+		const int size = 1024 * 1024;
+		Mat_32F a(1, size);
+		Mat_32F b(1, size);
+		Mat_32F c(1, size);
+		mat_rand(a, 0, 100);
+		mat_rand(b, 0, 100);
 
 		CalcTime t;
 		//div
@@ -2409,16 +2187,18 @@ int main(const int argc, const char** argv)
 			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
-				const __m256 ma = _mm256_load_ps(a + i);
-				const __m256 mb = _mm256_load_ps(b + i);
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
 
 				__m256 temp;
 				//divを使って
-				//XXXX
+				//xxxx
+
+				_mm256_store_ps(c.data + i, temp);
 			}
 			t.end();
 		}
-		std::cout << "div: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "div  : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//rcp
 		for (int j = 0; j < loop; j++)
@@ -2426,16 +2206,18 @@ int main(const int argc, const char** argv)
 			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
-				const __m256 ma = _mm256_load_ps(a + i);
-				const __m256 mb = _mm256_load_ps(b + i);
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
 
 				__m256 temp;
-				//rcpをつかって
-				//XXXX
+				//rcpとmulをつかって
+				//xxxx
+
+				_mm256_store_ps(c.data + i, temp);
 			}
 			t.end();
 		}
-		std::cout << "rcp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "rcp  : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
 		//sqrt
 		for (int j = 0; j < loop; j++)
@@ -2443,12 +2225,14 @@ int main(const int argc, const char** argv)
 			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
-				const __m256 ma = _mm256_load_ps(a + i);
-				const __m256 mb = _mm256_load_ps(b + i);
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
 
 				__m256 temp;
 				//sqrtを使って
-				//XXXX
+				//xxxx
+
+				_mm256_store_ps(c.data + i, temp);
 			}
 			t.end();
 		}
@@ -2460,12 +2244,14 @@ int main(const int argc, const char** argv)
 			t.start();
 			for (int i = 0; i < size; i += 8)
 			{
-				const __m256 ma = _mm256_load_ps(a + i);
-				const __m256 mb = _mm256_load_ps(b + i);
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
 
 				__m256 temp;
-				//rsqrtを使って
-				//XXXX
+				//rsqrtとrcpを使って
+				//xxxx
+
+				_mm256_store_ps(c.data + i, temp);
 			}
 			t.end();
 		}
@@ -2473,7 +2259,6 @@ int main(const int argc, const char** argv)
 
 		return 0;
 	}
-
 
 	//課題24
 	//haddとdpで要素の総和を取るプログラムを作成せよ．
