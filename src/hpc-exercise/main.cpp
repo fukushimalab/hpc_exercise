@@ -9,26 +9,17 @@
 
 void inline _mm256_transpose_8x8_ps(__m256* dst, const __m256* src);
 void inline rot(double a, double b, double& x, double& y, double radian);
-void timer_test()
-{
-	CalcTime t;
-	t.start();
-	for (int i = 0; i < 1000; i++)
-	{
-		Sleep(1000);
-		t.end();
-		std::cout << t.getLastTime()/1000 << std::endl;
-	}
-}
 
 int main(const int argc, const char** argv)
 {
-	timer_test();
+	
 	const int loofline_size = 16 * 1024 / sizeof(float);//8KByte
 	const int iteration = 1000000;
+	timer_test<loofline_size>(iteration, 1);
+	return 0;
 	loofline_test<loofline_size>(iteration, 1);
 	loofline_test<loofline_size>(iteration);
-	return 0;
+	
 
 	//課題1
 	//行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
