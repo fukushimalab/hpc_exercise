@@ -12,7 +12,7 @@ void inline rot(double a, double b, double& x, double& y, double radian);
 
 int main(const int argc, const char** argv)
 {
-	const int loofline_size = 8 * 1024 / sizeof(float);//8KByte
+	const int loofline_size = 16 * 1024 / sizeof(float);//8KByte
 	const int iteration = 1000000;
 	loofline_test<loofline_size>(iteration);
 	loofline_test_omp<loofline_size>(iteration);

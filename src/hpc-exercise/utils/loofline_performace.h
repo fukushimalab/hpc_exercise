@@ -3850,6 +3850,7 @@ void loofline_test(const int iteration)
 	const int loop = iteration;
 
 	CalcTime t;
+	CalcTime to;
 
 	float* x = (float*)_mm_malloc(sizeof(float) * size, 32);
 	float* y = (float*)_mm_malloc(sizeof(float) * size, 32);
@@ -3875,6 +3876,7 @@ void loofline_test(const int iteration)
 	{
 		//---------------------------------------------
 		n = 1;
+		to.start();
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -3897,10 +3899,13 @@ void loofline_test(const int iteration)
 			}
 			t.end();
 		}
+		to.end();
 		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (to.getLastTime() * 0.001/loop) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
 
 		//---------------------------------------------
 		n = 2;
+		to.start();
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -3925,10 +3930,13 @@ void loofline_test(const int iteration)
 			}
 			t.end();
 		}
+		to.end();
 		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (to.getLastTime() * 0.001 / loop) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
 
 		//---------------------------------------------
 		n = 3;
+		to.start();
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -3955,8 +3963,9 @@ void loofline_test(const int iteration)
 			}
 			t.end();
 		}
+		to.end();
 		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getAvgTime() * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
-
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (to.getLastTime() * 0.001 / loop) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
 		//---------------------------------------------
 		n = 4;
 		for (int j = 0; j < loop; j++)
