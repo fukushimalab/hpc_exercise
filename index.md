@@ -5,6 +5,18 @@
 編集用
 [マークダウンチートシート](https://gist.github.com/mignonstyle/083c9e1651d7734f84c99b8cf49d57fa)
 -->
+## 導入
+
+各プロジェクトは，Makefile（g++）でコンパイルできるようになっています．   
+おそらく，clangでも動きます（検証していない．Macの人はclangになっている人が多いです．）
+また，Windowsでは，Windows Subsystem for Linux (WSL)をインストールすれば，g++などのLinux環境が使えます．
+
+さらに，Windows用にVisual Studio 2019でもコンパイルできるようにしています．
+下記のファイルはVisual Studio 2019用のファイルです．必要ない人は無視してください．  
+`*.sln` `*.vcxproj*`
+
+ただしファイルの文字コードや改行コードには注意すること．
+Linux用に改行コードはLFになっていますが，Visual Stdio2019上で実行するには，CRLFになっていないといけません．
 
 ## 目次
 <!-- TOC -->
