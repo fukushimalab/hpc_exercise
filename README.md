@@ -30,7 +30,7 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 |Mac|clang++|△：※３|
 
 * ※１インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．
-* ※２clangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．
+* ※２Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
 * ※３デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
 
 
