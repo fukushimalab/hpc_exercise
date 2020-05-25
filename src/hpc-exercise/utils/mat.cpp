@@ -1,9 +1,5 @@
 #include "mat.h"
-#ifdef __GNUC__
-#include <x86intrin.h>
-#elif _MSC_VER
-#include <intrin.h>
-#endif
+#include "simd_util.h"
 #include <cstring>
 #include <iostream>
 

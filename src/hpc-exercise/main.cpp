@@ -1,7 +1,6 @@
-#include "utils/mat.h"
 #include "utils/mat_util.h"
-#include "utils/simd_util.h"
 #include "utils/loofline_performace.h"
+
 #ifdef _MSC_VER
 #define _USE_MATH_DEFINES
 #endif

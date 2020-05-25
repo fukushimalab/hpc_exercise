@@ -1,7 +1,6 @@
 #pragma once
 #include "mat.h"
 #include <vector>
-#include <time.h>
 
 #ifdef _MSC_VER
 #define NOMINMAX

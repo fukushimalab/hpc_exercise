@@ -1,13 +1,8 @@
 #pragma once
 #include "mat_util.h"
+#include "simd_util.h"
 #include <iostream>
 #include <omp.h>
-
-#ifdef __GNUC__
-#include <x86intrin.h>
-#elif _MSC_VER
-#include <intrin.h>
-#endif
 
 template<int size>
 void loofline_test(const int iteration, const int num_thread = -1)

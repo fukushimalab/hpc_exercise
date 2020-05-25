@@ -1,13 +1,10 @@
 #include "mat_util.h"
+#include "simd_util.h"
 #include <stdlib.h>
 #include <iostream>
 #include <cstring>
 
-#ifdef __GNUC__
-#include <x86intrin.h>
-#elif _MSC_VER
-#include <intrin.h>
-#endif
+
 
 //Mat util functions
 ////////////////////////////
