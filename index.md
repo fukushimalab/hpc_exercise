@@ -485,6 +485,7 @@ double time = (double)(end.tv_sec-start.tv_sec)*1e3 + (double)(end.tv_nsec-start
 この時間計測関数は，本演習環境を想定した精度の高いタイマーである．
 
 なお，Windows上で，MinGWを使った場合，`clock_gettime`が使えないため，本演習はMinGWではコンパイルが通らない．
+そのため，Visual Studioを使用した場合はWindows専用のタイマーを使用するようにコードを作ってある．
 
 ### 時間計測クラス
 　本演習では，時間計測を簡素化するために，CalcTimeクラスを提供している．
