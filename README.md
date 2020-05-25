@@ -20,8 +20,8 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 |CSE@384コア（名工大）|g++|〇：make|
 |CSE@384コア（名工大）|icc|〇：make|
 |20号館ローカル（名工大）|g++|〇：make|
-|Linux|g++|〇：make|
-|Linux|clang++|〇：make|
+|Linux (Ubuntu)|g++|〇：make|
+|Linux (Ubuntu)||clang++|〇：make|
 |Windows|Visual Studio2019|〇：slnを開く|
 |Windows|g++on WSL|〇：make|
 |Windows|MinGW|△：※１|
