@@ -1,9 +1,5 @@
 #include "image.h"
-#ifdef __GNUC__
-#include <x86intrin.h>
-#elif _MSC_VER
-#include <intrin.h>
-#endif
+#include "simd_util.h"
 #include <cstring>
 #include <iostream>
 #include <algorithm>
@@ -37,9 +33,9 @@ Image_8U::Image_8U(const Image_16S& m)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels*channels;j++)
+	for (int j = 0; j < rows * cols * channels * channels; j++)
 	{
-		data[j]=(unsigned char)std::min(std::max(m.data[j], (short)0), (short)255);
+		data[j] = (unsigned char)std::min(std::max(m.data[j], (short)0), (short)255);
 	}
 	memcpy((void*)this->data, (void*)m.data, size);
 }
@@ -49,31 +45,31 @@ Image_8U::Image_8U(const Image_32S& m)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels;j++)
+	for (int j = 0; j < rows * cols * channels; j++)
 	{
-		data[j]=(unsigned char)std::min(std::max(m.data[j], (int)0), (int)255);
+		data[j] = (unsigned char)std::min(std::max(m.data[j], (int)0), (int)255);
 	}
 }
 
 Image_8U::Image_8U(const Image_32F& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(unsigned char)), channels(m.channels) 
+	: rows(m.rows), cols(m.cols), type(sizeof(unsigned char)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels;j++)
+	for (int j = 0; j < rows * cols * channels; j++)
 	{
-		data[j]=(unsigned char)std::min(std::max(m.data[j], (float)0), (float)255);
+		data[j] = (unsigned char)std::min(std::max(m.data[j], (float)0), (float)255);
 	}
 }
 
 Image_8U::Image_8U(const Image_64F& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(unsigned char)), channels(m.channels) 
+	: rows(m.rows), cols(m.cols), type(sizeof(unsigned char)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels;j++)
+	for (int j = 0; j < rows * cols * channels; j++)
 	{
-		data[j]=(unsigned char)std::min(std::max(m.data[j], (double)0), (double)255);
+		data[j] = (unsigned char)std::min(std::max(m.data[j], (double)0), (double)255);
 	}
 }
 
@@ -131,9 +127,9 @@ Image_16S::Image_16S(const Image_8U& m)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels;j++)
+	for (int j = 0; j < rows * cols * channels; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = m.data[j];
 	}
 }
 
@@ -142,9 +138,9 @@ Image_16S::Image_16S(const Image_32S& m)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels;j++)
+	for (int j = 0; j < rows * cols * channels; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = m.data[j];
 	}
 }
 
@@ -153,9 +149,9 @@ Image_16S::Image_16S(const Image_32F& m)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels;j++)
+	for (int j = 0; j < rows * cols * channels; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (short)m.data[j];
 	}
 }
 
@@ -164,9 +160,9 @@ Image_16S::Image_16S(const Image_64F& m)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
-	for(int j=0;j<rows*cols*channels*channels;j++)
+	for (int j = 0; j < rows * cols * channels * channels; j++)
 	{
-		data[j]=m.data[j];
+		data[j] = (short)m.data[j];
 	}
 }
 
@@ -222,45 +218,45 @@ Image_32S::Image_32S(const Image_32S& m)
 Image_32S::Image_32S(const Image_8U& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(int)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Image_32S::Image_32S(const Image_16S& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(int)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Image_32S::Image_32S(const Image_32F& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(int)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = (int)m.data[j];
+	}
 }
 
 Image_32S::Image_32S(const Image_64F& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(int)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (int*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (int*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = (int)m.data[j];
+	}
 }
 
 Image_32S::~Image_32S()
@@ -300,7 +296,7 @@ Image_32F::Image_32F(const float* data, const int rows, const int cols, const in
 Image_32F::Image_32F(const int rows, const int cols, const int channels)
 	: type(sizeof(float)), rows(rows), cols(cols), channels(channels)
 {
-	const int size = type * rows * cols * channels; 
+	const int size = type * rows * cols * channels;
 	this->data = (float*)_mm_malloc(size, 32);
 }
 
@@ -315,45 +311,45 @@ Image_32F::Image_32F(const Image_32F& m)
 Image_32F::Image_32F(const Image_8U& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(float)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = (float)m.data[j];
+	}
 }
 
 Image_32F::Image_32F(const Image_16S& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(float)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = (float)m.data[j];
+	}
 }
 
 Image_32F::Image_32F(const Image_32S& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(float)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = (float)m.data[j];
+	}
 }
 
 Image_32F::Image_32F(const Image_64F& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(float)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (float*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (float*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = (float)m.data[j];
+	}
 }
 
 Image_32F::~Image_32F()
@@ -374,7 +370,7 @@ Image_32F& Image_32F::operator=(const Image_32F& m)
 		{
 			_mm_free(this->data);
 		}
-		const int size = type * rows * cols * channels; 
+		const int size = type * rows * cols * channels;
 		this->data = (float*)_mm_malloc(size, 32);
 		memcpy((void*)this->data, (void*)m.data, size);
 	}
@@ -393,7 +389,7 @@ Image_64F::Image_64F(const double* data, const int rows, const int cols, const i
 Image_64F::Image_64F(const int rows, const int cols, const int channels)
 	: type(sizeof(double)), rows(rows), cols(cols), channels(channels)
 {
-	const int size = type * rows * cols * channels; 
+	const int size = type * rows * cols * channels;
 	this->data = (double*)_mm_malloc(size, 32);
 }
 
@@ -408,45 +404,45 @@ Image_64F::Image_64F(const Image_64F& m)
 Image_64F::Image_64F(const Image_8U& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(double)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Image_64F::Image_64F(const Image_16S& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(double)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Image_64F::Image_64F(const Image_32S& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(double)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Image_64F::Image_64F(const Image_32F& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(double)), channels(m.channels)
 {
-        const int size = type * rows * cols * channels;
-        this->data = (double*)_mm_malloc(size, 32);
-        for(int j=0;j<rows*cols*channels;j++)
-        {
-                data[j]=m.data[j];
-        }
+	const int size = type * rows * cols * channels;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols * channels; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Image_64F::~Image_64F()
@@ -467,7 +463,7 @@ Image_64F& Image_64F::operator=(const Image_64F& m)
 		{
 			_mm_free(this->data);
 		}
-		const int size = type * rows * cols * channels; 
+		const int size = type * rows * cols * channels;
 		this->data = (double*)_mm_malloc(size, 32);
 		memcpy((void*)this->data, (void*)m.data, size);
 	}

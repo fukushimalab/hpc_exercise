@@ -5,6 +5,7 @@
 //#include <intrin.h>
 #elif _MSC_VER
 #include <intrin.h>
+#pragma warning(disable: 4996)
 #endif
 
 #include <iostream>

@@ -1,8 +1,11 @@
-#include "utils/image.h"
 #include "utils/image_util.h"
 #include "utils/simd_util.h"
-#include <time.h>
+
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
 #include <math.h>
+#include <algorithm>
 
 /////////////////////////////////
 // box filter

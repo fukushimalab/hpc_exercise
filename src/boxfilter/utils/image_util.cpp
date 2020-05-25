@@ -1,15 +1,9 @@
-#include <stdlib.h>
 #include "image_util.h"
+#include "simd_util.h"
+#include <stdlib.h>
 #include <iostream>
 #include <algorithm>
-#include <cmath>
-#ifdef __GNUC__
-#include <x86intrin.h>
-#elif _MSC_VER
-#include <intrin.h>
-#pragma warning(disable: 4996)
-#endif
-
+//#include <cmath>
 
 //Image util functions
 ////////////////////////////
@@ -573,127 +567,6 @@ double rand_64f(const double rand_min, const double rand_max)
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
 
-
-//timer
-#ifdef __GNUC__
-void CalcTime::start()
-{
-	clock_gettime(CLOCK_REALTIME, &s);
-	return;
-}
-
-void CalcTime::end()
-{
-	clock_gettime(CLOCK_REALTIME, &e);
-	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
-	return;
-}
-
-void CalcTime::clear()
-{
-	que.clear();
-	return;
-}
-
-double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
-{
-	double count = 0;
-	double time = 0;
-	if ((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
-	{
-		return -1;
-	}
-	std::vector<double>::iterator it = que.begin();
-	if (dropFirstMeasure)
-	{
-		it++;
-	}
-	for (; it != que.end(); ++it)
-	{
-		time += *it;
-		count++;
-	}
-	if (isClear)
-	{
-		que.clear();
-	}
-	return time / count;
-}
-
-double CalcTime::getLastTime()
-{
-	if (que.size() == 0)
-	{
-		return -1;
-	}
-	return que.back();
-}
-#elif _MSC_VER
-
-CalcTime::CalcTime()
-{
-	QueryPerformanceFrequency(&frequency);
-}
-
-void CalcTime::start()
-{
-	QueryPerformanceCounter(&s);
-	return;
-}
-
-void CalcTime::end()
-{
-	QueryPerformanceCounter(&e);
-	LONGLONG span = e.QuadPart - s.QuadPart;
-	double sec = (double)span / (double)frequency.QuadPart;
-
-	que.push_back(sec*1000.0); //msec
-	return;
-}
-
-void CalcTime::clear()
-{
-	que.clear();
-	return;
-}
-
-double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
-{
-	double count = 0;
-	double time = 0;
-	if ((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
-	{
-		return -1;
-	}
-	std::vector<double>::iterator it = que.begin();
-	if (dropFirstMeasure)
-	{
-		it++;
-	}
-	for (; it != que.end(); ++it)
-	{
-		time += *it;
-		count++;
-	}
-	if (isClear)
-	{
-		que.clear();
-	}
-	return time / count;
-}
-
-double CalcTime::getLastTime()
-{
-	if (que.size() == 0)
-	{
-		return -1;
-	}
-	return que.back();
-}
-#endif
-
-
-
 // calcPSNR
 double calcPSNR(const Image_8U& src1, const Image_8U& src2)
 {
@@ -769,4 +642,98 @@ double calcPSNR(const Image_32F& src1, const Image_32F& src2)
                 const double  mse = sse / (double)(ch * height * width);
                 return 10.0 * log10((255.0 * 255.0) / mse);
         }
+}
+
+//timer
+#ifdef USE_TIME_CHRONO
+void CalcTime::start()
+{
+	s = std::chrono::system_clock::now();
+	return;
+}
+
+void CalcTime::end()
+{
+	e = std::chrono::system_clock::now();
+	double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(e - s).count() / 1000.0);
+	que.push_back(time); //ms
+	return;
+}
+
+#else
+#ifdef __GNUC__
+void CalcTime::start()
+{
+	clock_gettime(CLOCK_REALTIME, &s);
+	return;
+}
+
+void CalcTime::end()
+{
+	clock_gettime(CLOCK_REALTIME, &e);
+	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
+	return;
+}
+#elif _MSC_VER
+CalcTime::CalcTime()
+{
+	QueryPerformanceFrequency(&frequency);
+}
+
+void CalcTime::start()
+{
+	QueryPerformanceCounter(&s);
+	return;
+}
+
+void CalcTime::end()
+{
+	QueryPerformanceCounter(&e);
+	LONGLONG span = e.QuadPart - s.QuadPart;
+	double sec = (double)span / (double)frequency.QuadPart;
+
+	que.push_back(sec * 1000.0); //msec
+	return;
+}
+#endif
+#endif
+
+void CalcTime::clear()
+{
+	que.clear();
+	return;
+}
+
+double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
+{
+	double count = 0;
+	double time = 0;
+	if ((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
+	{
+		return -1;
+	}
+	std::vector<double>::iterator it = que.begin();
+	if (dropFirstMeasure)
+	{
+		it++;
+	}
+	for (; it != que.end(); ++it)
+	{
+		time += *it;
+		count++;
+	}
+	if (isClear)
+	{
+		que.clear();
+	}
+	return time / count;
+}
+
+double CalcTime::getLastTime()
+{
+	if (que.size() == 0)
+	{
+		return -1;
+	}
+	return que.back();
 }

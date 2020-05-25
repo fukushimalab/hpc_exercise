@@ -1,6 +1,5 @@
 #pragma once
 
-
 struct Image_8U;
 struct Image_16S;
 struct Image_32S;

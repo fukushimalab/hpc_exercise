@@ -1,12 +1,16 @@
 #pragma once
+
 #ifdef __GNUC__
 #include <x86intrin.h>
+//#include <intrin.h>
 #elif _MSC_VER
 #include <intrin.h>
+#pragma warning(disable: 4996)
 #endif
+
 #include <iostream>
 
-void print_m256(const __m256 a)
+inline void print_m256(const __m256 a)
 {
 #ifdef __GNUC__
 	std::cout << ((float*)&a)[0] << ", "
@@ -29,7 +33,7 @@ void print_m256(const __m256 a)
 #endif
 }
 
-void print_m256d(const __m256d a)
+inline void print_m256d(const __m256d a)
 {
 #ifdef __GNUC__
 	std::cout << ((double*)&a)[0] << ", "
@@ -44,7 +48,7 @@ void print_m256d(const __m256d a)
 #endif
 }
 
-void print_m256i_i8(const __m256i a)
+inline void print_m256i_i8(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << (int)((char*)&a)[0] << ", "
@@ -115,7 +119,7 @@ void print_m256i_i8(const __m256i a)
 #endif
 }
 
-void print_m256i_u8(const __m256i a)
+inline void print_m256i_u8(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << (int)((unsigned char*)&a)[0] << ", "
@@ -186,7 +190,7 @@ void print_m256i_u8(const __m256i a)
 #endif
 }
 
-void print_m256i_i16(const __m256i a)
+inline void print_m256i_i16(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << ((short*)&a)[0] << ", "
@@ -225,7 +229,7 @@ void print_m256i_i16(const __m256i a)
 #endif
 }
 
-void print_m256i_u16(const __m256i a)
+inline void print_m256i_u16(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << ((unsigned short*)&a)[0] << ", "
@@ -264,7 +268,7 @@ void print_m256i_u16(const __m256i a)
 #endif
 }
 
-void print_m256i_i32(const __m256i a)
+inline void print_m256i_i32(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << ((int*)&a)[0] << ", "
@@ -287,7 +291,7 @@ void print_m256i_i32(const __m256i a)
 #endif
 }
 
-void print_m256i_u32(const __m256i a)
+inline void print_m256i_u32(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << ((unsigned int*)&a)[0] << ", "
@@ -310,7 +314,7 @@ void print_m256i_u32(const __m256i a)
 #endif
 }
 
-void print_m256i_i64(const __m256i a)
+inline void print_m256i_i64(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << ((long long*)&a)[0] << ", "
@@ -325,7 +329,7 @@ void print_m256i_i64(const __m256i a)
 #endif
 }
 
-void print_m256i_u64(const __m256i a)
+inline void print_m256i_u64(const __m256i a)
 {
 #ifdef __GNUC__
 	std::cout << ((unsigned long long*)&a)[0] << ", "
@@ -339,4 +343,3 @@ void print_m256i_u64(const __m256i a)
 		<< a.m256i_u64[3] << std::endl;
 #endif
 }
-

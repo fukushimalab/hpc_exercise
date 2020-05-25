@@ -1,7 +1,5 @@
-#include "utils/image.h"
 #include "utils/image_util.h"
 #include "utils/simd_util.h"
-#include <time.h>
 
 #ifdef _MSC_VER
 #define _USE_MATH_DEFINES
@@ -132,7 +130,7 @@ int main(const int argc, const char** argv)
 	//////////////////////////////////////////////////////////////////////
 	// 課題
 	//////////////////////////////////////////////////////////////////////
-	
+
 	if (false)
 	{
 		std::cout << "Gaussian filter" << std::endl;
@@ -164,7 +162,7 @@ int main(const int argc, const char** argv)
 		//畳み込み等の浮動小数点演算の順序に依存するので，PSNRが無限大にすることは難しい．
 		//ただし，PSNRは58以上は，unsigned charにキャストした場合の四捨五入の量子化の範囲内なので同一の画像と見なして良い．
 		//また，人間の目で50dB以上の画像を区別するのはほぼ不可能．
-		std::cout << "PSNR: " << calcPSNR(reference, dest)<<"dB" << std::endl;
+		std::cout << "PSNR: " << calcPSNR(reference, dest) << "dB" << std::endl;
 
 		writePXM("img/gauss.ppm", dest);
 		return 0;
@@ -250,7 +248,7 @@ int main(const int argc, const char** argv)
 		const int loop = 10;
 
 		const float sigma_s = 1.f;
-		const int r = 3 * sigma_s;
+		const int r = (int)(3.f * sigma_s);
 		const float sigma_r = 16.0f;
 		Image_8U src, dest;
 		readPXM("img/lena.ppm", src);
@@ -311,7 +309,7 @@ void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma)
 	{
 		for (int x = 0; x < src.cols * cn; x++)
 		{
-			dest.data[cn * (y * src.cols) + x] = pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f;
+			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f);
 		}
 	}
 }
@@ -324,7 +322,7 @@ void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma)
 	{
 		for (int x = 0; x < src.cols * cn; x++)
 		{
-			dest.data[cn * (y * src.cols) + x] = pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f;
+			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f);
 		}
 	}
 }
@@ -473,7 +471,7 @@ float* createGaussianKernel(const int radius, float sigma)
 	{
 		for (int j = -radius; j <= radius; j++)
 		{
-			const float v = exp((i * i + j * j) / (-2.0 * sigma * sigma));
+			const float v = exp((i * i + j * j) / (-2.f * sigma * sigma));
 			kernel[idx++] = v;
 			sum += v;
 		}

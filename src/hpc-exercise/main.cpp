@@ -1,4 +1,3 @@
-#include "utils/mat_util.h"
 #include "utils/loofline_performace.h"
 
 #ifdef _MSC_VER

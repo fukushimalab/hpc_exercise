@@ -1,4 +1,7 @@
 #pragma once
+//for using not accurate timer (1ms) if your system is not supported. Usually using more accurate timer(ns).
+//#define USE_TIME_CHRONO
+
 #include "image.h"
 #include <vector>
 #include <time.h>
@@ -7,6 +10,7 @@
 #define NOMINMAX
 #include <windows.h>
 #endif
+
 
 //Image util functions
 //read PXM
@@ -66,7 +70,27 @@ int rand_32s(const int rand_min, const int rand_max);
 float rand_32f(const float rand_min, const float rand_max);
 double rand_64f(const double rand_min, const double rand_max);
 
+//calc PSNR
+double calcPSNR(const Image_8U& src1, const Image_8U& src2);
+double calcPSNR(const Image_32F& src1, const Image_32F& src2);
+
 //timer
+#ifdef USE_TIME_CHRONO
+#include <chrono>
+struct CalcTime
+{
+	std::vector<double> que;
+	std::chrono::system_clock::time_point s;
+	std::chrono::system_clock::time_point e;
+	void start();
+	void end();
+	void clear();
+
+	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
+	double getLastTime();
+};
+
+#else
 #ifdef __GNUC__
 struct CalcTime
 {
@@ -97,7 +121,4 @@ struct CalcTime
 	CalcTime();
 };
 #endif
-
-//calc PSNR
-double calcPSNR(const Image_8U& src1, const Image_8U& src2);
-double calcPSNR(const Image_32F& src1, const Image_32F& src2);
+#endif
