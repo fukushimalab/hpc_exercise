@@ -30,7 +30,7 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 
 * ※１：普段はこれがデフォルト
 * ※２：普通の時間にこれで回すと，1～4年生の全ユーザのCPU資源が枯渇するので，他の授業に影響がでないように使うなら深夜．
-* ※３：インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．
+* ※３：インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．この場合，1ms以下の精度がないので，タイマーの測り方を変更すること．
 * ※４：Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
 * ※５：デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
 
