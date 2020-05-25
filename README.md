@@ -17,20 +17,22 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 
 |OS等 |コンパイラ|備考|
 |---|---------|---|
-|CSE@384コア（名工大）|g++|〇：make|
-|CSE@384コア（名工大）|icc|〇：make|
-|20号館ローカル（名工大）|g++|〇：make|
+|20号館ローカル（名工大）|g++|〇：make※１|
+|CSE@384コア（名工大）|g++|〇：make※２|
+|CSE@384コア（名工大）|icc|〇：make※２|
 |Linux (Ubuntu)|g++|〇：make|
 |Linux (Ubuntu)|clang++|〇：make|
 |Windows|Visual Studio2019|〇：slnを開く|
 |Windows|g++on WSL|〇：make|
-|Windows|MinGW|△：※１|
-|Windows|clang+VS2019|×：※２|
-|Mac|clang++|△：※３|
+|Windows|MinGW|△：※３|
+|Windows|clang+VS2019|×：※４|
+|Mac|clang++|△：※５|
 
-* ※１：インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．
-* ※２：Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
-* ※３：デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
+* ※１：普段はこれがデフォルト
+* ※２：普通の時間にこれで回すと，1～4年生の全ユーザのCPU資源が枯渇するので，他の授業に影響がでないように使うなら深夜．
+* ※３：インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．
+* ※４：Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
+* ※５：デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
 
 AVX命令が前提なので，ARMのCPUでは動きません．
 
