@@ -2433,7 +2433,7 @@ int main(const int argc, const char** argv)
 	//課題26
 	//上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
 	//ただし，ベクトル化していないコードのほうが速い可能性が高い．これは，これくらい単純なコードは，自動ベクトル化によってコードが最適化されるため．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 26" << std::endl;
 		const int loop = 100000;
@@ -2450,7 +2450,7 @@ int main(const int argc, const char** argv)
 
 		CalcTime t;
 
-		// unrolling 1: 埋めてある
+		// unrolling 1: 埋めてある．自動ベクトル化の可能性大
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -2461,7 +2461,23 @@ int main(const int argc, const char** argv)
 			}
 			t.end();
 		}
-		std::cout << "  1: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "cpp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
+
+		// unrolling 1: 強制的にベクトル化を排除
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			// unrolling 1
+			for (int i = 0; i < size; i++)
+			{
+				__m128 ma = _mm_loadu_ps(a.data + i);
+				__m128 mb = _mm_loadu_ps(b.data + i);
+				__m128 temp = _mm_sub_ss(ma, mb);
+				_mm_storeu_ps(c.data + i, _mm_mul_ss(temp, temp));
+			}
+			t.end();
+		}
+		std::cout << "  1: time (avg): " << t.getAvgTime() << " ms" << ": check diff " << mat_diff(ans, c) << std::endl;
 
 		// unrolling 8: 埋めてある
 		for (int j = 0; j < loop; j++)
