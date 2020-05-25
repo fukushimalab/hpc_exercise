@@ -21,16 +21,16 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 |CSE@384コア（名工大）|icc|〇：make|
 |20号館ローカル（名工大）|g++|〇：make|
 |Linux (Ubuntu)|g++|〇：make|
-|Linux (Ubuntu)||clang++|〇：make|
+|Linux (Ubuntu)|clang++|〇：make|
 |Windows|Visual Studio2019|〇：slnを開く|
 |Windows|g++on WSL|〇：make|
 |Windows|MinGW|△：※１|
 |Windows|clang+VS2019|×：※２|
 |Mac|clang++|△：※３|
 
-* ※１インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．
-* ※２Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
-* ※３デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
+* ※１：インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．
+* ※２：Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
+* ※３：デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
 
 
 
