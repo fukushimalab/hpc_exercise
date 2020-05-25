@@ -12,13 +12,12 @@
 template<int size>
 void loofline_test(const int iteration, const int num_thread = -1)
 {
-	const int thread_max = (num_thread == -1) ? omp_get_num_procs() : num_thread;
-	omp_set_num_threads(thread_max);
-
-	//FLOPS�v�Z
 	//x+1: (1*x+1)
 	//x*x+x+1: x*(x+1)+1
 	//x*x*x+x*x+x+1: x*(x*(x+1))+1
+
+	const int thread_max = (num_thread == -1) ? omp_get_num_procs() : num_thread;
+	omp_set_num_threads(thread_max);
 
 	std::cout << "loofline test: " << thread_max << "threads" << std::endl;
 	const int loop = iteration;
