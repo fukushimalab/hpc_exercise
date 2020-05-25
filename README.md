@@ -32,5 +32,6 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 * ※２：Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
 * ※３：デフォルトのclangはOpenMPに対応していない可能性があるので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．
 
+AVX命令が前提なので，ARMのCPUでは動きません．
 
 
