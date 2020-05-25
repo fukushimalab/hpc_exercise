@@ -6,6 +6,7 @@
 #endif
 #include <math.h>
 
+
 void inline _mm256_transpose_8x8_ps(__m256* dst, const __m256* src);
 void inline rot(double a, double b, double& x, double& y, double radian);
 
@@ -2099,7 +2100,6 @@ int main(const int argc, const char** argv)
 		mat_rand(x, 0, 1);
 		mat_zero(c);
 
-
 		//mul, add
 		for (int j = 0; j < loop; j++)
 		{
@@ -2161,6 +2161,9 @@ int main(const int argc, const char** argv)
 		loofline_test<loofline_size>(iteration, 1);
 		//multi core performance
 		loofline_test<loofline_size>(iteration);
+		//ベクトル化の性能をオートベクタライゼーションに頼るときはこっち
+		//loofline_test_cpp<loofline_size>(iteration, 1);
+		//loofline_test_cpp<loofline_size>(iteration);
 
 		return 0;
 	}
@@ -2700,13 +2703,9 @@ int main(const int argc, const char** argv)
 		{
 			std::cout << "float 8x8" << std::endl;
 			const int size = 64;
-#ifdef __GNUC__
-			__attribute__((aligned(32))) float a[size];
-			__attribute__((aligned(32))) float b[size];
-#elif _MSC_VER
-			__declspec(align(32)) float a[size];
-			__declspec(align(32)) float b[size];
-#endif
+			float* a = (float*)_mm_malloc(sizeof(float) * size, 32);
+			float* b = (float*)_mm_malloc(sizeof(float) * size, 32);
+
 			for (int i = 0; i < size; i++)
 			{
 				a[i] = (float)i;
@@ -2732,17 +2731,15 @@ int main(const int argc, const char** argv)
 			{
 				print_m256(mb[i]);
 			}
+			_mm_free(a);
+			_mm_free(b);
 		}
 		{
 			std::cout << "double 4x4" << std::endl;
 			const int size = 16;
-#ifdef __GNUC__
-			__attribute__((aligned(32))) double a[size];
-			__attribute__((aligned(32))) double b[size];
-#elif _MSC_VER
-			__declspec(align(32)) double a[size];
-			__declspec(align(32)) double b[size];
-#endif
+			double* a = (double*)_mm_malloc(sizeof(double) * size, 32);
+			double* b = (double*)_mm_malloc(sizeof(double) * size, 32);
+
 			for (int i = 0; i < size; i++)
 			{
 				a[i] = i;
@@ -2769,6 +2766,8 @@ int main(const int argc, const char** argv)
 			{
 				print_m256d(mb[i]);
 			}
+			_mm_free(a);
+			_mm_free(b);
 		}
 		return 0;
 	}

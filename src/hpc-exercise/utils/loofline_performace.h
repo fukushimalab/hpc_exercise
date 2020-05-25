@@ -1,8 +1,576 @@
 #pragma once
+
 #include "mat_util.h"
 #include "simd_util.h"
 #include <iostream>
 #include <omp.h>
+
+template<int size>
+void loofline_test_cpp(const int iteration, const int num_thread = -1)
+{
+	//x+1: (1*x+1)
+	//x*x+x+1: x*(x+1)+1
+	//x*x*x+x*x+x+1: x*(x*(x+1))+1
+	const int thread_max = (num_thread == -1) ? omp_get_num_procs() : num_thread;
+	omp_set_num_threads(thread_max);
+
+	std::cout << "loofline test: " << thread_max << "threads" << std::endl;
+	const int loop = iteration;
+
+	CalcTime t;
+
+	float* x = (float*)_mm_malloc(sizeof(float) * size * thread_max, 32);
+	float* y = (float*)_mm_malloc(sizeof(float) * size * thread_max, 32);
+
+	float* ptr = x;
+	const float rand_max = 1.f;
+	const float rand_min = 0.f;
+	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	for (int i = 0; i < size * thread_max; i++)
+	{
+		*ptr++ = rand_min + (rand() * v);
+	}
+
+	printf("size %d KBYTE, iteration %d\n", size * (int)(sizeof(float)) / 1024, iteration);
+	printf("order, GFLOPS, FLOPS/BYTE\n");
+
+	int n = 0;
+	{
+		//---------------------------------------------
+		n = 1;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				py[i] = px[i] + 1.f;//1
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 2;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				py[i] = px[i] * temp + 1.f;//2
+			}
+
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 3;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				py[i] = px[i] * temp + 1.f;//3
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 4;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				py[i] = px[i] * temp + 1.f;//4
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 5;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				py[i] = px[i] * temp + 1.f;//5
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 6;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				py[i] = px[i] * temp + 1.f;//6
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 7;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				py[i] = px[i] * temp + 1.f;//7
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 8;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				py[i] = px[i] * temp + 1.f;//8
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 9;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				py[i] = px[i] * temp + 1.f;//9
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 10;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				py[i] = px[i] * temp + 1.f;//10
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 11;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				py[i] = px[i] * temp + 1.f;//11
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 12;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				py[i] = px[i] * temp + 1.f;//12
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 13;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				py[i] = px[i] * temp + 1.f;//13
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 14;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				py[i] = px[i] * temp + 1.f;//14
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 15;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				temp = px[i] * temp + 1.f;//14
+				py[i] = px[i] * temp + 1.f;//15
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 16;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				temp = px[i] * temp + 1.f;//14
+				temp = px[i] * temp + 1.f;//15
+				py[i] = px[i] * temp + 1.f;//16
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 17;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				temp = px[i] * temp + 1.f;//14
+				temp = px[i] * temp + 1.f;//15
+				temp = px[i] * temp + 1.f;//16
+				py[i] = px[i] * temp + 1.f;//17
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 18;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				temp = px[i] * temp + 1.f;//14
+				temp = px[i] * temp + 1.f;//15
+				temp = px[i] * temp + 1.f;//16
+				temp = px[i] * temp + 1.f;//17
+				py[i] = px[i] * temp + 1.f;//18
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 19;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				temp = px[i] * temp + 1.f;//14
+				temp = px[i] * temp + 1.f;//15
+				temp = px[i] * temp + 1.f;//16
+				temp = px[i] * temp + 1.f;//17
+				temp = px[i] * temp + 1.f;//18
+				py[i] = px[i] * temp + 1.f;//19
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+
+		//---------------------------------------------
+		n = 20;
+		t.start();
+#pragma omp parallel for
+		for (int j = 0; j < loop; j++)
+		{
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
+			for (int i = 0; i < size; i++)
+			{
+				float temp = px[i] + 1.f;//1
+				temp = px[i] * temp + 1.f;//2
+				temp = px[i] * temp + 1.f;//3
+				temp = px[i] * temp + 1.f;//4
+				temp = px[i] * temp + 1.f;//5
+				temp = px[i] * temp + 1.f;//6
+				temp = px[i] * temp + 1.f;//7
+				temp = px[i] * temp + 1.f;//8
+				temp = px[i] * temp + 1.f;//9
+				temp = px[i] * temp + 1.f;//10
+				temp = px[i] * temp + 1.f;//11
+				temp = px[i] * temp + 1.f;//12
+				temp = px[i] * temp + 1.f;//13
+				temp = px[i] * temp + 1.f;//14
+				temp = px[i] * temp + 1.f;//15
+				temp = px[i] * temp + 1.f;//16
+				temp = px[i] * temp + 1.f;//17
+				temp = px[i] * temp + 1.f;//18
+				temp = px[i] * temp + 1.f;//19
+				py[i] = px[i] * temp + 1.f;//20
+			}
+		}
+		t.end();
+		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+	}
+
+	_mm_free(x);
+	_mm_free(y);
+}
 
 template<int size>
 void loofline_test(const int iteration, const int num_thread = -1)
@@ -44,9 +612,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			int v = omp_get_thread_num();
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -72,8 +640,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -102,8 +671,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -133,8 +703,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -166,8 +737,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -201,8 +773,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -238,8 +811,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -277,8 +851,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -318,8 +893,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -361,8 +937,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -406,8 +983,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -453,8 +1031,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -502,8 +1081,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -553,8 +1133,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -606,8 +1187,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -661,8 +1243,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -718,8 +1301,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -777,8 +1361,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -838,8 +1423,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -901,8 +1487,9 @@ void loofline_test(const int iteration, const int num_thread = -1)
 #pragma omp parallel for
 		for (int j = 0; j < loop; j++)
 		{
-			float* px = x + omp_get_thread_num() * size;
-			float* py = y + omp_get_thread_num() * size;
+			const int v = omp_get_thread_num();
+			float* px = x + v * size;
+			float* py = y + v * size;
 			const __m256 mones = _mm256_set1_ps(1.f);
 			for (int i = 0; i < simdsize16; i++)
 			{
@@ -956,7 +1543,6 @@ void loofline_test(const int iteration, const int num_thread = -1)
 				px += 16;
 				py += 16;
 			}
-
 		}
 		t.end();
 		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
@@ -971,11 +1557,6 @@ void timer_test(const int iteration, const int num_thread = -1)
 {
 	const int thread_max = (num_thread == -1) ? omp_get_max_threads() : num_thread;
 	omp_set_num_threads(thread_max);
-
-	//FLOPS�v�Z
-	//x+1: (1*x+1)
-	//x*x+x+1: x*(x+1)+1
-	//x*x*x+x*x+x+1: x*(x*(x+1))+1
 
 	std::cout << "timer test: " << thread_max << "threads" << std::endl;
 	const int loop = iteration;

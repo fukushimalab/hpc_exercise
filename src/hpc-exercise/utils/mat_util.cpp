@@ -5,7 +5,6 @@
 #include <cstring>
 
 
-
 //Mat util functions
 ////////////////////////////
 //init (zero)
@@ -741,6 +740,22 @@ double mat_diff(Mat_64F& src1, Mat_64F& src2)
 }
 
 //timer
+#ifdef USE_TIME_CHRONO
+void CalcTime::start()
+{
+	s = std::chrono::system_clock::now();
+	return;
+}
+
+void CalcTime::end()
+{
+	e = std::chrono::system_clock::now();
+	double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(e - s).count() / 1000.0);
+	que.push_back(time); //ms
+	return;
+}
+
+#else
 #ifdef __GNUC__
 void CalcTime::start()
 {
@@ -754,48 +769,7 @@ void CalcTime::end()
 	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
 	return;
 }
-
-void CalcTime::clear()
-{
-	que.clear();
-	return;
-}
-
-double CalcTime::getAvgTime(const bool dropFirstMeasure, const bool isClear)
-{
-	double count = 0;
-	double time = 0;
-	if ((dropFirstMeasure && que.size() <= 1) || (!dropFirstMeasure && que.size() == 0))
-	{
-		return -1;
-	}
-	std::vector<double>::iterator it = que.begin();
-	if (dropFirstMeasure)
-	{
-		it++;
-	}
-	for (; it != que.end(); ++it)
-	{
-		time += *it;
-		count++;
-	}
-	if (isClear)
-	{
-		que.clear();
-	}
-	return time / count;
-}
-
-double CalcTime::getLastTime()
-{
-	if (que.size() == 0)
-	{
-		return -1;
-	}
-	return que.back();
-}
 #elif _MSC_VER
-
 CalcTime::CalcTime()
 {
 	QueryPerformanceFrequency(&frequency);
@@ -816,6 +790,8 @@ void CalcTime::end()
 	que.push_back(sec * 1000.0); //msec
 	return;
 }
+#endif
+#endif
 
 void CalcTime::clear()
 {
@@ -856,4 +832,3 @@ double CalcTime::getLastTime()
 	}
 	return que.back();
 }
-#endif

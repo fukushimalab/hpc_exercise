@@ -2,6 +2,7 @@
 
 #ifdef __GNUC__
 #include <x86intrin.h>
+//#include <intrin.h>
 #elif _MSC_VER
 #include <intrin.h>
 #endif

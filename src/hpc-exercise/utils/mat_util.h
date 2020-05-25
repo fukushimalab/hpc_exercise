@@ -1,4 +1,7 @@
 #pragma once
+//for using not accurate timer (1ms) if your system is not supported. Usually using more accurate timer(ns).
+//#define USE_TIME_CHRONO
+
 #include "mat.h"
 #include <vector>
 
@@ -6,6 +9,7 @@
 #define NOMINMAX
 #include <windows.h>
 #endif
+
 
 //Mat util functions
 //init (zero)
@@ -86,6 +90,22 @@ double mat_diff(Mat_32F& src1, Mat_32F& src2);
 double mat_diff(Mat_64F& src1, Mat_64F& src2);
 
 //timer
+#ifdef USE_TIME_CHRONO
+#include <chrono>
+struct CalcTime
+{
+	std::vector<double> que;
+	std::chrono::system_clock::time_point s;
+	std::chrono::system_clock::time_point e;
+	void start();
+	void end();
+	void clear();
+
+	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
+	double getLastTime();
+};
+
+#else
 #ifdef __GNUC__
 struct CalcTime
 {
@@ -115,4 +135,5 @@ struct CalcTime
 	double getLastTime();
 	CalcTime();
 };
+#endif
 #endif
