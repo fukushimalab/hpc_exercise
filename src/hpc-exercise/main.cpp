@@ -2433,7 +2433,7 @@ int main(const int argc, const char** argv)
 	//課題26
 	//上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
 	//ただし，ベクトル化していないコードのほうが速い可能性が高い．これは，これくらい単純なコードは，自動ベクトル化によってコードが最適化されるため．
-	//if (false)
+	if (false)
 	{
 		std::cout << "exercise 26" << std::endl;
 		const int loop = 100000;
@@ -2463,7 +2463,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "cpp: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 
-		// unrolling 1: 強制的にベクトル化を排除
+		// unrolling 1: 埋めてある．強制的にベクトル化を排除している．
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
