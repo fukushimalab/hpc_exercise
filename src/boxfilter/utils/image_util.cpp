@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <algorithm>
-//#include <cmath>
+#include <cmath>
 
 //Image util functions
 ////////////////////////////
