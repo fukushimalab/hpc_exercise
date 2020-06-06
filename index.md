@@ -1,4 +1,4 @@
-# 高能率計算
+# 高性能計算
 名古屋工業大学 情報工学科 ネットワーク系分野 3年後期 ネットワーク系演習II
 
 <!--
@@ -263,6 +263,7 @@ VisualStudioの使用に習熟した人のみの利用を想定している．
 * [プロセッサを支える技術－－果てしなくスピードを追求する世界（Hisa Ando）](https://www.amazon.co.jp/%E3%83%97%E3%83%AD%E3%82%BB%E3%83%83%E3%82%B5%E3%82%92%E6%94%AF%E3%81%88%E3%82%8B%E6%8A%80%E8%A1%93-%EF%BC%8D%EF%BC%8D%E6%9E%9C%E3%81%A6%E3%81%97%E3%81%AA%E3%81%8F%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%92%E8%BF%BD%E6%B1%82%E3%81%99%E3%82%8B%E4%B8%96%E7%95%8C-WEB-DB-PRESS-plus/dp/4774145211/ref=pd_sim_14_97?_encoding=UTF8&pd_rd_i=4774145211&pd_rd_r=564d946c-a1b4-11e8-9d84-25270957ff53&pd_rd_w=pjDUu&pd_rd_wg=TMkH9&pf_rd_i=desktop-dp-sims&pf_rd_m=AN1VRQENFRJN5&pf_rd_p=053a78c4-e34f-47d4-9426-4d23f47a211d&pf_rd_r=7GV789RMBET9ZE9FAH5X&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=7GV789RMBET9ZE9FAH5X)
 * [コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁（Hisa Ando）](https://www.amazon.co.jp/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E6%8A%80%E8%A1%93%E5%85%A5%E9%96%80-%E9%AB%98%E9%80%9F%E5%8C%96%E3%81%AE%E8%BF%BD%E6%B1%82%C3%97%E6%B6%88%E8%B2%BB%E9%9B%BB%E5%8A%9B%E3%81%AE%E5%A3%81-WEB-PRESS-plus/dp/4774164267/ref=pd_sim_14_2?_encoding=UTF8&pd_rd_i=4774164267&pd_rd_r=6a50425c-a1b4-11e8-88fd-59ccc6f09d99&pd_rd_w=AHRk1&pd_rd_wg=8FIoI&pf_rd_i=desktop-dp-sims&pf_rd_m=AN1VRQENFRJN5&pf_rd_p=053a78c4-e34f-47d4-9426-4d23f47a211d&pf_rd_r=P0QYFJEX2MYX882CWE20&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=P0QYFJEX2MYX882CWE20)
 * [数値計算の常識（伊理 正夫, 藤野 和建）](https://www.amazon.co.jp/%E6%95%B0%E5%80%A4%E8%A8%88%E7%AE%97%E3%81%AE%E5%B8%B8%E8%AD%98-%E4%BC%8A%E7%90%86-%E6%AD%A3%E5%A4%AB/dp/4320013433/ref=pd_sim_14_59?_encoding=UTF8&pd_rd_i=4320013433&pd_rd_r=564d946c-a1b4-11e8-9d84-25270957ff53&pd_rd_w=pjDUu&pd_rd_wg=TMkH9&pf_rd_i=desktop-dp-sims&pf_rd_m=AN1VRQENFRJN5&pf_rd_p=053a78c4-e34f-47d4-9426-4d23f47a211d&pf_rd_r=7GV789RMBET9ZE9FAH5X&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=7GV789RMBET9ZE9FAH5X)
+* [Introduction to High-Performance Scientific Computing](https://pages.tacc.utexas.edu/~eijkhout/istc/istc.html)
 
 ## 予定表
 * 1週：導入，最適化コンパイラとパフォーマンス測定方法，古典的な高速化技法（演算量の削減・置換，テーブル参照，固定小数点など）
