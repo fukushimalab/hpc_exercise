@@ -154,7 +154,7 @@ inline void print_m256i_u8(const __m256i a)
 		<< (int)((unsigned char*)&a)[29] << ", "
 		<< (int)((unsigned char*)&a)[30] << ", "
 		<< (int)((unsigned char*)&a)[31] << ", " << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << (int)a.m256i_u8[0] << ", "
 		<< (int)a.m256i_u8[1] << ", "
 		<< (int)a.m256i_u8[2] << ", "
@@ -209,7 +209,7 @@ inline void print_m256i_i16(const __m256i a)
 		<< ((short*)&a)[13] << ", "
 		<< ((short*)&a)[14] << ", "
 		<< ((short*)&a)[15] << ", " << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << a.m256i_i16[0] << ", "
 		<< a.m256i_i16[1] << ", "
 		<< a.m256i_i16[2] << ", "
@@ -248,7 +248,7 @@ inline void print_m256i_u16(const __m256i a)
 		<< ((unsigned short*)&a)[13] << ", "
 		<< ((unsigned short*)&a)[14] << ", "
 		<< ((unsigned short*)&a)[15] << ", " << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << a.m256i_u16[0] << ", "
 		<< a.m256i_u16[1] << ", "
 		<< a.m256i_u16[2] << ", "
@@ -279,7 +279,7 @@ inline void print_m256i_i32(const __m256i a)
 		<< ((int*)&a)[5] << ", "
 		<< ((int*)&a)[6] << ", "
 		<< ((int*)&a)[7] << ", " << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << a.m256i_i32[0] << ", "
 		<< a.m256i_i32[1] << ", "
 		<< a.m256i_i32[2] << ", "
@@ -302,7 +302,7 @@ inline void print_m256i_u32(const __m256i a)
 		<< ((unsigned int*)&a)[5] << ", "
 		<< ((unsigned int*)&a)[6] << ", "
 		<< ((unsigned int*)&a)[7] << ", " << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << a.m256i_u32[0] << ", "
 		<< a.m256i_u32[1] << ", "
 		<< a.m256i_u32[2] << ", "
@@ -321,7 +321,7 @@ inline void print_m256i_i64(const __m256i a)
 		<< ((long long*)&a)[1] << ", "
 		<< ((long long*)&a)[2] << ", "
 		<< ((long long*)&a)[3] << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << a.m256i_i64[0] << ", "
 		<< a.m256i_i64[1] << ", "
 		<< a.m256i_i64[2] << ", "
@@ -336,10 +336,68 @@ inline void print_m256i_u64(const __m256i a)
 		<< ((unsigned long long*)&a)[1] << ", "
 		<< ((unsigned long long*)&a)[2] << ", "
 		<< ((unsigned long long*)&a)[3] << std::endl;
-#elif MSC_VER
+#elif _MSC_VER
 	std::cout << a.m256i_u64[0] << ", "
 		<< a.m256i_u64[1] << ", "
 		<< a.m256i_u64[2] << ", "
 		<< a.m256i_u64[3] << std::endl;
+#endif
+}
+
+
+inline void print_m128(const __m128 a)
+{
+#ifdef __GNUC__
+	std::cout << ((float*)&a)[0] << ", "
+		<< ((float*)&a)[1] << ", "
+		<< ((float*)&a)[2] << ", "
+		<< ((float*)&a)[3] << std::endl;
+#elif _MSC_VER
+	std::cout 
+		<< a.m128_f32[0] << ", "
+		<< a.m128_f32[1] << ", "
+		<< a.m128_f32[2] << ", "
+		<< a.m128_f32[3] << std::endl;
+#endif
+}
+
+inline void print_m128i_u8(const __m128i a)
+{
+#ifdef __GNUC__
+	std::cout << (int)((unsigned char*)&a)[0] << ", "
+		<< (int)((unsigned char*)&a)[1] << ", "
+		<< (int)((unsigned char*)&a)[2] << ", "
+		<< (int)((unsigned char*)&a)[3] << ", "
+		<< (int)((unsigned char*)&a)[4] << ", "
+		<< (int)((unsigned char*)&a)[5] << ", "
+		<< (int)((unsigned char*)&a)[6] << ", "
+		<< (int)((unsigned char*)&a)[7] << ", " << std::endl;
+	std::cout << (int)((unsigned char*)&a)[8] << ", "
+		<< (int)((unsigned char*)&a)[9] << ", "
+		<< (int)((unsigned char*)&a)[10] << ", "
+		<< (int)((unsigned char*)&a)[11] << ", "
+		<< (int)((unsigned char*)&a)[12] << ", "
+		<< (int)((unsigned char*)&a)[13] << ", "
+		<< (int)((unsigned char*)&a)[14] << ", "
+		<< (int)((unsigned char*)&a)[15] << ", " << std::endl;
+#elif _MSC_VER
+	std::cout 
+		<< (int)a.m128i_u8[0] << ", "
+		<< (int)a.m128i_u8[1] << ", "
+		<< (int)a.m128i_u8[2] << ", "
+		<< (int)a.m128i_u8[3] << ", "
+		<< (int)a.m128i_u8[4] << ", "
+		<< (int)a.m128i_u8[5] << ", "
+		<< (int)a.m128i_u8[6] << ", "
+		<< (int)a.m128i_u8[7] << ", " //<< std::endl;
+	//std::cout 
+		<< (int)a.m128i_u8[8] << ", "
+		<< (int)a.m128i_u8[9] << ", "
+		<< (int)a.m128i_u8[10] << ", "
+		<< (int)a.m128i_u8[11] << ", "
+		<< (int)a.m128i_u8[12] << ", "
+		<< (int)a.m128i_u8[13] << ", "
+		<< (int)a.m128i_u8[14] << ", "
+		<< (int)a.m128i_u8[15] << ", " << std::endl;
 #endif
 }

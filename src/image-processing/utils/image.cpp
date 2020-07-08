@@ -8,7 +8,7 @@
 Image_8U::Image_8U(const unsigned char* data, const int rows, const int cols, const int channels)
 	: rows(rows), cols(cols), type(sizeof(unsigned char)), channels(channels)
 {
-	const int size = type * rows * cols * channels;
+	const long size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	memcpy((void*)this->data, (void*)data, size);
 }
@@ -16,14 +16,14 @@ Image_8U::Image_8U(const unsigned char* data, const int rows, const int cols, co
 Image_8U::Image_8U(const int rows, const int cols, const int channels)
 	: rows(rows), cols(cols), type(sizeof(unsigned char)), channels(channels)
 {
-	const int size = type * rows * cols * channels;
+	const long size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 }
 
 Image_8U::Image_8U(const Image_8U& m)
 	: rows(m.rows), cols(m.cols), type(sizeof(unsigned char)), channels(m.channels)
 {
-	const int size = type * rows * cols * channels;
+	const long size = type * rows * cols * channels;
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	memcpy((void*)this->data, (void*)m.data, size);
 }
