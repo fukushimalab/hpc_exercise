@@ -10,6 +10,11 @@
 /////////////////////////////////
 // チュートリアル
 /////////////////////////////////
+
+void MulConstant(const Image_8U& src, Image_8U& dest, const float factor);
+void MulConstantFast(const Image_8U& src, Image_8U& dest, const float factor);
+void MulConstantFast2(const Image_8U& src, Image_8U& dest, const float factor);
+void MulConstantFast3(const Image_8U& src, Image_8U& dest, const float factor);
 void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma);
 void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma);
 void MeanVar(const Image_8U& src, float& mean, float& var);
@@ -130,7 +135,59 @@ int main(const int argc, const char** argv)
 	//////////////////////////////////////////////////////////////////////
 	// 課題
 	//////////////////////////////////////////////////////////////////////
+	
 
+	// 乗算によるuchar->float変換のSIMD化の例
+	if (false)
+	{
+		std::cout << "gamma correction" << std::endl;
+		const int loop = 1000;
+
+		const float factor = 0.8f;
+		Image_8U src, dest, reference;
+		readPXM("img/lena.ppm", src);
+
+		CalcTime t;
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			MulConstant(src, reference, factor);
+			t.end();
+		}
+		std::cout << "base: " << t.getAvgTime() << " ms" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			MulConstantFast(src, dest, factor);
+			t.end();
+		}
+		std::cout << "opt1.: " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "PSNR: " << calcPSNR(reference, dest) << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			MulConstantFast2(src, dest, factor);
+			t.end();
+		}
+		std::cout << "opt2.: " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "PSNR: " << calcPSNR(reference, dest) << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			MulConstantFast3(src, dest, factor);
+			t.end();
+		}
+		std::cout << "opt3.: " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "PSNR: " << calcPSNR(reference, dest) << std::endl;
+
+		writePXM("img/gamma.ppm", dest);
+		return 0;
+	}
+
+	//ガウシアンフィルタの高速化の例
 	if (false)
 	{
 		std::cout << "Gaussian filter" << std::endl;
@@ -298,6 +355,91 @@ int main(const int argc, const char** argv)
 //////////////////////////////////////////////////////////////////////
 // チュートリアル
 //////////////////////////////////////////////////////////////////////
+
+void MulConstant(const Image_8U& src, Image_8U& dest, const float factor)
+{
+	dest = Image_8U(src.rows, src.cols, src.channels);
+	const int cn = src.channels;
+	for (int y = 0; y < src.rows; y++)
+	{
+		for (int x = 0; x < src.cols * cn; x++)
+		{
+			//+ 0.5fは四捨五入
+			dest.data[cn * (y * src.cols) + x] = (unsigned char)(src.data[cn * (y * src.cols) + x] * factor + 0.5f);
+		}
+	}
+}
+
+void MulConstantFast(const Image_8U& src, Image_8U& dest, const float factor)
+{
+	dest = Image_8U(src.rows, src.cols, src.channels);
+	const int cn = src.channels;
+	for (int x = 0; x < src.rows * src.cols * cn; x++)//全画素同じ処理ならループはつぶせる
+	{
+		dest.data[x] = (unsigned char)(src.data[x] * 0.8 + 0.5);
+	}
+}
+
+void MulConstantFast2(const Image_8U& src, Image_8U& dest, const float factor)
+{
+	dest = Image_8U(src.rows, src.cols, src.channels);
+	const int cn = src.channels;
+
+	__m256 mfactor = _mm256_set1_ps(factor);
+	for (int x = 0; x < src.rows * src.cols * cn; x += 8)//全画素同じ処理ならループはつぶせる
+	{
+		//__m128i ms8 = _mm_loadu_si128((__m128i*)(src.data + x));//ucharを16個読み込み
+		__m128i ms8 = _mm_loadl_epi64((__m128i*)(src.data + x));//ucharを8個読み込み．あまりのところは0．（こっちのほうがメモリアクセス的には安全だが上記でもアラインをそろえて確保しているので動くはず．）
+
+		__m256i ms32 = _mm256_cvtepu8_epi32(ms8);//uchar->intにキャスト．16個の下8個は無視される．128i->256iに注意
+		__m256 ms32f = _mm256_cvtepi32_ps(ms32);//int->floatにキャスト
+		__m256 mmul32f = _mm256_mul_ps(ms32f, mfactor);//factorと乗算
+
+		__m256i mmul32 = _mm256_cvtps_epi32(mmul32f);//float-> int
+		__m256i mmul16 = _mm256_packs_epi32(mmul32, _mm256_setzero_si256());//int->short:0とpackでshortにする．
+		__m256i mmul8 = _mm256_packus_epi16(mmul16, _mm256_setzero_si256());//short->uchar:0とpack"us"でunsigned charにする．uがないとcharになる．
+		__m256i mmul8perm = _mm256_permutevar8x32_epi32(mmul8, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+		__m128i mmul8_128 = _mm256_castsi256_si128(mmul8perm);//後半は使っていないので，256->128にキャストして後半を捨てる．
+		//_mm256_cvtepi32_epi8という関数がAVX512からあるが，相当高いCPUじゃないとこの命令は使用不可．命令がないので落ちる．
+
+		//_mm_storeu_si128((__m128i*)(dest.data + x), mmul8_128);//16個書き込み．後半8個は次の書き込みで上書きされる．
+		_mm_storel_epi64((__m128i*)(dest.data + x), mmul8_128);//先頭8個だけ書き込み．こちらを使ったほうが安全．
+	}
+}
+
+inline void v_cvtepu8_psx2(__m128i src, __m256& dest0, __m256& dest1)
+{
+	dest0 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(src));
+	dest1 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(_mm_shuffle_epi32(src, _MM_SHUFFLE(1, 0, 3, 2))));
+}
+
+inline __m128i v_cvtpsx2_epu8(const __m256 v0, const __m256 v1)
+{
+	return _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_packus_epi16(_mm256_packs_epi32(_mm256_cvtps_epi32(v0), _mm256_cvtps_epi32(v1)), _mm256_setzero_si256()), _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7)));
+}
+
+void MulConstantFast3(const Image_8U& src, Image_8U& dest, const float factor)
+{
+	dest = Image_8U(src.rows, src.cols, src.channels);
+	const int cn = src.channels;
+
+	__m256 mfactor = _mm256_set1_ps(factor);
+	for (int x = 0; x < src.rows * src.cols * cn; x += 16)//全画素同じ処理ならループはつぶせる
+	{
+		__m128i ms8 = _mm_load_si128((__m128i*)(src.data + x));//ucharを16個読み込み
+		
+		__m256 ms32f_0, ms32f_1; 
+		v_cvtepu8_psx2(ms8, ms32f_0, ms32f_1);//uchar->floatx2にキャスト．v_cvtepu8_psx2は上記に自作
+		
+		__m256 mmul32f_0 = _mm256_mul_ps(ms32f_0, mfactor);//factorと乗算
+		__m256 mmul32f_1 = _mm256_mul_ps(ms32f_1, mfactor);//factorと乗算
+
+		__m128i mmul8_128 = v_cvtpsx2_epu8(mmul32f_0, mmul32f_1);//floatx2->uchar．v_cvtpsx2_epu8は上記に自作
+
+		_mm_store_si128((__m128i*)(dest.data + x), mmul8_128);
+	}
+}
+
 ///////////////////////
 // ガンマ変換
 ///////////////////////
@@ -309,7 +451,7 @@ void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma)
 	{
 		for (int x = 0; x < src.cols * cn; x++)
 		{
-			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f);
+			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f + 0.5f);
 		}
 	}
 }
@@ -322,7 +464,7 @@ void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma)
 	{
 		for (int x = 0; x < src.cols * cn; x++)
 		{
-			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f);
+			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f + 0.5f);
 		}
 	}
 }
