@@ -2071,7 +2071,7 @@ int main(const int argc, const char** argv)
 	}
 
 	//課題22
-	//配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，FMAが速くなることを示せ．
+	//(1) 配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，FMAが速くなることを示せ．
 	//なお，上記の関数は以下に等しい．
 	//a=_mm256_fmadd_ps(a,b,c);
 	//a=_mm256_fmadd_ps(a,b,c);
@@ -2079,7 +2079,8 @@ int main(const int argc, const char** argv)
 	//a=_mm256_fmadd_ps(a,b,c);
 	//これは，単純にFMAが1度だとメモリで律速するこのコードでは計算速度の差が出にくいためである．差が小さければ，より演算を増やせば良い．
 	//なお，現在のg++では，最適化によってmul - addの命令はおそらくFMAに自動的に最適化されている．コンパイラオプション等で抑制して様子を見るとよい．
-	//また，GFLOPSと演算強度[FLOPS / BYTE]をFMA命令で計算する関数`loofline_test`を使って，フールラインのグラフとして図示せよ．
+
+	//(2) また，GFLOPSと演算強度[FLOPS / BYTE]をFMA命令で計算する関数`loofline_test`を使って，ルールラインのグラフとして図示せよ．
 	if (false)
 	{
 		std::cout << "exercise 22" << std::endl;
@@ -2156,9 +2157,10 @@ int main(const int argc, const char** argv)
 
 		const int loofline_size = 16 * 1024 / sizeof(float);//16KByte
 		const int iteration = 1000000;
-		//single core performance
+		//
+		std::cout << "single core performance" << std::endl;
 		loofline_test<loofline_size>(iteration, 1);
-		//multi core performance
+		std::cout << "multi core performance" << std::endl;
 		loofline_test<loofline_size>(iteration);
 		//ベクトル化の性能をオートベクタライゼーションに頼るときはこっち
 		//loofline_test_cpp<loofline_size>(iteration, 1);

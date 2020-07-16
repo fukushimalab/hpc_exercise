@@ -138,3 +138,5 @@ struct CalcTime
 };
 #endif
 #endif
+
+bool show_mxcsr(const bool showState = true, const bool showMask = false, const bool isClaer = false);

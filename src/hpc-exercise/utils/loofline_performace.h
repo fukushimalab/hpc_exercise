@@ -4,6 +4,8 @@
 #include "simd_util.h"
 #include <iostream>
 #include <omp.h>
+#include <algorithm>
+#include <cfloat>
 
 template<int size>
 void loofline_test_cpp(const int iteration, const int num_thread = -1)
@@ -572,9 +574,23 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 	_mm_free(y);
 }
 
+#define USE_DAZ
+#define USE_FTZ
 template<int size>
 void loofline_test(const int iteration, const int num_thread = -1)
 {
+
+#ifdef USE_DAZ
+#include <pmmintrin.h>
+	_MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+#endif
+	
+#ifdef USE_FTZ
+#include <xmmintrin.h>
+	_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#endif
+	//show_mxcsr(true, true, false); //check status
+
 	//x+1: (1*x+1)
 	//x*x+x+1: x*(x+1)+1
 	//x*x*x+x*x+x+1: x*(x*(x+1))+1
@@ -596,7 +612,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
 	for (int i = 0; i < size * thread_max; i++)
 	{
-		*ptr++ = rand_min + (rand() * v);
+		*ptr++ = std::max(FLT_MIN, rand_min + (rand() * v));
 	}
 
 	int simdsize16 = size / 16;
