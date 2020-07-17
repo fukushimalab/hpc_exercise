@@ -3,7 +3,7 @@
 #ifdef _MSC_VER
 #define _USE_MATH_DEFINES
 #endif
-#include <math.h>
+#include <cmath>
 
 
 void inline _mm256_transpose_8x8_ps(__m256* dst, const __m256* src);

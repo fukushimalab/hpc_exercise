@@ -1,6 +1,5 @@
 #include "image_util.h"
 #include "simd_util.h"
-#include <stdlib.h>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
