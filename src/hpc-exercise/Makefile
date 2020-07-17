@@ -1,7 +1,7 @@
 PROGRAM=hpc_exercise
 OBJS=utils/mat.o utils/mat_util.o main.o
 
-CXX = g++
+CXX = clang++
 CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native
 
 .SUFFIXES: .cpp .o
