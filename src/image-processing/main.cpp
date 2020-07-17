@@ -140,7 +140,7 @@ int main(const int argc, const char** argv)
 	// 乗算によるuchar->float変換のSIMD化の例
 	if (false)
 	{
-		std::cout << "gamma correction" << std::endl;
+		std::cout << "multiply fast" << std::endl;
 		const int loop = 1000;
 
 		const float factor = 0.8f;
