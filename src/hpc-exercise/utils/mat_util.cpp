@@ -3,6 +3,9 @@
 #include <iostream>
 #include <cstring>
 
+#include <immintrin.h>
+#include <pmmintrin.h>
+#include <bitset>
 
 //Mat util functions
 ////////////////////////////
@@ -13,19 +16,16 @@ void mat_zero(Mat_8U& m)
 	const int size = m.cols * m.rows;
 	memset(m.data, 0, sizeof(unsigned char) * size);
 }
-
 void mat_zero(Mat_16S& m)
 {
 	const int size = m.cols * m.rows;
 	memset(m.data, 0, sizeof(short) * size);
 }
-
 void mat_zero(Mat_32S& m)
 {
 	const int size = m.cols * m.rows;
 	memset(m.data, 0, sizeof(int) * size);
 }
-
 void mat_zero(Mat_32F& m)
 {
 	const int size = m.cols * m.rows;
@@ -41,7 +41,6 @@ void mat_zero(Mat_32F& m)
 		m.data[i] = 0.f;
 	}
 }
-
 void mat_zero(Mat_64F& m)
 {
 	const int size = m.cols * m.rows;
@@ -58,7 +57,6 @@ void mat_zero(Mat_64F& m)
 	}
 }
 
-
 ////////////////////////////
 //init (one)
 ////////////////////////////
@@ -67,7 +65,6 @@ void mat_one(Mat_8U& m)
 	const int size = m.cols * m.rows;
 	memset(m.data, 1, sizeof(unsigned char) * size);
 }
-
 void mat_one(Mat_16S& m)
 {
 	const int size = m.cols * m.rows;
@@ -83,7 +80,6 @@ void mat_one(Mat_16S& m)
 		m.data[i] = 1;
 	}
 }
-
 void mat_one(Mat_32S& m)
 {
 	const int size = m.cols * m.rows;
@@ -99,7 +95,6 @@ void mat_one(Mat_32S& m)
 		m.data[i] = 1;
 	}
 }
-
 void mat_one(Mat_32F& m)
 {
 	const int size = m.cols * m.rows;
@@ -115,7 +110,6 @@ void mat_one(Mat_32F& m)
 		m.data[i] = 1.f;
 	}
 }
-
 void mat_one(Mat_64F& m)
 {
 	const int size = m.cols * m.rows;
@@ -132,7 +126,6 @@ void mat_one(Mat_64F& m)
 	}
 }
 
-
 ////////////////////////////
 //init (rand)
 ////////////////////////////
@@ -147,7 +140,6 @@ void mat_rand(Mat_8U& m, const unsigned char rand_min, const unsigned char rand_
 		*ptr++ = rand_min + (unsigned char)(rand() * v);
 	}
 }
-
 void mat_rand(Mat_16S& m, const short rand_min, const short rand_max)
 {
 	const int size = m.rows * m.cols;
@@ -159,7 +151,6 @@ void mat_rand(Mat_16S& m, const short rand_min, const short rand_max)
 		*ptr++ = rand_min + (short)(rand() * v);
 	}
 }
-
 void mat_rand(Mat_32S& m, const int rand_min, const int rand_max)
 {
 	const int size = m.rows * m.cols;
@@ -171,7 +162,6 @@ void mat_rand(Mat_32S& m, const int rand_min, const int rand_max)
 		*ptr++ = rand_min + (int)(rand() * v);
 	}
 }
-
 void mat_rand(Mat_32F& m, const float rand_min, const float rand_max)
 {
 	const int size = m.rows * m.cols;
@@ -183,7 +173,6 @@ void mat_rand(Mat_32F& m, const float rand_min, const float rand_max)
 		*ptr++ = rand_min + (rand() * v);
 	}
 }
-
 void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 {
 	const int size = m.rows * m.cols;
@@ -209,7 +198,6 @@ Mat_8U mat_add(const Mat_8U& m, const unsigned char v)
 	}
 	return dest;
 }
-
 Mat_16S mat_add(const Mat_16S& m, const short v)
 {
 	Mat_16S dest(m.rows, m.cols);
@@ -220,7 +208,6 @@ Mat_16S mat_add(const Mat_16S& m, const short v)
 	}
 	return dest;
 }
-
 Mat_32S mat_add(const Mat_32S& m, const int v)
 {
 	Mat_32S dest(m.rows, m.cols);
@@ -231,7 +218,6 @@ Mat_32S mat_add(const Mat_32S& m, const int v)
 	}
 	return dest;
 }
-
 Mat_32F mat_add(const Mat_32F& m, const float v)
 {
 	Mat_32F dest(m.rows, m.cols);
@@ -242,7 +228,6 @@ Mat_32F mat_add(const Mat_32F& m, const float v)
 	}
 	return dest;
 }
-
 Mat_64F mat_add(const Mat_64F& m, const double v)
 {
 	Mat_64F dest(m.rows, m.cols);
@@ -253,7 +238,6 @@ Mat_64F mat_add(const Mat_64F& m, const double v)
 	}
 	return dest;
 }
-
 
 ////////////////////////////
 //mat add
@@ -274,7 +258,6 @@ Mat_8U mat_add(const Mat_8U& m1, const Mat_8U& m2)
 	}
 	return dest;
 }
-
 Mat_16S mat_add(const Mat_16S& m1, const Mat_16S& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
@@ -291,7 +274,6 @@ Mat_16S mat_add(const Mat_16S& m1, const Mat_16S& m2)
 	}
 	return dest;
 }
-
 Mat_32S mat_add(const Mat_32S& m1, const Mat_32S& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
@@ -308,7 +290,6 @@ Mat_32S mat_add(const Mat_32S& m1, const Mat_32S& m2)
 	}
 	return dest;
 }
-
 Mat_32F mat_add(const Mat_32F& m1, const Mat_32F& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
@@ -325,7 +306,6 @@ Mat_32F mat_add(const Mat_32F& m1, const Mat_32F& m2)
 	}
 	return dest;
 }
-
 Mat_64F mat_add(const Mat_64F& m1, const Mat_64F& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
@@ -356,7 +336,6 @@ Mat_8U mat_mul(const Mat_8U& m, const unsigned char v)
 	}
 	return dest;
 }
-
 Mat_16S mat_mul(const Mat_16S& m, const short v)
 {
 	Mat_16S dest(m.rows, m.cols);
@@ -367,7 +346,6 @@ Mat_16S mat_mul(const Mat_16S& m, const short v)
 	}
 	return dest;
 }
-
 Mat_32S mat_mul(const Mat_32S& m, const int v)
 {
 	Mat_32S dest(m.rows, m.cols);
@@ -378,7 +356,6 @@ Mat_32S mat_mul(const Mat_32S& m, const int v)
 	}
 	return dest;
 }
-
 Mat_32F mat_mul(const Mat_32F& m, const float v)
 {
 	Mat_32F dest(m.rows, m.cols);
@@ -389,7 +366,6 @@ Mat_32F mat_mul(const Mat_32F& m, const float v)
 	}
 	return dest;
 }
-
 Mat_64F mat_mul(const Mat_64F& m, const double v)
 {
 	Mat_64F dest(m.rows, m.cols);
@@ -400,7 +376,6 @@ Mat_64F mat_mul(const Mat_64F& m, const double v)
 	}
 	return dest;
 }
-
 
 ////////////////////////////
 //mat mul
@@ -421,7 +396,6 @@ Mat_8U mat_mul(const Mat_8U& m1, const Mat_8U& m2)
 	}
 	return dest;
 }
-
 Mat_16S mat_mul(const Mat_16S& m1, const Mat_16S& m2)
 {
 	if (m1.rows != m2.cols)
@@ -438,7 +412,6 @@ Mat_16S mat_mul(const Mat_16S& m1, const Mat_16S& m2)
 	}
 	return dest;
 }
-
 Mat_32S mat_mul(const Mat_32S& m1, const Mat_32S& m2)
 {
 	if (m1.rows != m2.cols)
@@ -455,7 +428,6 @@ Mat_32S mat_mul(const Mat_32S& m1, const Mat_32S& m2)
 	}
 	return dest;
 }
-
 Mat_32F mat_mul(const Mat_32F& m1, const Mat_32F& m2)
 {
 	if (m1.rows != m2.cols)
@@ -472,7 +444,6 @@ Mat_32F mat_mul(const Mat_32F& m1, const Mat_32F& m2)
 	}
 	return dest;
 }
-
 Mat_64F mat_mul(const Mat_64F& m1, const Mat_64F& m2)
 {
 	if (m1.rows != m2.cols)
@@ -490,7 +461,6 @@ Mat_64F mat_mul(const Mat_64F& m1, const Mat_64F& m2)
 	return dest;
 }
 
-
 ////////////////////////////
 //val div
 ////////////////////////////
@@ -504,7 +474,6 @@ Mat_8U mat_div(const Mat_8U& m, const unsigned char v)
 	}
 	return dest;
 }
-
 Mat_16S mat_div(const Mat_16S& m, const short v)
 {
 	Mat_16S dest(m.rows, m.cols);
@@ -515,7 +484,6 @@ Mat_16S mat_div(const Mat_16S& m, const short v)
 	}
 	return dest;
 }
-
 Mat_32S mat_div(const Mat_32S& m, const int v)
 {
 	Mat_32S dest(m.rows, m.cols);
@@ -526,7 +494,6 @@ Mat_32S mat_div(const Mat_32S& m, const int v)
 	}
 	return dest;
 }
-
 Mat_32F mat_div(const Mat_32F& m, const float v)
 {
 	Mat_32F dest(m.rows, m.cols);
@@ -537,7 +504,6 @@ Mat_32F mat_div(const Mat_32F& m, const float v)
 	}
 	return dest;
 }
-
 Mat_64F mat_div(const Mat_64F& m, const double v)
 {
 	Mat_64F dest(m.rows, m.cols);
@@ -548,7 +514,6 @@ Mat_64F mat_div(const Mat_64F& m, const double v)
 	}
 	return dest;
 }
-
 
 ////////////////////////////
 //show
@@ -566,7 +531,6 @@ void mat_show(const Mat_8U& m)
 		std::cout << std::endl;
 	}
 }
-
 void mat_show(const Mat_16S& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 16S" << std::endl;
@@ -580,7 +544,6 @@ void mat_show(const Mat_16S& m)
 		std::cout << std::endl;
 	}
 }
-
 void mat_show(const Mat_32S& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 32S" << std::endl;
@@ -594,7 +557,6 @@ void mat_show(const Mat_32S& m)
 		std::cout << std::endl;
 	}
 }
-
 void mat_show(const Mat_32F& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 32F" << std::endl;
@@ -608,7 +570,6 @@ void mat_show(const Mat_32F& m)
 		std::cout << std::endl;
 	}
 }
-
 void mat_show(const Mat_64F& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 64F" << std::endl;
@@ -628,22 +589,18 @@ unsigned char rand_8u(const unsigned char rand_min, const unsigned char rand_max
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
-
 short rand_16s(const short rand_min, const short rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
-
 int rand_32s(const int rand_min, const int rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
-
 float rand_32f(const float rand_min, const float rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / static_cast<float>(RAND_MAX));
 }
-
 double rand_64f(const double rand_min, const double rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
@@ -666,7 +623,6 @@ int mat_diff(Mat_8U& src1, Mat_8U& src2)
 	}
 	return ret;
 }
-
 int mat_diff(Mat_16S& src1, Mat_16S& src2)
 {
 	if (src1.rows * src1.cols != src2.cols * src2.rows)
@@ -701,7 +657,6 @@ int mat_diff(Mat_32S& src1, Mat_32S& src2)
 	}
 	return ret;
 }
-
 double mat_diff(Mat_32F& src1, Mat_32F& src2)
 {
 	if (src1.rows * src1.cols != src2.cols * src2.rows)
@@ -719,7 +674,6 @@ double mat_diff(Mat_32F& src1, Mat_32F& src2)
 	}
 	return ret;
 }
-
 double mat_diff(Mat_64F& src1, Mat_64F& src2)
 {
 	if (src1.rows* src1.cols != src2.cols*src2.rows)
@@ -754,8 +708,7 @@ void CalcTime::end()
 	return;
 }
 
-#else
-#ifdef __APPLE__
+#elif defined(__APPLE__)
 #include <mach/mach_time.h>
 #define ORWL_NANO (+1.0E-9)
 #define ORWL_GIGA UINT64_C(1000000000)
@@ -792,20 +745,7 @@ void CalcTime::end()
     que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
     return;
 }
-#elif __GNUC__
-void CalcTime::start()
-{
-	clock_gettime(CLOCK_REALTIME, &s);
-	return;
-}
-
-void CalcTime::end()
-{
-	clock_gettime(CLOCK_REALTIME, &e);
-	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
-	return;
-}
-#elif _MSC_VER
+#elif defined(_MSC_VER)
 CalcTime::CalcTime()
 {
 	QueryPerformanceFrequency(&frequency);
@@ -826,7 +766,20 @@ void CalcTime::end()
 	que.push_back(sec * 1000.0); //msec
 	return;
 }
-#endif
+#elif defined(__GNUC__)
+void CalcTime::start()
+{
+	clock_gettime(CLOCK_REALTIME, &s);
+	return;
+}
+
+void CalcTime::end()
+{
+	clock_gettime(CLOCK_REALTIME, &e);
+	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
+	return;
+}
+
 #endif
 
 void CalcTime::clear()
@@ -869,10 +822,6 @@ double CalcTime::getLastTime()
 	return que.back();
 }
 
-#include <immintrin.h>
-#include <pmmintrin.h>
-#include <iostream>
-#include<bitset>
 
 bool show_mxcsr(const bool showState, const bool showMask, const bool isClaer)
 {

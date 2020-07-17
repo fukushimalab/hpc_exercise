@@ -115,7 +115,7 @@ Image_16S::Image_16S(const int rows, const int cols, const int channels)
 }
 
 Image_16S::Image_16S(const Image_16S& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(channels)
+	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
@@ -123,7 +123,7 @@ Image_16S::Image_16S(const Image_16S& m)
 }
 
 Image_16S::Image_16S(const Image_8U& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(channels)
+	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
@@ -134,7 +134,7 @@ Image_16S::Image_16S(const Image_8U& m)
 }
 
 Image_16S::Image_16S(const Image_32S& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(channels)
+	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
@@ -145,7 +145,7 @@ Image_16S::Image_16S(const Image_32S& m)
 }
 
 Image_16S::Image_16S(const Image_32F& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(channels)
+	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);
@@ -156,7 +156,7 @@ Image_16S::Image_16S(const Image_32F& m)
 }
 
 Image_16S::Image_16S(const Image_64F& m)
-	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(channels)
+	: rows(m.rows), cols(m.cols), type(sizeof(short)), channels(m.channels)
 {
 	const int size = type * rows * cols * channels;
 	this->data = (short*)_mm_malloc(size, 32);

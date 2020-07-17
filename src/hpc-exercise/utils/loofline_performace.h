@@ -3,9 +3,10 @@
 #include "mat_util.h"
 #include "simd_util.h"
 #include <iostream>
-#include <omp.h>
 #include <algorithm>
 #include <cfloat>
+
+#include <omp.h>
 
 template<int size>
 void loofline_test_cpp(const int iteration, const int num_thread = -1)

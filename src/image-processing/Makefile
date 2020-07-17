@@ -1,8 +1,10 @@
-PROGRAM=image_processing
+PROGRAM=hpc_exercise
 OBJS=utils/image.o utils/image_util.o main.o
 
-CC = g++
-CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -Wno-unused-result -mfpmath=both -O3 -mtune=native
+CXX = g++
+CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native
+#CXX = clang++
+#CXXFLAGS = -std=c++0x -Xpreprocessor -fopenmp -lomp -Wno-unused-result -Ofast -march=native -mtune=native
 
 .SUFFIXES: .cpp .o
 
@@ -10,14 +12,14 @@ CXXFLAGS=-lm -std=c++0x -fopenmp -march=native -Wno-unused-result -mfpmath=both 
 all: depend $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(CXXFLAGS) -o $(PROGRAM) $^
+	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $^
 
 .c.o:
-	$(CC) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
 clean:
-	$(RM) $(PROGRAM) $(OBJS) depend.inc *.ppm *.pgm
+	$(RM) $(PROGRAM) $(OBJS) depend.inc
 
 .PHONY: depend
 depend: $(OBJS:.o=.cpp)

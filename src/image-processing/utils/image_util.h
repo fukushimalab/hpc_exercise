@@ -4,7 +4,7 @@
 
 #include "image.h"
 #include <vector>
-#include <time.h>
+#include <ctime>
 
 #ifdef _MSC_VER
 #define NOMINMAX
@@ -89,9 +89,7 @@ struct CalcTime
 	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
 	double getLastTime();
 };
-
-#else
-#ifdef __GNUC__
+#elif defined(__GNUC__)
 struct CalcTime
 {
 	std::vector<double> que;
@@ -104,7 +102,7 @@ struct CalcTime
 	double getAvgTime(const bool dropFirstMeasure = true, const bool isClear = true);
 	double getLastTime();
 };
-#elif _MSC_VER
+#elif defined(_MSC_VER)
 struct CalcTime
 {
 	std::vector<double> que;
@@ -120,5 +118,4 @@ struct CalcTime
 	double getLastTime();
 	CalcTime();
 };
-#endif
 #endif

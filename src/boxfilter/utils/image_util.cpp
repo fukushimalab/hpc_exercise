@@ -1,6 +1,5 @@
 #include "image_util.h"
 #include "simd_util.h"
-#include <stdlib.h>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
@@ -307,7 +306,6 @@ void image_zero(Image_8U& m)
 		}
 	}
 }
-
 void image_zero(Image_16S& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -321,7 +319,6 @@ void image_zero(Image_16S& m)
 		}
 	}
 }
-
 void image_zero(Image_32S& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -335,7 +332,6 @@ void image_zero(Image_32S& m)
 		}
 	}
 }
-
 void image_zero(Image_32F& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -349,7 +345,6 @@ void image_zero(Image_32F& m)
 		}
 	}
 }
-
 void image_zero(Image_64F& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -381,7 +376,6 @@ void image_one(Image_8U& m)
 		}
 	}
 }
-
 void image_one(Image_16S& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -395,7 +389,6 @@ void image_one(Image_16S& m)
 		}
 	}
 }
-
 void image_one(Image_32S& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -409,7 +402,6 @@ void image_one(Image_32S& m)
 		}
 	}
 }
-
 void image_one(Image_32F& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -423,7 +415,6 @@ void image_one(Image_32F& m)
 		}
 	}
 }
-
 void image_one(Image_64F& m)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -455,7 +446,6 @@ void image_rand(Image_8U& m, const unsigned char rand_min, const unsigned char r
 		}
 	}
 }
-
 void image_rand(Image_16S& m, const short rand_min, const short rand_max)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -469,7 +459,6 @@ void image_rand(Image_16S& m, const short rand_min, const short rand_max)
 		}
 	}
 }
-
 void image_rand(Image_32S& m, const int rand_min, const int rand_max)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -483,7 +472,6 @@ void image_rand(Image_32S& m, const int rand_min, const int rand_max)
 		}
 	}
 }
-
 void image_rand(Image_32F& m, const float rand_min, const float rand_max)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -492,12 +480,11 @@ void image_rand(Image_32F& m, const float rand_min, const float rand_max)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / static_cast<float>(RAND_MAX));
 			}
 		}
 	}
 }
-
 void image_rand(Image_64F& m, const double rand_min, const double rand_max)
 {
 	for (int j = 0; j < m.rows; j++)
@@ -506,7 +493,7 @@ void image_rand(Image_64F& m, const double rand_min, const double rand_max)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
 			}
 		}
 	}
@@ -520,22 +507,18 @@ void image_info(const Image_8U m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " x " << m.channels << " ]  8U" << std::endl;
 }
-
 void image_info(const Image_16S m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " x " << m.channels << " ] 16S" << std::endl;
 }
-
 void image_info(const Image_32S m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " x " << m.channels << " ] 32S" << std::endl;
 }
-
 void image_info(const Image_32F m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " x " << m.channels << " ] 32F" << std::endl;
 }
-
 void image_info(const Image_64F m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " x " << m.channels << " ] 64F" << std::endl;
@@ -546,25 +529,21 @@ unsigned char rand_8u(const unsigned char rand_min, const unsigned char rand_max
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
-
 short rand_16s(const short rand_min, const short rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
-
 int rand_32s(const int rand_min, const int rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
 }
-
 float rand_32f(const float rand_min, const float rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / static_cast<float>(RAND_MAX));
 }
-
 double rand_64f(const double rand_min, const double rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
 }
 
 // calcPSNR
@@ -605,7 +584,6 @@ double calcPSNR(const Image_8U& src1, const Image_8U& src2)
                 return 10.0 * log10((255.0 * 255.0) / mse);
         }
 }
-
 double calcPSNR(const Image_32F& src1, const Image_32F& src2)
 {
         if (src1.channels != src2.channels)
@@ -660,8 +638,7 @@ void CalcTime::end()
 	return;
 }
 
-#else
-#ifdef __APPLE__
+#elif defined(__APPLE__)
 #include <mach/mach_time.h>
 #define ORWL_NANO (+1.0E-9)
 #define ORWL_GIGA UINT64_C(1000000000)
@@ -698,20 +675,7 @@ void CalcTime::end()
 	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
 	return;
 }
-#elif __GNUC__
-void CalcTime::start()
-{
-	clock_gettime(CLOCK_REALTIME, &s);
-	return;
-}
-
-void CalcTime::end()
-{
-	clock_gettime(CLOCK_REALTIME, &e);
-	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
-	return;
-}
-#elif _MSC_VER
+#elif defined(_MSC_VER)
 CalcTime::CalcTime()
 {
 	QueryPerformanceFrequency(&frequency);
@@ -732,7 +696,20 @@ void CalcTime::end()
 	que.push_back(sec * 1000.0); //msec
 	return;
 }
-#endif
+#elif defined(__GNUC__)
+void CalcTime::start()
+{
+	clock_gettime(CLOCK_REALTIME, &s);
+	return;
+}
+
+void CalcTime::end()
+{
+	clock_gettime(CLOCK_REALTIME, &e);
+	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
+	return;
+}
+
 #endif
 
 void CalcTime::clear()
