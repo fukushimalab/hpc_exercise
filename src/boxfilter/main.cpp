@@ -6,6 +6,7 @@
 #endif
 #include <cmath>
 #include <algorithm>
+#include <omp.h>
 
 /////////////////////////////////
 // box filter

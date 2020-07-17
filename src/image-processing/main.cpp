@@ -6,6 +6,7 @@
 #endif
 #include <cmath>
 #include <algorithm>
+#include <omp.h>
 
 /////////////////////////////////
 // チュートリアル
@@ -18,6 +19,7 @@ void MulConstantFast3(const Image_8U& src, Image_8U& dest, const float factor);
 void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma);
 void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma);
 void MeanVar(const Image_8U& src, float& mean, float& var);
+void MeanVarAccFloat(const Image_8U& src, float& mean, float& var);
 void MeanVarFast(const Image_8U& src, float& mean, float& var);
 void GaussianFilter(const Image_8U& src, Image_8U& dest, const int r, const float sigma);
 void FIRFilter(const Image_8U& src, Image_8U& dest, const int r, float parameter);
@@ -135,7 +137,7 @@ int main(const int argc, const char** argv)
 	//////////////////////////////////////////////////////////////////////
 	// 課題
 	//////////////////////////////////////////////////////////////////////
-	
+
 
 	// 乗算によるuchar->float変換のSIMD化の例
 	if (false)
@@ -229,7 +231,7 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "gamma correction" << std::endl;
-		const int loop = 10;
+		const int loop = 100;
 
 		const float gamma = 2.f;
 		Image_8U src, dest, reference;
@@ -264,7 +266,7 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "mean-var" << std::endl;
-		const int loop = 10;
+		const int loop = 100;
 
 		Image_8U src;
 		readPXM("img/lena.ppm", src);
@@ -279,6 +281,17 @@ int main(const int argc, const char** argv)
 		}
 
 		std::cout << "base: " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "mean: " << mean << std::endl;
+		std::cout << "var : " << var << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			MeanVarAccFloat(src, mean, var);
+			t.end();
+		}
+
+		std::cout << "flt : " << t.getAvgTime() << " ms" << std::endl;
 		std::cout << "mean: " << mean << std::endl;
 		std::cout << "var : " << var << std::endl;
 
@@ -407,17 +420,6 @@ void MulConstantFast2(const Image_8U& src, Image_8U& dest, const float factor)
 	}
 }
 
-inline void v_cvtepu8_psx2(__m128i src, __m256& dest0, __m256& dest1)
-{
-	dest0 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(src));
-	dest1 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(_mm_shuffle_epi32(src, _MM_SHUFFLE(1, 0, 3, 2))));
-}
-
-inline __m128i v_cvtpsx2_epu8(const __m256 v0, const __m256 v1)
-{
-	return _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_packus_epi16(_mm256_packs_epi32(_mm256_cvtps_epi32(v0), _mm256_cvtps_epi32(v1)), _mm256_setzero_si256()), _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7)));
-}
-
 void MulConstantFast3(const Image_8U& src, Image_8U& dest, const float factor)
 {
 	dest = Image_8U(src.rows, src.cols, src.channels);
@@ -427,14 +429,14 @@ void MulConstantFast3(const Image_8U& src, Image_8U& dest, const float factor)
 	for (int x = 0; x < src.rows * src.cols * cn; x += 16)//全画素同じ処理ならループはつぶせる
 	{
 		__m128i ms8 = _mm_load_si128((__m128i*)(src.data + x));//ucharを16個読み込み
-		
-		__m256 ms32f_0, ms32f_1; 
-		v_cvtepu8_psx2(ms8, ms32f_0, ms32f_1);//uchar->floatx2にキャスト．v_cvtepu8_psx2は上記に自作
-		
+
+		__m256 ms32f_0, ms32f_1;
+		_mm256_cvtepu8_psx2(ms8, ms32f_0, ms32f_1);//uchar->floatx2にキャスト．v_cvtepu8_psx2は上記に自作
+
 		__m256 mmul32f_0 = _mm256_mul_ps(ms32f_0, mfactor);//factorと乗算
 		__m256 mmul32f_1 = _mm256_mul_ps(ms32f_1, mfactor);//factorと乗算
 
-		__m128i mmul8_128 = v_cvtpsx2_epu8(mmul32f_0, mmul32f_1);//floatx2->uchar．v_cvtpsx2_epu8は上記に自作
+		__m128i mmul8_128 = _mm256_cvtpsx2_epu8(mmul32f_0, mmul32f_1);//floatx2->uchar．v_cvtpsx2_epu8は上記に自作
 
 		_mm_store_si128((__m128i*)(dest.data + x), mmul8_128);
 	}
@@ -460,13 +462,6 @@ void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma)
 {
 	dest = Image_8U(src.rows, src.cols, src.channels);
 	const int cn = src.channels;
-	for (int y = 0; y < src.rows; y++)
-	{
-		for (int x = 0; x < src.cols * cn; x++)
-		{
-			dest.data[cn * (y * src.cols) + x] = (unsigned char)(pow((float)src.data[cn * (y * src.cols) + x] / 255.f, 1.f / gamma) * 255.0f + 0.5f);
-		}
-	}
 }
 
 ///////////////////////
@@ -474,8 +469,32 @@ void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma)
 ///////////////////////
 void MeanVar(const Image_8U& src, float& mean, float& var)
 {
+	double m = 0.0;
+	double v = 0.0;
 	mean = 0;
 	var = 0;
+	const int cn = src.channels;
+
+	for (int y = 0; y < src.rows; y++)
+	{
+		for (int x = 0; x < src.cols * cn; x++)
+		{
+			m += src.data[cn * (y * src.cols) + x];
+			v += src.data[cn * (y * src.cols) + x] * src.data[cn * (y * src.cols) + x];
+		}
+	}
+	m /= (float)(src.rows * src.cols * cn);
+	v = v / (float)(src.rows * src.cols * cn) - m * m;
+
+	mean = m;
+	var = v;
+}
+
+void MeanVarAccFloat(const Image_8U& src, float& mean, float& var)
+{
+	mean = 0.f;//floatで計算すると桁が足りない．
+	var = 0.f;//floatで計算すると桁が足りない．
+
 	const int cn = src.channels;
 
 	for (int y = 0; y < src.rows; y++)
@@ -488,24 +507,15 @@ void MeanVar(const Image_8U& src, float& mean, float& var)
 	}
 	mean /= (float)(src.rows * src.cols * cn);
 	var = var / (float)(src.rows * src.cols * cn) - mean * mean;
+
+	mean = mean;
+	var = var;
 }
 
 void MeanVarFast(const Image_8U& src, float& mean, float& var)
 {
-	mean = 0;
-	var = 0;
-	const int cn = src.channels;
-
-	for (int y = 0; y < src.rows; y++)
-	{
-		for (int x = 0; x < src.cols * cn; x++)
-		{
-			mean += src.data[cn * (y * src.cols) + x];
-			var += src.data[cn * (y * src.cols) + x] * src.data[cn * (y * src.cols) + x];
-		}
-	}
-	mean /= (float)(src.rows * src.cols * cn);
-	var = var / (float)(src.rows * src.cols * cn) - mean * mean;
+	mean = 0.f;
+	var = 0.f;
 }
 
 ///////////////////////
@@ -560,32 +570,6 @@ void GaussianFilter(const Image_8U& src, Image_8U& dest, const int r, const floa
 ///////////////////////
 // FIR filter (sample)
 ///////////////////////
-inline __m256 _mm256_load_epu8cvtps(const __m128i* P)
-{
-	return _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(_mm_loadu_si128((__m128i*)P)));
-}
-
-void inline _mm256_stream_ps_color(void* dst, const __m256 rsrc, const __m256 gsrc, const __m256 bsrc)
-{
-	static const int smask1 = _MM_SHUFFLE(1, 2, 3, 0);
-	static const int smask2 = _MM_SHUFFLE(2, 3, 0, 1);
-	static const int smask3 = _MM_SHUFFLE(3, 0, 1, 2);
-	static const int bmask1 = 0x44;
-	static const int bmask2 = 0x22;
-	static const int pmask1 = 0x20;
-	static const int pmask2 = 0x30;
-	static const int pmask3 = 0x31;
-	const __m256 aa = _mm256_shuffle_ps(rsrc, rsrc, smask1);
-	const __m256 bb = _mm256_shuffle_ps(gsrc, gsrc, smask2);
-	const __m256 cc = _mm256_shuffle_ps(bsrc, bsrc, smask3);
-	__m256 bval = _mm256_blend_ps(_mm256_blend_ps(aa, cc, bmask1), bb, bmask2);
-	__m256 gval = _mm256_blend_ps(_mm256_blend_ps(cc, bb, bmask1), aa, bmask2);
-	__m256 rval = _mm256_blend_ps(_mm256_blend_ps(bb, aa, bmask1), cc, bmask2);
-	_mm256_stream_ps((float*)dst + 0, _mm256_permute2f128_ps(bval, rval, pmask1));
-	_mm256_stream_ps((float*)dst + 8, _mm256_permute2f128_ps(gval, bval, pmask2));
-	_mm256_stream_ps((float*)dst + 16, _mm256_permute2f128_ps(rval, gval, pmask3));
-}
-
 float* createBoxKernel(const int radius)
 {
 	float* kernel = (float*)_mm_malloc(sizeof(float) * (2 * radius + 1) * (2 * radius + 1), 32);

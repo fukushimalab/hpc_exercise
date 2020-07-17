@@ -332,10 +332,10 @@ inline void print_m256i_i64(const __m256i a)
 inline void print_m256i_u64(const __m256i a)
 {
 #ifdef __GNUC__
-	std::cout << ((unsigned long long*)&a)[0] << ", "
-		<< ((unsigned long long*)&a)[1] << ", "
-		<< ((unsigned long long*)&a)[2] << ", "
-		<< ((unsigned long long*)&a)[3] << std::endl;
+	std::cout << ((unsigned long long*) & a)[0] << ", "
+		<< ((unsigned long long*) & a)[1] << ", "
+		<< ((unsigned long long*) & a)[2] << ", "
+		<< ((unsigned long long*) & a)[3] << std::endl;
 #elif _MSC_VER
 	std::cout << a.m256i_u64[0] << ", "
 		<< a.m256i_u64[1] << ", "
@@ -353,7 +353,7 @@ inline void print_m128(const __m128 a)
 		<< ((float*)&a)[2] << ", "
 		<< ((float*)&a)[3] << std::endl;
 #elif _MSC_VER
-	std::cout 
+	std::cout
 		<< a.m128_f32[0] << ", "
 		<< a.m128_f32[1] << ", "
 		<< a.m128_f32[2] << ", "
@@ -381,7 +381,7 @@ inline void print_m128i_u8(const __m128i a)
 		<< (int)((unsigned char*)&a)[14] << ", "
 		<< (int)((unsigned char*)&a)[15] << ", " << std::endl;
 #elif _MSC_VER
-	std::cout 
+	std::cout
 		<< (int)a.m128i_u8[0] << ", "
 		<< (int)a.m128i_u8[1] << ", "
 		<< (int)a.m128i_u8[2] << ", "
@@ -400,4 +400,62 @@ inline void print_m128i_u8(const __m128i a)
 		<< (int)a.m128i_u8[14] << ", "
 		<< (int)a.m128i_u8[15] << ", " << std::endl;
 #endif
+}
+
+//unsigned charx16->floatx16
+inline void _mm256_cvtepu8_psx2(__m128i src, __m256& dest0, __m256& dest1)
+{
+	dest0 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(src));
+	dest1 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(_mm_shuffle_epi32(src, _MM_SHUFFLE(1, 0, 3, 2))));
+}
+
+//unsigned charx8 ->float
+inline void _mm256_load_epu8cvtpsx2(const __m128i* P, __m256& dest0, __m256& dest1)
+{
+	__m128i src = _mm_load_si128(P);
+	dest0 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(src));
+	dest1 = _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(_mm_shuffle_epi32(src, _MM_SHUFFLE(1, 0, 3, 2))));
+}
+
+//floatx16->unsigned charx16
+inline __m128i _mm256_cvtpsx2_epu8(const __m256 v0, const __m256 v1)
+{
+	return _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_packus_epi16(_mm256_packs_epi32(_mm256_cvtps_epi32(v0), _mm256_cvtps_epi32(v1)), _mm256_setzero_si256()), _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7)));
+}
+
+//unsigned charx8 ->float
+inline __m256 _mm256_load_epu8cvtps(const __m128i* P)
+{
+	return _mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(_mm_loadl_epi64((__m128i*)P)));
+}
+
+//float->unsigned charx8
+__m128i inline _mm256_cvtps_epu8(__m256 src)
+{
+	__m256i srci = _mm256_cvtps_epi32(src);//float-> int
+	__m256i src16 = _mm256_packs_epi32(srci, _mm256_setzero_si256());//int->short:0Ç∆packÇ≈shortÇ…Ç∑ÇÈÅD
+	__m256i src8 = _mm256_packus_epi16(src16, _mm256_setzero_si256());//short->uchar:0Ç∆pack"us"Ç≈unsigned charÇ…Ç∑ÇÈÅDuÇ™Ç»Ç¢Ç∆charÇ…Ç»ÇÈÅD
+	__m256i src8perm = _mm256_permutevar8x32_epi32(src8, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));//permutevarÇ≈ï¿Ç◊ë÷Ç¶
+	return _mm256_castsi256_si128(src8perm);
+}
+
+void inline _mm256_stream_ps_color(void* dst, const __m256 rsrc, const __m256 gsrc, const __m256 bsrc)
+{
+	static const int smask1 = _MM_SHUFFLE(1, 2, 3, 0);
+	static const int smask2 = _MM_SHUFFLE(2, 3, 0, 1);
+	static const int smask3 = _MM_SHUFFLE(3, 0, 1, 2);
+	static const int bmask1 = 0x44;
+	static const int bmask2 = 0x22;
+	static const int pmask1 = 0x20;
+	static const int pmask2 = 0x30;
+	static const int pmask3 = 0x31;
+	const __m256 aa = _mm256_shuffle_ps(rsrc, rsrc, smask1);
+	const __m256 bb = _mm256_shuffle_ps(gsrc, gsrc, smask2);
+	const __m256 cc = _mm256_shuffle_ps(bsrc, bsrc, smask3);
+	__m256 bval = _mm256_blend_ps(_mm256_blend_ps(aa, cc, bmask1), bb, bmask2);
+	__m256 gval = _mm256_blend_ps(_mm256_blend_ps(cc, bb, bmask1), aa, bmask2);
+	__m256 rval = _mm256_blend_ps(_mm256_blend_ps(bb, aa, bmask1), cc, bmask2);
+	_mm256_stream_ps((float*)dst + 0, _mm256_permute2f128_ps(bval, rval, pmask1));
+	_mm256_stream_ps((float*)dst + 8, _mm256_permute2f128_ps(gval, bval, pmask2));
+	_mm256_stream_ps((float*)dst + 16, _mm256_permute2f128_ps(rval, gval, pmask3));
 }
