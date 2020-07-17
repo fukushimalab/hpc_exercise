@@ -12,19 +12,19 @@
 void mat_zero(Mat_8U& m)
 {
 	const int size = m.cols * m.rows;
-	memset(m.data, sizeof(unsigned char) * size, 0);
+	memset(m.data, 0, sizeof(unsigned char) * size);
 }
 
 void mat_zero(Mat_16S& m)
 {
 	const int size = m.cols * m.rows;
-	memset(m.data, sizeof(short) * size, 0);
+	memset(m.data, 0, sizeof(short) * size);
 }
 
 void mat_zero(Mat_32S& m)
 {
 	const int size = m.cols * m.rows;
-	memset(m.data, sizeof(int) * size, 0);
+	memset(m.data, 0, sizeof(int) * size);
 }
 
 void mat_zero(Mat_32F& m)
@@ -66,7 +66,7 @@ void mat_zero(Mat_64F& m)
 void mat_one(Mat_8U& m)
 {
 	const int size = m.cols * m.rows;
-	memset(m.data, sizeof(unsigned char) * size, 1);
+	memset(m.data, 1, sizeof(unsigned char) * size);
 }
 
 void mat_one(Mat_16S& m)
@@ -142,7 +142,7 @@ void mat_rand(Mat_8U& m, const unsigned char rand_min, const unsigned char rand_
 	const int size = m.rows * m.cols;
 
 	unsigned char* ptr = m.data;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
 		*ptr++ = rand_min + (unsigned char)(rand() * v);
@@ -154,7 +154,7 @@ void mat_rand(Mat_16S& m, const short rand_min, const short rand_max)
 	const int size = m.rows * m.cols;
 
 	short* ptr = m.data;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
 		*ptr++ = rand_min + (short)(rand() * v);
@@ -166,7 +166,7 @@ void mat_rand(Mat_32S& m, const int rand_min, const int rand_max)
 	const int size = m.rows * m.cols;
 
 	int* ptr = m.data;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
 		*ptr++ = rand_min + (int)(rand() * v);
@@ -178,7 +178,7 @@ void mat_rand(Mat_32F& m, const float rand_min, const float rand_max)
 	const int size = m.rows * m.cols;
 
 	float* ptr = m.data;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
 		*ptr++ = rand_min + (rand() * v);
@@ -190,7 +190,7 @@ void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 	const int size = m.rows * m.cols;
 
 	double* ptr = m.data;
-	const double v = (double)(rand_max - rand_min) / (RAND_MAX);
+	const double v = (double)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
 		*ptr++ = rand_min + (rand() * v);
@@ -642,12 +642,12 @@ int rand_32s(const int rand_min, const int rand_max)
 
 float rand_32f(const float rand_min, const float rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / static_cast<float>(RAND_MAX));
 }
 
 double rand_64f(const double rand_min, const double rand_max)
 {
-	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+	return rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
 }
 
 int mat_diff(Mat_8U& src1, Mat_8U& src2)

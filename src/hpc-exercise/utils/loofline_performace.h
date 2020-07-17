@@ -27,7 +27,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 	float* ptr = x;
 	const float rand_max = 1.f;
 	const float rand_min = 0.f;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size * thread_max; i++)
 	{
 		*ptr++ = rand_min + (rand() * v);
@@ -609,7 +609,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 	float* ptr = x;
 	const float rand_max = 1.f;
 	const float rand_min = 0.f;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size * thread_max; i++)
 	{
 		*ptr++ = std::max(FLT_MIN, rand_min + (rand() * v));
@@ -1585,7 +1585,7 @@ void timer_test(const int iteration, const int num_thread = -1)
 	float* ptr = x;
 	const float rand_max = 1.f;
 	const float rand_min = 0.f;
-	const float v = (float)(rand_max - rand_min) / (RAND_MAX);
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size * thread_max; i++)
 	{
 		*ptr++ = rand_min + (rand() * v);

@@ -2081,7 +2081,7 @@ int main(const int argc, const char** argv)
 	//なお，現在のg++では，最適化によってmul - addの命令はおそらくFMAに自動的に最適化されている．コンパイラオプション等で抑制して様子を見るとよい．
 
 	//(2) また，GFLOPSと演算強度[FLOPS / BYTE]をFMA命令で計算する関数`loofline_test`を使って，ルールラインのグラフとして図示せよ．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 22" << std::endl;
 		const int loop = 10000000;

@@ -1,8 +1,8 @@
 PROGRAM=hpc_exercise
 OBJS=utils/mat.o utils/mat_util.o main.o
 
-CC = g++
-CXXFLAGS =-lm -std=c++0x -fopenmp -march=native -Wno-unused-result -mfpmath=both #-O3 #-mtune=native
+CXX = g++
+CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native
 
 .SUFFIXES: .cpp .o
 
@@ -10,10 +10,10 @@ CXXFLAGS =-lm -std=c++0x -fopenmp -march=native -Wno-unused-result -mfpmath=both
 all: depend $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(CXXFLAGS) -o $(PROGRAM) $^
+	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $^
 
 .c.o:
-	$(CC) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
 clean:
