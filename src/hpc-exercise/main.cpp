@@ -2698,7 +2698,7 @@ int main(const int argc, const char** argv)
 	//課題27
 	//上の関数を用いた8x8のfloatの転置の動作を確認せよ．また，4x4のdouble型データの転置を作成せよ．
 	//難しいと思った場合は，効率を無視して，set命令やstoreしてスカラで書くなどすれば書ける．
-	if (false)
+	//if (false)
 	{
 		std::cout << "exercise 27" << std::endl;
 		{
