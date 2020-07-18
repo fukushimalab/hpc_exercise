@@ -139,6 +139,32 @@ for(int y = 0; y < height; y++)
 }
 ```
 
+### 課題0
+image-processingのコードをコンパイルして実行せよ
+このコードはコマンドライン引数をとることができ，下記のように使える．
+```．
+./image-processing 繰り返し回数iteration
+```
+また引数を省略した場合は，`main`直下にデフォルトの値が定義してあり，それを用いる．
+課題番号の指定はこれまでと同様にコメントアウトして使うとよい．
+
+```cpp
+int main(const int argc, const char** argv)
+{
+	const int default_loop = 10;
+```
+
+```
+fukushima@LetsnoteLV7:~/hpc/image-processing$ ./image_processing 100
+iteration = 100
+
+gamma correction
+|method|time [ms]|PSNR [dB]|
+|------|---------|---------|
+|base  | 16.1804|--------|
+|opt1. | 0.811683|inf      |
+|opt2. | 0.146788|inf      |
+```
 ### 課題１
 
 ガンマ変換を高速化せよ．
@@ -152,7 +178,7 @@ for(int y = 0; y < height; y++)
 *注意*
 
 image-processing/main.cppのmain関数にプロトタイプ宣言されたガンマ関数がある．
-`void GammaCorrection`がmain関数の下に定義されているので，それをコピーしてGammaCorrectionFastなどの関数を作り直して高速化するとよい．
+`void GammaCorrection`がmain関数の下に定義されているので，それをコピーしてGammaCorrectionFastなどの関数を作り直して高速化するとよい．（GammaCorrectionFast1,GammaCorrectionFast2を用意している）
 また，高速化の結果，バグや数値計算の順序によって演算結果が変わっている可能性があるためPSNR等で正しく挙動しているか確認するとよい．
 
 この注意点は以下の課題でも同じである．

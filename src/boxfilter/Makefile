@@ -1,4 +1,4 @@
-PROGRAM=hpc_exercise
+PROGRAM=boxfilter
 OBJS=utils/image.o utils/image_util.o main.o
 
 CXX = g++

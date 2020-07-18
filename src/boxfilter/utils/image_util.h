@@ -20,16 +20,16 @@ int readPXM(const char* name, Image_8U& dst);
 void writePXM(const char* name, const Image_8U& src);
 
 //color (RGB) to gray
-void cvtColorGray(const Image_8U src, Image_8U& dest);
-void cvtColorGray(const Image_32F src, Image_32F& dest);
+void cvtColorGray(const Image_8U& src, Image_8U& dest);
+void cvtColorGray(const Image_32F& src, Image_32F& dest);
 
 //copy make border
-void copyMakeBorder(const Image_8U src, Image_8U& dest, const int top, const int bottom, const int left, const int right);
-void copyMakeBorder(const Image_32F src, Image_32F& dest, const int top, const int bottom, const int left, const int right);
+void copyMakeBorder(const Image_8U& src, Image_8U& dest, const int top, const int bottom, const int left, const int right);
+void copyMakeBorder(const Image_32F& src, Image_32F& dest, const int top, const int bottom, const int left, const int right);
 
 //split image
-void split(const Image_8U src, Image_8U* dest);
-void split(const Image_32F src, Image_32F* dest);
+void split(const Image_8U& src, Image_8U* dest);
+void split(const Image_32F& src, Image_32F* dest);
 
 //marge image
 void merge(const Image_8U* src, const int channel, Image_8U& dest);

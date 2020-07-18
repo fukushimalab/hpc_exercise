@@ -110,4 +110,3 @@ struct Image_64F
 	Image_64F& operator=(const Image_64F& m);
 	void show() const;
 };
-

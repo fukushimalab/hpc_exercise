@@ -5,8 +5,8 @@
 #define _USE_MATH_DEFINES
 #endif
 #include <cmath>
-#include <algorithm>
 #include <omp.h>
+#include <algorithm>
 
 /////////////////////////////////
 // チュートリアル
@@ -17,10 +17,12 @@ void MulConstantFast(const Image_8U& src, Image_8U& dest, const float factor);
 void MulConstantFast2(const Image_8U& src, Image_8U& dest, const float factor);
 void MulConstantFast3(const Image_8U& src, Image_8U& dest, const float factor);
 void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma);
-void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma);
+void GammaCorrectionFast1(const Image_8U& src, Image_8U& dest, const float gamma);
+void GammaCorrectionFast2(const Image_8U& src, Image_8U& dest, const float gamma);
 void MeanVar(const Image_8U& src, float& mean, float& var);
 void MeanVarAccFloat(const Image_8U& src, float& mean, float& var);
-void MeanVarFast(const Image_8U& src, float& mean, float& var);
+void MeanVarFast1(const Image_8U& src, float& mean, float& var);
+void MeanVarFast2(const Image_8U& src, float& mean, float& var);
 void GaussianFilter(const Image_8U& src, Image_8U& dest, const int r, const float sigma);
 void FIRFilter(const Image_8U& src, Image_8U& dest, const int r, float parameter);
 
@@ -33,6 +35,9 @@ void NonLocalMeansFilter(const Image_8U& src, Image_8U& dest, const int template
 
 int main(const int argc, const char** argv)
 {
+	const int default_loop = 10;
+	const int loop = (argc < 2) ? default_loop : atoi(argv[1]);
+	std::cout << "iteration = " << loop << std::endl << std::endl;
 	//////////////////////////////////////////////////////////////////////
 	// チュートリアル
 	//////////////////////////////////////////////////////////////////////
@@ -44,7 +49,7 @@ int main(const int argc, const char** argv)
 		readPXM("img/lena.ppm", img);//カラー画像読み込み
 		Image_8U gray;
 		cvtColorGray(img, gray);//グレイに変換
-		writePXM("img/lena_gray.pgm", gray);//グレイ画像保存
+		writePXM("imgout/lena_gray.pgm", gray);//グレイ画像保存
 
 		return 0;
 	}
@@ -67,7 +72,7 @@ int main(const int argc, const char** argv)
 				}
 			}
 		}
-		writePXM("img/lena_gray_pad.pgm", gray);//グレイ画像保存
+		writePXM("imgout/lena_gray_pad.pgm", gray);//グレイ画像保存
 
 		return 0;
 	}
@@ -87,7 +92,7 @@ int main(const int argc, const char** argv)
 				dst.data[3 * (img.cols * j + i) + 1] = std::min(255, 2 * (img.data[3 * (img.cols * j + i) + 1]));
 			}
 		}
-		writePXM("img/lena_green.ppm", dst);//カラー画像保存
+		writePXM("imgout/lena_green.ppm", dst);//カラー画像保存
 
 		//splitとmergeを使ってもよい．こっちは青を2倍
 		Image_8U splitImg[3];
@@ -101,7 +106,7 @@ int main(const int argc, const char** argv)
 			}
 		}
 		merge(splitImg, 3, dst);
-		writePXM("img/lena_blue.ppm", dst);//カラー画像保存
+		writePXM("imgout/lena_blue.ppm", dst);//カラー画像保存
 
 		return 0;
 	}
@@ -128,7 +133,7 @@ int main(const int argc, const char** argv)
 				dst.data[3 * (dst.cols * (j + 50) + i + 50) + 2] = 0;
 			}
 		}
-		writePXM("img/lena_border.ppm", dst);//カラー画像保存
+		writePXM("imgout/lena_border.ppm", dst);//カラー画像保存
 
 		return 0;
 	}
@@ -138,12 +143,10 @@ int main(const int argc, const char** argv)
 	// 課題
 	//////////////////////////////////////////////////////////////////////
 
-
 	// 乗算によるuchar->float変換のSIMD化の例
 	if (false)
 	{
 		std::cout << "multiply fast" << std::endl;
-		const int loop = 1000;
 
 		const float factor = 0.8f;
 		Image_8U src, dest, reference;
@@ -185,7 +188,7 @@ int main(const int argc, const char** argv)
 		std::cout << "opt3.: " << t.getAvgTime() << " ms" << std::endl;
 		std::cout << "PSNR: " << calcPSNR(reference, dest) << std::endl;
 
-		writePXM("img/gamma.ppm", dest);
+		writePXM("imgout/mul.ppm", dest);
 		return 0;
 	}
 
@@ -193,8 +196,6 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "Gaussian filter" << std::endl;
-
-		const int loop = 10;
 
 		const int r = 5;
 		const float sigma = 20.f;
@@ -223,15 +224,14 @@ int main(const int argc, const char** argv)
 		//また，人間の目で50dB以上の画像を区別するのはほぼ不可能．
 		std::cout << "PSNR: " << calcPSNR(reference, dest) << "dB" << std::endl;
 
-		writePXM("img/gauss.ppm", dest);
+		writePXM("imgout/gauss.ppm", dest);
 		return 0;
 	}
 
 	// gamma correction
-	if (false)
+	//if (false)
 	{
 		std::cout << "gamma correction" << std::endl;
-		const int loop = 100;
 
 		const float gamma = 2.f;
 		Image_8U src, dest, reference;
@@ -244,19 +244,29 @@ int main(const int argc, const char** argv)
 			GammaCorrection(src, reference, gamma);
 			t.end();
 		}
-		std::cout << "base: " << t.getAvgTime() << " ms" << std::endl;
+		std::cout << "|method|time [ms]|PSNR [dB]|" << std::endl;
+		std::cout << "|------|---------|---------|" << std::endl;
+		std::cout << "|base  | " << t.getAvgTime() << "|--------|" << std::endl;
 
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
 			//この関数を最適する
-			GammaCorrectionFast(src, dest, gamma);
+			GammaCorrectionFast1(src, dest, gamma);
 			t.end();
 		}
-		std::cout << "opt.: " << t.getAvgTime() << " ms" << std::endl;
-		std::cout << "PSNR: " << calcPSNR(reference, dest) << std::endl;
+		std::cout << "|opt1. | " << t.getAvgTime() << "|" << calcPSNR(reference, dest) << "      |" << std::endl;
 
-		writePXM("img/gamma.ppm", dest);
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			//この関数を最適する
+			GammaCorrectionFast2(src, dest, gamma);
+			t.end();
+		}
+		std::cout << "|opt2. | " << t.getAvgTime() << "|" << calcPSNR(reference, dest) << "      |" << std::endl;
+
+		writePXM("imgout/gamma.ppm", dest);
 		return 0;
 	}
 
@@ -266,10 +276,9 @@ int main(const int argc, const char** argv)
 	if (false)
 	{
 		std::cout << "mean-var" << std::endl;
-		const int loop = 100;
 
-		Image_8U src;
-		readPXM("img/lena.ppm", src);
+		Image_8U src(1024, 1024, 1);
+		image_rand(src, 0, 253);
 
 		float mean, var;
 		CalcTime t;
@@ -280,9 +289,10 @@ int main(const int argc, const char** argv)
 			t.end();
 		}
 
-		std::cout << "base: " << t.getAvgTime() << " ms" << std::endl;
-		std::cout << "mean: " << mean << std::endl;
-		std::cout << "var : " << var << std::endl;
+		std::cout << "|method|time [ms]|mean   |var    |" << std::endl;
+		std::cout << "|------|---------|-------|-------|" << std::endl;
+		std::cout << "|base  | " << t.getAvgTime() << "|" << mean << "|" << var << "|" << std::endl;
+
 
 		for (int k = 0; k < loop; k++)
 		{
@@ -290,20 +300,24 @@ int main(const int argc, const char** argv)
 			MeanVarAccFloat(src, mean, var);
 			t.end();
 		}
-
-		std::cout << "flt : " << t.getAvgTime() << " ms" << std::endl;
-		std::cout << "mean: " << mean << std::endl;
-		std::cout << "var : " << var << std::endl;
+		std::cout << "|float | " << t.getAvgTime() << "|" << mean << "|" << var << "|" << std::endl;
 
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
-			MeanVarFast(src, mean, var);
+			MeanVarFast1(src, mean, var);
 			t.end();
 		}
-		std::cout << "opt.: " << t.getAvgTime() << " ms" << std::endl;
-		std::cout << "mean: " << mean << std::endl;
-		std::cout << "var : " << var << std::endl;
+		std::cout << "|opt. 1| " << t.getAvgTime() << "|" << mean << "|" << var << "|" << std::endl;
+
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			MeanVarFast2(src, mean, var);
+			t.end();
+		}
+		std::cout << "|opt. 2| " << t.getAvgTime() << "|" << mean << "|" << var << "|" << std::endl;
+
 		return 0;
 	}
 
@@ -315,8 +329,6 @@ int main(const int argc, const char** argv)
 	///////////////////////
 	if (false)
 	{
-		const int loop = 10;
-
 		const float sigma_s = 1.f;
 		const int r = (int)(3.f * sigma_s);
 		const float sigma_r = 16.0f;
@@ -332,7 +344,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		std::cout << "PSNR : " << calcPSNR(src, dest) << " dB" << std::endl; //高速化した関数のとサンプルコードの出力の精度を確認すること（現状は，入力画像を入れている．）
-		writePXM("bf.ppm", dest);
+		writePXM("imgout/bf.ppm", dest);
 		return 0;
 	}
 	///////////////////////
@@ -358,7 +370,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "time (avg): " << t.getAvgTime() << " ms" << std::endl;
 		std::cout << "PSNR : " << calcPSNR(gray, dest) << " dB" << std::endl; //高速化した関数のとサンプルコードの出力の精度を確認すること（現状は，入力画像を入れている．）
-		writePXM("nlmf.pgm", dest);
+		writePXM("imgout/nlmf.pgm", dest);
 		return 0;
 	}
 
@@ -389,7 +401,7 @@ void MulConstantFast(const Image_8U& src, Image_8U& dest, const float factor)
 	const int cn = src.channels;
 	for (int x = 0; x < src.rows * src.cols * cn; x++)//全画素同じ処理ならループはつぶせる
 	{
-		dest.data[x] = (unsigned char)(src.data[x] * 0.8 + 0.5);
+		dest.data[x] = (unsigned char)(src.data[x] * factor + 0.5);
 	}
 }
 
@@ -458,10 +470,19 @@ void GammaCorrection(const Image_8U& src, Image_8U& dest, const float gamma)
 	}
 }
 
-void GammaCorrectionFast(const Image_8U& src, Image_8U& dest, const float gamma)
+void GammaCorrectionFast1(const Image_8U& src, Image_8U& dest, const float gamma)
 {
 	dest = Image_8U(src.rows, src.cols, src.channels);
 	const int cn = src.channels;
+	//ここを実装
+	
+}
+
+void GammaCorrectionFast2(const Image_8U& src, Image_8U& dest, const float gamma)
+{
+	dest = Image_8U(src.rows, src.cols, src.channels);
+	const int cn = src.channels;
+	//ここを実装
 }
 
 ///////////////////////
@@ -471,8 +492,27 @@ void MeanVar(const Image_8U& src, float& mean, float& var)
 {
 	double m = 0.0;
 	double v = 0.0;
-	mean = 0;
-	var = 0;
+	const int cn = src.channels;
+
+	for (int y = 0; y < src.rows; y++)
+	{
+		for (int x = 0; x < src.cols * cn; x++)
+		{
+			m += src.data[cn * (y * src.cols) + x];
+			v += src.data[cn * (y * src.cols) + x] * src.data[cn * (y * src.cols) + x];
+		}
+	}
+	m /= (double)(src.rows * src.cols * cn);
+	v = v / (double)(src.rows * src.cols * cn) - m * m;
+
+	mean = m;
+	var = v;
+}
+
+void MeanVarAccFloat(const Image_8U& src, float& mean, float& var)
+{
+	float m = 0.f;//floatに保存．有効桁が少し足りない
+	float v = 0.f;//floatに保存．有効桁が足りない
 	const int cn = src.channels;
 
 	for (int y = 0; y < src.rows; y++)
@@ -490,33 +530,18 @@ void MeanVar(const Image_8U& src, float& mean, float& var)
 	var = v;
 }
 
-void MeanVarAccFloat(const Image_8U& src, float& mean, float& var)
+void MeanVarFast1(const Image_8U& src, float& mean, float& var)
 {
-	mean = 0.f;//floatで計算すると桁が足りない．
-	var = 0.f;//floatで計算すると桁が足りない．
-
-	const int cn = src.channels;
-
-	for (int y = 0; y < src.rows; y++)
-	{
-		for (int x = 0; x < src.cols * cn; x++)
-		{
-			mean += src.data[cn * (y * src.cols) + x];
-			var += src.data[cn * (y * src.cols) + x] * src.data[cn * (y * src.cols) + x];
-		}
-	}
-	mean /= (float)(src.rows * src.cols * cn);
-	var = var / (float)(src.rows * src.cols * cn) - mean * mean;
-
-	mean = mean;
-	var = var;
+	//ここに1つ目を実装する
 }
 
-void MeanVarFast(const Image_8U& src, float& mean, float& var)
+void MeanVarFast2(const Image_8U& src, float& mean, float& var)
 {
-	mean = 0.f;
-	var = 0.f;
+	//ここに2つ目を実装する
 }
+
+
+
 
 ///////////////////////
 // ガウシアンフィルタ

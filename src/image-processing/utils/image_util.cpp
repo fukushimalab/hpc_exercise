@@ -1,6 +1,7 @@
 #include "image_util.h"
 #include "simd_util.h"
 #include <iostream>
+#include <cstring>
 #include <algorithm>
 #include <cmath>
 
@@ -39,7 +40,7 @@ int readPXM(const char* name, Image_8U& src)
 	{
 		_mm_free(src.data);
 	}
-	const int size = src.rows*src.cols*src.channels * sizeof(unsigned char);
+	const int size = src.rows * src.cols * src.channels * sizeof(unsigned char);
 	src.data = (unsigned char*)_mm_malloc(size, 32);
 	fread(src.data, sizeof(unsigned char), size, fp);
 	fclose(fp);
@@ -71,7 +72,7 @@ void writePXM(const char* name, const Image_8U& src)
 	fprintf(fp, "%d %d\n", src.cols, src.rows);
 	fprintf(fp, "255\n");
 
-	const int size = src.rows*src.cols*src.channels;
+	const int size = src.rows * src.cols * src.channels;
 	fwrite(src.data, sizeof(unsigned char), size, fp);
 	fprintf(fp, "\n");
 	fclose(fp);
@@ -81,47 +82,17 @@ void writePXM(const char* name, const Image_8U& src)
 ////////////////////////////
 //copy make border
 ////////////////////////////
-void copyMakeBorder(const Image_8U src, Image_8U& dest, const int top, const int bottom, const int left, const int right)
+void copyMakeBorder(const Image_8U& src, Image_8U& dest, const int top, const int bottom, const int left, const int right)
 {
+	dest.rows = src.rows + top + bottom;
+	dest.cols = src.cols + left + right;
+	dest.channels = src.channels;
+	if (dest.data != nullptr)
 	{
-		dest.rows = src.rows + top + bottom;
-		dest.cols = src.cols + left + right;
-		dest.channels = src.channels;
-		if (dest.data != nullptr)
-		{
-			_mm_free(dest.data);
-		}
-		const int size = dest.rows*dest.cols*dest.channels * sizeof(unsigned char);
-		dest.data = (unsigned char*)_mm_malloc(size, 32);
+		_mm_free(dest.data);
 	}
-#pragma omp parallel for
-	for (int j = -top; j < src.rows + bottom; j++)
-	{
-		for (int i = -left; i < src.cols + right; i++)
-		{
-			const int y = j < 0 ? std::max(j, 0) : std::min(j, src.rows - 1);
-			const int x = i < 0 ? std::max(i, 0) : std::min(i, src.cols - 1);
-			for (int k = 0; k < src.channels; k++)
-			{			
-				dest.data[dest.channels*((j + top) * dest.cols + (i + left)) + k] = src.data[src.channels*(y*src.cols + x) + k];
-			}
-		}
-	}
-}
-
-void copyMakeBorder(const Image_32F src, Image_32F& dest, const int top, const int bottom, const int left, const int right)
-{
-	{
-		dest.rows = src.rows + top + bottom;
-		dest.cols = src.cols + left + right;
-		dest.channels = src.channels;
-		if (dest.data != nullptr)
-		{
-			_mm_free(dest.data);
-		}
-		const int size = dest.rows*dest.cols*dest.channels * sizeof(float);
-		dest.data = (float*)_mm_malloc(size, 32);
-	}
+	const int size = dest.rows * dest.cols * dest.channels * sizeof(unsigned char);
+	dest.data = (unsigned char*)_mm_malloc(size, 32);
 
 #pragma omp parallel for
 	for (int j = -top; j < src.rows + bottom; j++)
@@ -132,7 +103,89 @@ void copyMakeBorder(const Image_32F src, Image_32F& dest, const int top, const i
 			const int x = i < 0 ? std::max(i, 0) : std::min(i, src.cols - 1);
 			for (int k = 0; k < src.channels; k++)
 			{
-				dest.data[dest.channels*((j + top) * dest.cols + (i + left)) + k] = src.data[src.channels*(y*src.cols + x) + k];
+				dest.data[dest.channels * ((j + top) * dest.cols + (i + left)) + k] = src.data[src.channels * (y * src.cols + x) + k];
+			}
+		}
+	}
+}
+
+void copyMakeBorder(const Image_32F& src, Image_32F& dest, const int top, const int bottom, const int left, const int right)
+{
+	dest.rows = src.rows + top + bottom;
+	dest.cols = src.cols + left + right;
+	dest.channels = src.channels;
+	if (dest.data != nullptr)
+	{
+		_mm_free(dest.data);
+	}
+	const int size = dest.rows * dest.cols * dest.channels * sizeof(float);
+	dest.data = (float*)_mm_malloc(size, 32);
+
+	if (src.channels == 3)
+	{
+		const int LEFT = get_simd_ceil(left, 8);
+		const int RIGHT = get_simd_ceil(right, 8);
+		const int END = dest.cols - RIGHT;
+
+		const int e = (src.cols - 1) * 3;
+		const int sw = src.cols * 3;
+		const int dw = dest.cols * 3;
+		//src top line
+		{
+			float* s = src.data;
+			float* d = dest.data + top * dw;
+
+			for (int i = 0; i < LEFT; i += 8)
+				_mm256_storeu_ps_color(d + 3 * i, _mm256_set1_ps(s[0]), _mm256_set1_ps(s[1]), _mm256_set1_ps(s[2]));
+
+			for (int i = END; i < END + RIGHT; i += 8)
+				_mm256_storeu_ps_color(d + 3 * i, _mm256_set1_ps(s[e]), _mm256_set1_ps(s[e + 1]), _mm256_set1_ps(s[e + 2]));
+
+			memcpy(d + 3 * left, s, sizeof(float) * sw);
+		}
+		//border upper
+		for (int j = 0; j < top; j++)
+		{
+			float* s = dest.data + top * dw;
+			float* d = dest.data + j * dw;
+			memcpy(d, s, sizeof(float) * dw);
+		}
+#pragma omp parallel for
+		for (int j = top + 1; j < dest.rows - bottom; j++)
+		{
+			float* s = src.data + (j - top) * sw;
+			float* d = dest.data + j * dw;
+
+			for (int i = 0; i < LEFT; i += 8)
+				_mm256_storeu_ps_color(d + 3 * i, _mm256_set1_ps(s[0]), _mm256_set1_ps(s[1]), _mm256_set1_ps(s[2]));
+
+			for (int i = END; i < END + RIGHT; i += 8)
+				_mm256_storeu_ps_color(d + 3 * i, _mm256_set1_ps(s[e]), _mm256_set1_ps(s[e + 1]), _mm256_set1_ps(s[e + 2]));
+
+			memcpy(d + 3 * left, s, sizeof(float) * sw);
+		}
+
+		//border lower
+		for (int j = dest.rows - bottom; j < dest.rows; j++)
+		{
+			float* s = dest.data + (dest.rows - bottom - 1) * dw;
+			float* d = dest.data + j * dw;
+			memcpy(d, s, sizeof(float) * dw);
+		}
+	}
+	else
+	{
+#pragma omp parallel for
+		for (int j = -top; j < src.rows + bottom; j++)
+		{
+			for (int i = -left; i < src.cols + right; i++)
+			{
+				const int y = j < 0 ? std::max(j, 0) : std::min(j, src.rows - 1);
+				const int x = i < 0 ? std::max(i, 0) : std::min(i, src.cols - 1);
+				for (int k = 0; k < src.channels; k++)
+				{
+					dest.data[dest.channels * ((j + top) * dest.cols + (i + left)) + k] = src.data[src.channels * (y * src.cols + x) + k];
+				}
 			}
 		}
 	}
@@ -142,7 +195,7 @@ void copyMakeBorder(const Image_32F src, Image_32F& dest, const int top, const i
 ////////////////////////////
 //color (RGB) to gray
 ////////////////////////////
-void cvtColorGray(const Image_8U src, Image_8U& dest)
+void cvtColorGray(const Image_8U& src, Image_8U& dest)
 {
 	if (src.rows != dest.rows || src.cols != dest.cols || dest.channels != 1)
 	{
@@ -153,18 +206,18 @@ void cvtColorGray(const Image_8U src, Image_8U& dest)
 		{
 			_mm_free(dest.data);
 		}
-		const int size = dest.rows*dest.cols*dest.channels * sizeof(unsigned char);
+		const int size = dest.rows * dest.cols * dest.channels * sizeof(unsigned char);
 		dest.data = (unsigned char*)_mm_malloc(size, 32);
 	}
 
-	const int size = src.cols*src.rows;
+	const int size = src.cols * src.rows;
 	for (int i = 0; i < size; i++)
 	{
-		dest.data[i] = (unsigned char)(((src.data[3 * i + 0] + src.data[3 * i + 1] + src.data[3 * i + 2])*0.3333f) + 0.5f);
+		dest.data[i] = (unsigned char)(((src.data[3 * i + 0] + src.data[3 * i + 1] + src.data[3 * i + 2]) * 0.3333f) + 0.5f);
 	}
 }
 
-void cvtColorGray(const Image_32F src, Image_32F& dest)
+void cvtColorGray(const Image_32F& src, Image_32F& dest)
 {
 	if (src.rows != dest.rows || src.cols != dest.cols || dest.channels != 1)
 	{
@@ -175,23 +228,23 @@ void cvtColorGray(const Image_32F src, Image_32F& dest)
 		{
 			_mm_free(dest.data);
 		}
-		const int size = dest.rows*dest.cols*dest.channels * sizeof(float);
+		const int size = dest.rows * dest.cols * dest.channels * sizeof(float);
 		dest.data = (float*)_mm_malloc(size, 32);
 	}
 
-	const int size = src.cols*src.rows;
+	const int size = src.cols * src.rows;
 	for (int i = 0; i < size; i++)
 	{
-		dest.data[i] = (float)(((src.data[3 * i + 0] + src.data[3 * i + 1] + src.data[3 * i + 2])*0.3333f) + 0.5f);
+		dest.data[i] = (float)(((src.data[3 * i + 0] + src.data[3 * i + 1] + src.data[3 * i + 2]) * 0.3333f) + 0.5f);
 	}
 }
 
 ////////////////////////////
 //split image
 ////////////////////////////
-void split(const Image_8U src, Image_8U* dest)
+void split(const Image_8U& src, Image_8U* dest)
 {
-	const int size = src.rows*src.cols*src.channels * sizeof(unsigned char);
+	const int size = src.rows * src.cols * src.channels * sizeof(unsigned char);
 	for (int i = 0; i < src.channels; i++)
 	{
 		dest[i].rows = src.rows;
@@ -209,15 +262,15 @@ void split(const Image_8U src, Image_8U* dest)
 		{
 			for (int k = 0; k < src.channels; k++)
 			{
-				dest[k].data[j*step + i] = src.data[src.channels*(j*step + i) + k];
+				dest[k].data[j * step + i] = src.data[src.channels * (j * step + i) + k];
 			}
 		}
 	}
 }
 
-void split(const Image_32F src, Image_32F* dest)
+void split(const Image_32F& src, Image_32F* dest)
 {
-	const int size = src.rows*src.cols*src.channels * sizeof(float);
+	const int size = src.rows * src.cols * src.channels * sizeof(float);
 	for (int i = 0; i < src.channels; i++)
 	{
 		dest[i].rows = src.rows;
@@ -228,15 +281,51 @@ void split(const Image_32F src, Image_32F* dest)
 	}
 
 	const int step = src.cols;
-#pragma omp parallel for
-	for (int j = 0; j < src.rows; j++)
+	if (src.channels == 3)
 	{
-		for (int i = 0; i < src.cols; i++)
+#pragma omp parallel for
+		for (int j = 0; j < src.rows; j++)
 		{
+			float* s = &src.data[src.channels * (j * step)];
+			float* d0 = &dest[0].data[j * step];
+			float* d1 = &dest[1].data[j * step];
+			float* d2 = &dest[2].data[j * step];
+			const int simdend = (src.cols / 8) * 8;
+			for (int i = 0; i < src.cols; i += 8)
+			{
+				__m256 b, g, r;
+				_mm256_load_cvtps_bgr2planar_ps(s + 3 * i, b, g, r);
+				_mm256_storeu_ps(d0 + i, b);
+				_mm256_storeu_ps(d1 + i, g);
+				_mm256_storeu_ps(d2 + i, r);
+			}
+			for (int i = simdend; i < src.cols; i++)
+			{
+				d0[i] = s[3 * i + 0];
+				d1[i] = s[3 * i + 1];
+				d2[i] = s[3 * i + 2];
+			}
+		}
+	}
+	else
+	{
+#pragma omp parallel for
+		for (int j = 0; j < src.rows; j++)
+		{
+			float* s = &src.data[src.channels * (j * step)];
+			float** d = new float* [src.channels];
 			for (int k = 0; k < src.channels; k++)
 			{
-				dest[k].data[j*step + i] = src.data[src.channels*(j*step + i) + k];
+				d[k] = &dest[k].data[j * step];
 			}
+			for (int i = 0; i < src.cols; i++)
+			{
+				for (int k = 0; k < src.channels; k++)
+				{
+					d[k][i] = s[src.channels * i + k];
+				}
+			}
+			delete[]d;
 		}
 	}
 }
@@ -261,7 +350,7 @@ void merge(const Image_8U* src, const int channel, Image_8U& dest)
 		{
 			for (int k = 0; k < dest.channels; k++)
 			{
-				dest.data[dest.channels*(j*dest.cols + i) + k] = src[k].data[j*src[k].cols + i];
+				dest.data[dest.channels * (j * dest.cols + i) + k] = src[k].data[j * src[k].cols + i];
 			}
 		}
 	}
@@ -276,18 +365,57 @@ void merge(const Image_32F* src, const int channel, Image_32F& dest)
 	const int size = dest.rows * dest.cols * dest.channels * dest.type;
 	dest.data = (float*)_mm_malloc(size, 32);
 
-#pragma omp parallel for
-	for (int j = 0; j < dest.rows; j++)
+	if (dest.channels == 3)
 	{
-		for (int i = 0; i < dest.cols; i++)
+#pragma omp parallel for
+		for (int j = 0; j < dest.rows; j++)
 		{
-			for (int k = 0; k < dest.channels; k++)
+			float* d = &dest.data[dest.channels * (j * dest.cols)];
+			float* s0 = &src[0].data[j * src[0].cols];
+			float* s1 = &src[1].data[j * src[1].cols];
+			float* s2 = &src[2].data[j * src[2].cols];
+
+			const int simdend = (dest.cols / 8) * 8;
+			for (int i = 0; i < simdend; i += 8)
 			{
-				dest.data[dest.channels*(j*dest.cols + i) + k] = src[k].data[j*src[k].cols + i];
+				__m256 b, g, r;
+				b = _mm256_load_ps(s0 + i);
+				g = _mm256_load_ps(s1 + i);
+				r = _mm256_load_ps(s2 + i);
+				_mm256_stream_ps_color(d + 3 * i, b, g, r);
+			}
+			for (int i = simdend; i < dest.cols; i++)
+			{
+				d[3 * i + 0] = s0[i];
+				d[3 * i + 1] = s1[i];
+				d[3 * i + 2] = s2[i];
 			}
 		}
 	}
+	else
+	{
+#pragma omp parallel for
+		for (int j = 0; j < dest.rows; j++)
+		{
+			float* d = &dest.data[dest.channels * (j * dest.cols)];
+			float** s = new float* [dest.channels];
+			for (int k = 0; k < dest.channels; k++)
+			{
+				s[k] = &src[k].data[j * src[k].cols];
+			}
+
+			for (int i = 0; i < dest.cols; i++)
+			{
+				for (int k = 0; k < dest.channels; k++)
+				{
+					d[dest.channels * i + k] = s[k][i];
+				}
+			}
+			delete[]s;
+		}
+	}
 }
+
 
 
 ////////////////////////////
@@ -301,7 +429,7 @@ void image_zero(Image_8U& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 0;
+				m.data[m.channels * (j * m.cols + i) + k] = 0;
 			}
 		}
 	}
@@ -314,7 +442,7 @@ void image_zero(Image_16S& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 0;
+				m.data[m.channels * (j * m.cols + i) + k] = 0;
 			}
 		}
 	}
@@ -327,7 +455,7 @@ void image_zero(Image_32S& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 0;
+				m.data[m.channels * (j * m.cols + i) + k] = 0;
 			}
 		}
 	}
@@ -340,7 +468,7 @@ void image_zero(Image_32F& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 0;
+				m.data[m.channels * (j * m.cols + i) + k] = 0;
 			}
 		}
 	}
@@ -353,7 +481,7 @@ void image_zero(Image_64F& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 0;
+				m.data[m.channels * (j * m.cols + i) + k] = 0;
 			}
 		}
 	}
@@ -371,7 +499,7 @@ void image_one(Image_8U& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 1;
+				m.data[m.channels * (j * m.cols + i) + k] = 1;
 			}
 		}
 	}
@@ -384,7 +512,7 @@ void image_one(Image_16S& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 1;
+				m.data[m.channels * (j * m.cols + i) + k] = 1;
 			}
 		}
 	}
@@ -397,7 +525,7 @@ void image_one(Image_32S& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 1;
+				m.data[m.channels * (j * m.cols + i) + k] = 1;
 			}
 		}
 	}
@@ -410,7 +538,7 @@ void image_one(Image_32F& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 1.0f;
+				m.data[m.channels * (j * m.cols + i) + k] = 1.0f;
 			}
 		}
 	}
@@ -423,7 +551,7 @@ void image_one(Image_64F& m)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = 1.0;
+				m.data[m.channels * (j * m.cols + i) + k] = 1.0;
 			}
 		}
 	}
@@ -441,7 +569,7 @@ void image_rand(Image_8U& m, const unsigned char rand_min, const unsigned char r
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+				m.data[m.channels * (j * m.cols + i) + k] = rand_min + (rand() * static_cast<float>(rand_max - rand_min) / static_cast<float>(RAND_MAX));
 			}
 		}
 	}
@@ -454,7 +582,7 @@ void image_rand(Image_16S& m, const short rand_min, const short rand_max)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+				m.data[m.channels * (j * m.cols + i) + k] = rand_min + (rand() * static_cast<float>(rand_max - rand_min) / static_cast<float>(RAND_MAX));
 			}
 		}
 	}
@@ -467,7 +595,7 @@ void image_rand(Image_32S& m, const int rand_min, const int rand_max)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
+				m.data[m.channels * (j * m.cols + i) + k] = rand_min + (rand() * static_cast<float>(rand_max - rand_min) / static_cast<float>(RAND_MAX));
 			}
 		}
 	}
@@ -480,7 +608,7 @@ void image_rand(Image_32F& m, const float rand_min, const float rand_max)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / static_cast<float>(RAND_MAX));
+				m.data[m.channels * (j * m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / static_cast<float>(RAND_MAX));
 			}
 		}
 	}
@@ -493,7 +621,7 @@ void image_rand(Image_64F& m, const double rand_min, const double rand_max)
 		{
 			for (int k = 0; k < m.channels; k++)
 			{
-				m.data[m.channels*(j*m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
+				m.data[m.channels * (j * m.cols + i) + k] = rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
 			}
 		}
 	}
@@ -549,77 +677,77 @@ double rand_64f(const double rand_min, const double rand_max)
 // calcPSNR
 double calcPSNR(const Image_8U& src1, const Image_8U& src2)
 {
-        if (src1.channels != src2.channels)
-        {
-                std::cout << "error: different number of chennels" << std::endl;
-                return -1;
-        }
-        if (src1.rows != src2.rows || src1.cols != src2.cols)
-        {
-                std::cout << "error: different image size" << std::endl;
-                return -1;
-        }
+	if (src1.channels != src2.channels)
+	{
+		std::cout << "error: different number of chennels" << std::endl;
+		return -1;
+	}
+	if (src1.rows != src2.rows || src1.cols != src2.cols)
+	{
+		std::cout << "error: different image size" << std::endl;
+		return -1;
+	}
 
-        Image_64F temp1(src1);
-        Image_64F temp2(src2);
+	Image_64F temp1(src1);
+	Image_64F temp2(src2);
 
-        const int height = src1.rows;
-        const int width = src1.cols;
-        const int ch = src1.channels;
+	const int height = src1.rows;
+	const int width = src1.cols;
+	const int ch = src1.channels;
 
-        double sse = 0;
-        for (int i = 0; i < height*width*ch; i++)
-        {
-                double t = src1.data[i] - src2.data[i];
-                sse += t * t;
-        }
+	double sse = 0;
+	for (int i = 0; i < height * width * ch; i++)
+	{
+		double t = src1.data[i] - src2.data[i];
+		sse += t * t;
+	}
 
-        if (sse <= 1e-10)
-        {
-                return INFINITY;
-        }
-        else
-        {
-                const double  mse = sse / (double)(ch * height * width);
-                return 10.0 * log10((255.0 * 255.0) / mse);
-        }
+	if (sse <= 1e-10)
+	{
+		return INFINITY;
+	}
+	else
+	{
+		const double  mse = sse / (double)(ch * height * width);
+		return 10.0 * log10((255.0 * 255.0) / mse);
+	}
 }
 double calcPSNR(const Image_32F& src1, const Image_32F& src2)
 {
-        if (src1.channels != src2.channels)
-        {
-                std::cout << "error: different number of chennels" << std::endl;
-                return -1;
-        }
-        if (src1.rows != src2.rows || src1.cols != src2.cols)
-        {
-                std::cout << "error: different image size" << std::endl;
-                return -1;
-        }
+	if (src1.channels != src2.channels)
+	{
+		std::cout << "error: different number of chennels" << std::endl;
+		return -1;
+	}
+	if (src1.rows != src2.rows || src1.cols != src2.cols)
+	{
+		std::cout << "error: different image size" << std::endl;
+		return -1;
+	}
 
-        Image_64F temp1(src1);
-        Image_64F temp2(src2);
+	Image_64F temp1(src1);
+	Image_64F temp2(src2);
 
-        const int height = src1.rows;
-        const int width = src1.cols;
-        const int ch = src1.channels;
+	const int height = src1.rows;
+	const int width = src1.cols;
+	const int ch = src1.channels;
 
-        double sse = 0;
-        for (int i = 0; i < height*width*ch; i++)
-        {
-                double t = src1.data[i] - src2.data[i];
-                sse += t * t;
-        }
+	double sse = 0;
+	for (int i = 0; i < height * width * ch; i++)
+	{
+		double t = src1.data[i] - src2.data[i];
+		sse += t * t;
+	}
 
-        if (sse <= 1e-10)
-        {
-                return INFINITY;
-        }
-        else
-        {
-                const double  mse = sse / (double)(ch * height * width);
-                return 10.0 * log10((255.0 * 255.0) / mse);
-        }
+	if (sse <= 1e-10)
+	{
+		return INFINITY;
+	}
+	else
+	{
+		const double  mse = sse / (double)(ch * height * width);
+		return 10.0 * log10((255.0 * 255.0) / mse);
+	}
 }
 
 //timer
