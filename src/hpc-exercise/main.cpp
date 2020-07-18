@@ -10,6 +10,15 @@ void inline rot(double a, double b, double& x, double& y, double radian);
 
 int main(const int argc, const char** argv)
 {
+	const int default_loop = 0;
+	const int default_size = 64;
+	const int default_work = 0;
+
+	const int loop = (argc < 2) ? default_loop : atoi(argv[1]);
+	const int r = (argc < 3) ? default_size : atoi(argv[2]);
+	const int exercise = (argc < 4) ? default_work : atoi(argv[3]);
+	std::cout << "exercise " << exercise << ": iteration = " << loop << " r = " << r << std::endl << std::endl;
+
 
 	//課題1
 	//行列積和演算AX+Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
