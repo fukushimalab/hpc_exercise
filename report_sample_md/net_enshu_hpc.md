@@ -17,28 +17,63 @@ https://en.wikichip.org/wiki/WikiChip
 
 なんどか実行した結果の実行時間の例を以下に示す．
 
-```
-1回目：ｘｘｘｘ
-２回目：ｘｘｘｘ
-．．．
+exercise 1: loop = 10, size = 30
 
-ｎ回目：ｘｘｘｘ
-```
+|time    |ms  |
+|--------|----|
+|time   0|0.0084|
+|time   1|0.0018|
+|time   2|0.0018|
+|time   3|0.0015|
+|time   4|0.0016|
+|time   5|0.0016|
+|time   6|0.0018|
+|time   7|0.0016|
+|time   8|0.0016|
+|time   9|0.0015|
+|time avg|0.00164444|
 
 考察：計算時間にはばらつきが観測できたが，おおむね一回目の計測時間が遅かった．
 
 # 課題２
 コンパイラオプションをO0~Ofastに変えてプログラムをコンパイルした．
 
-結果は以下のようになった
+結果は以下のようになった．
 
-* O0：xx ms
-* O1：xx ms
-* O2：xx ms
-* O3：xx ms
-* Ofast：xx ms
+exercise 2: loop = 100, size = 1024
 
-考察：Ofastが最も速かった．またコンパイル時間も最も長かった．O0とO1の実行速度の差は顕著だが，O1～3の差はごくわずかであり，優位な差を計測するにはより大きなサイズの行列で計測する必要があると考えられる．
+|option|time [ms]|
+|------|---------|
+|-O0   |2321.71  |
+|-O1   |xxxxx    |
+|・・・   |・・・      |
+|-Ofast|92.4779 |
+
+またコンパイル時間を下記に示す．
+```shell-session 
+fukushima@darkroom:~/hpc$ time make
+g++ -std=c++0x -fopenmp -Wno-unused-result -O0 -march=native -mtune=native   -c -o utils/mat.o utils/mat.cpp
+g++ -std=c++0x -fopenmp -Wno-unused-result -O0 -march=native -mtune=native   -c -o utils/mat_util.o utils/mat_util.cpp
+g++ -std=c++0x -fopenmp -Wno-unused-result -O0 -march=native -mtune=native   -c -o main.o main.cpp
+g++ -std=c++0x -fopenmp -Wno-unused-result -O0 -march=native -mtune=native -o hpc_exercise utils/mat.o utils/mat_util.o main.o
+
+real    0m2.558s
+user    0m1.484s
+sys     0m1.016s
+
+fukushima@darkroom:~/hpc$ time make
+g++ -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native   -c -o utils/mat.o utils/mat.cpp
+g++ -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native   -c -o utils/mat_util.o utils/mat_util.cpp
+g++ -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native   -c -o main.o main.cpp
+g++ -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native -o hpc_exercise utils/mat.o utils/mat_util.o main.o
+
+real    0m3.573s
+user    0m2.563s
+sys     0m0.969s
+```
+
+考察：Ofastが最も高速に動作した．またコンパイル時間も最も長かった．O0とO1の実行速度の差は顕著だが，O1～3の差はごくわずかであり，優位な差を計測するにはより大きなサイズの行列で計測する必要があると考えられる．
+そのほか，`-march=native -mtune=native`のオプションについても検証した結果，`-march=native`は指定しないとコンパイルエラーが出た．`-mtune=native`については，．．．
 
 # 課題３
 以下のようにコードを書き換えた．

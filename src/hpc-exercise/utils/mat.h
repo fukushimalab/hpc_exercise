@@ -1,10 +1,35 @@
 #pragma once
 
+struct Mat_8S;
 struct Mat_8U;
 struct Mat_16S;
 struct Mat_32S;
 struct Mat_32F;
 struct Mat_64F;
+
+struct Mat_8S
+{
+	char* data = nullptr;
+	int type;
+	int rows;
+	int cols;
+
+	Mat_8S(const char* data, const int rows, const int cols);
+	Mat_8S(const int rows, const int cols);
+	Mat_8S(const Mat_8S& m);
+	Mat_8S(const Mat_8U& m);
+	Mat_8S(const Mat_16S& m);
+	Mat_8S(const Mat_32S& m);
+	Mat_8S(const Mat_32F& m);
+	Mat_8S(const Mat_64F& m);
+	~Mat_8S();
+	Mat_8S& operator=(const Mat_8S& m);
+	void show() const;
+	int index(const int row, const int col) const
+	{
+		return row * cols + col;
+	}
+};
 
 struct Mat_8U
 {
@@ -108,6 +133,7 @@ struct Mat_64F
 	Mat_64F(const double* data, const int rows, const int cols);
 	Mat_64F(const int rows, const int cols);
 	Mat_64F(const Mat_64F& m);
+	Mat_64F(const Mat_8S& m);
 	Mat_64F(const Mat_8U& m);
 	Mat_64F(const Mat_16S& m);
 	Mat_64F(const Mat_32S& m);

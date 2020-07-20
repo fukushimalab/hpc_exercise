@@ -2,7 +2,7 @@ PROGRAM=boxfilter
 OBJS=utils/image.o utils/image_util.o main.o
 
 CXX = g++
-CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native
+CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -march=native -mtune=native -O3
 
 .SUFFIXES: .cpp .o
 

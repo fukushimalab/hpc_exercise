@@ -1,8 +1,19 @@
-PROGRAM=image_processing
-OBJS=utils/image.o utils/image_util.o main.o
+PROGRAM=hpc_exercise
+OBJS=utils/mat.o utils/mat_util.o main.o
 
 CXX = g++
-CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -Ofast -march=native -mtune=native
+CXXFLAGS = -std=c++0x -Wno-unused-result -pipe -fopenmp -march=native -O3
+#for O1
+#CXXFLAGS = -std=c++0x -Wno-unused-result -pipe -fopenmp -march=native -O1
+
+#for O2 without auto vectorization
+#CXXFLAGS = -std=c++0x -Wno-unused-result -pipe -fopenmp -march=native -O2
+
+#for O2 with auto vectorizion
+#CXXFLAGS = -std=c++0x -Wno-unused-result -pipe -fopenmp -march=native -O2 -ftree-vectorize
+
+#for asm
+#CXXFLAGS = -std=c++0x -Wno-unused-result -fopenmp -g -O2 -march=native -ftree-vectorize -save-temps=obj #-pipe
 #CXX = clang++
 #CXXFLAGS = -std=c++0x -Xpreprocessor -fopenmp -lomp -Wno-unused-result -Ofast -march=native -mtune=native
 
@@ -19,7 +30,7 @@ $(PROGRAM): $(OBJS)
 
 .PHONY: clean
 clean:
-	$(RM) $(PROGRAM) $(OBJS) depend.inc
+	$(RM) $(PROGRAM) $(OBJS) depend.inc *.s *.ii
 
 .PHONY: depend
 depend: $(OBJS:.o=.cpp)

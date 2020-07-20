@@ -178,7 +178,7 @@ void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 	const int size = m.rows * m.cols;
 
 	double* ptr = m.data;
-	const double v = (double)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
+	const double v = (double)(rand_max - rand_min) / static_cast<double>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
 		*ptr++ = rand_min + (rand() * v);
@@ -242,6 +242,90 @@ Mat_64F mat_add(const Mat_64F& m, const double v)
 ////////////////////////////
 //mat add
 ////////////////////////////
+
+void mat_add_scalar(const Mat_8S& m1, const Mat_8S& m2, Mat_8S& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
+	{
+		dest.data[i] = m1.data[i] + m2.data[i];
+	}
+}
+void mat_add(const Mat_8S& m1, const Mat_8S& m2, Mat_8S& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
+	const int size = m1.cols * m1.rows;
+	const int simdsize = get_simd_floor(size, 32);
+	for (int i = 0; i < simdsize; i += 32)
+	{
+		__m256i ms1 = _mm256_load_si256((__m256i*)(m1.data + i));
+		__m256i ms2 = _mm256_load_si256((__m256i*)(m2.data + i));
+		_mm256_store_si256((__m256i*)(dest.data + i), _mm256_add_epi8(ms1, ms2));
+	}
+	for (int i = simdsize; i < size; i++)
+	{
+		dest.data[i] = m1.data[i] + m2.data[i];
+	}
+}
+Mat_8S mat_add(const Mat_8S& m1, const Mat_8S& m2)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
+	Mat_8S dest(m1.rows, m1.cols);
+	mat_add(m1, m2, dest);
+
+	return dest;
+}
+void mat_add_scalar(const Mat_8U& m1, const Mat_8U& m2, Mat_8U& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
+	{
+		dest.data[i] = m1.data[i] + m2.data[i];
+	}
+}
+void mat_add(const Mat_8U& m1, const Mat_8U& m2, Mat_8U& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
+	const int size = m1.cols * m1.rows;
+	const int simdsize = get_simd_floor(size, 32);
+	for (int i = 0; i < simdsize; i += 32)
+	{
+		__m256i ms1 = _mm256_load_si256((__m256i*)(m1.data + i));
+		__m256i ms2 = _mm256_load_si256((__m256i*)(m2.data + i));
+		_mm256_store_si256((__m256i*)(dest.data + i), _mm256_adds_epu8(ms1, ms2));
+	}
+	for (int i = simdsize; i < size; i++)
+	{
+		dest.data[i] = m1.data[i] + m2.data[i];
+	}
+}
 Mat_8U mat_add(const Mat_8U& m1, const Mat_8U& m2)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
@@ -251,12 +335,23 @@ Mat_8U mat_add(const Mat_8U& m1, const Mat_8U& m2)
 	}
 
 	Mat_8U dest(m1.rows, m1.cols);
+	mat_add(m1, m2, dest);
+
+	return dest;
+}
+void mat_add(const Mat_16S& m1, const Mat_16S& m2, Mat_16S& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
 	const int size = m1.cols * m1.rows;
 	for (int i = 0; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return dest;
 }
 Mat_16S mat_add(const Mat_16S& m1, const Mat_16S& m2)
 {
@@ -267,12 +362,23 @@ Mat_16S mat_add(const Mat_16S& m1, const Mat_16S& m2)
 	}
 
 	Mat_16S dest(m1.rows, m1.cols);
+	mat_add(m1, m2, dest);
+
+	return dest;
+}
+void mat_add(const Mat_32S& m1, const Mat_32S& m2, Mat_32S& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
 	const int size = m1.cols * m1.rows;
 	for (int i = 0; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return dest;
 }
 Mat_32S mat_add(const Mat_32S& m1, const Mat_32S& m2)
 {
@@ -283,12 +389,23 @@ Mat_32S mat_add(const Mat_32S& m1, const Mat_32S& m2)
 	}
 
 	Mat_32S dest(m1.rows, m1.cols);
+	mat_add(m1, m2, dest);
+
+	return dest;
+}
+void mat_add(const Mat_32F& m1, const Mat_32F& m2, Mat_32F& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
 	const int size = m1.cols * m1.rows;
 	for (int i = 0; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return dest;
 }
 Mat_32F mat_add(const Mat_32F& m1, const Mat_32F& m2)
 {
@@ -299,12 +416,23 @@ Mat_32F mat_add(const Mat_32F& m1, const Mat_32F& m2)
 	}
 
 	Mat_32F dest(m1.rows, m1.cols);
+	mat_add(m1, m2, dest);
+
+	return dest;
+}
+void mat_add(const Mat_64F& m1, const Mat_64F& m2, Mat_64F& dest)
+{
+	if (m1.rows != m2.rows || m1.cols != m2.cols)
+	{
+		std::cout << "invalid mat size (mat add)" << std::endl;
+		exit(-1);
+	}
+
 	const int size = m1.cols * m1.rows;
 	for (int i = 0; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] + m2.data[i];
 	}
-	return dest;
 }
 Mat_64F mat_add(const Mat_64F& m1, const Mat_64F& m2)
 {
@@ -315,11 +443,8 @@ Mat_64F mat_add(const Mat_64F& m1, const Mat_64F& m2)
 	}
 
 	Mat_64F dest(m1.rows, m1.cols);
-	const int size = m1.cols * m1.rows;
-	for (int i = 0; i < size; i++)
-	{
-		dest.data[i] = m1.data[i] + m2.data[i];
-	}
+	mat_add(m1, m2, dest);
+
 	return dest;
 }
 
@@ -670,13 +795,13 @@ double mat_diff(Mat_32F& src1, Mat_32F& src2)
 
 	for (int i = 0; i < size; i++)
 	{
-		ret += (double)((src1.data[i] - src2.data[i]) * (src1.data[i] - src2.data[i]));
+		ret += ((double)(src1.data[i] - src2.data[i]) * (double)(src1.data[i] - src2.data[i]));
 	}
 	return ret;
 }
 double mat_diff(Mat_64F& src1, Mat_64F& src2)
 {
-	if (src1.rows* src1.cols != src2.cols*src2.rows)
+	if (src1.rows * src1.cols != src2.cols * src2.rows)
 	{
 		std::cout << "invalid mat size (mat diff)" << std::endl;
 		exit(-1);
@@ -716,34 +841,34 @@ void CalcTime::end()
 static double orwl_timebase = 0.0;
 static uint64_t orwl_timestart = 0;
 
-struct timespec orwl_gettime(void) 
+struct timespec orwl_gettime(void)
 {
-  if (!orwl_timestart) 
-  {
-    mach_timebase_info_data_t tb = { 0 };
-    mach_timebase_info(&tb);
-    orwl_timebase = tb.numer;
-    orwl_timebase /= tb.denom;
-    orwl_timestart = mach_absolute_time();
-  }
-  struct timespec t;
-  double diff = (mach_absolute_time() - orwl_timestart) * orwl_timebase;
-  t.tv_sec = diff * ORWL_NANO;
-  t.tv_nsec = diff - (t.tv_sec * ORWL_GIGA);
-  return t;
+	if (!orwl_timestart)
+	{
+		mach_timebase_info_data_t tb = { 0 };
+		mach_timebase_info(&tb);
+		orwl_timebase = tb.numer;
+		orwl_timebase /= tb.denom;
+		orwl_timestart = mach_absolute_time();
+	}
+	struct timespec t;
+	double diff = (mach_absolute_time() - orwl_timestart) * orwl_timebase;
+	t.tv_sec = diff * ORWL_NANO;
+	t.tv_nsec = diff - (t.tv_sec * ORWL_GIGA);
+	return t;
 }
 
 void CalcTime::start()
 {
-    s = orwl_gettime();
-    return;
+	s = orwl_gettime();
+	return;
 }
 
 void CalcTime::end()
 {
-    e = orwl_gettime();
-    que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
-    return;
+	e = orwl_gettime();
+	que.push_back((double)(e.tv_sec - s.tv_sec) * 1e3 + (double)(e.tv_nsec - s.tv_nsec) * 1e-6); //ms
+	return;
 }
 #elif defined(_MSC_VER)
 CalcTime::CalcTime()

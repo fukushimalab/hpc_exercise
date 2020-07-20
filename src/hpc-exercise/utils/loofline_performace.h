@@ -54,7 +54,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 2;
@@ -73,7 +73,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 3;
@@ -92,7 +92,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 4;
@@ -112,7 +112,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 5;
@@ -133,7 +133,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 6;
@@ -155,7 +155,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 7;
@@ -178,7 +178,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 8;
@@ -202,7 +202,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 9;
@@ -227,7 +227,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 10;
@@ -253,7 +253,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 11;
@@ -280,7 +280,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 12;
@@ -308,7 +308,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 13;
@@ -337,7 +337,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 14;
@@ -367,7 +367,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 15;
@@ -398,7 +398,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 16;
@@ -430,7 +430,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 17;
@@ -463,7 +463,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 18;
@@ -497,7 +497,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 19;
@@ -532,7 +532,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 20;
@@ -568,7 +568,7 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 	}
 
 	_mm_free(x);
@@ -619,7 +619,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 	int simdsize16 = size / 16;
 
 	printf("size %d KBYTE, iteration %d\n", size * (int)(sizeof(float)) / 1024, iteration);
-	printf("order, GFLOPS, FLOPS/BYTE\n");
+	printf("order, FLOPS/BYTE, GFLOPS\n");
 
 	int n = 0;
 	{
@@ -649,7 +649,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 2;
@@ -680,7 +680,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 3;
@@ -712,7 +712,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 4;
@@ -746,7 +746,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 5;
@@ -782,7 +782,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 6;
@@ -820,7 +820,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 7;
@@ -860,7 +860,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 8;
@@ -902,7 +902,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 9;
@@ -946,7 +946,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 10;
@@ -992,7 +992,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 11;
@@ -1040,7 +1040,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 12;
@@ -1090,7 +1090,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 13;
@@ -1142,7 +1142,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 14;
@@ -1196,7 +1196,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 15;
@@ -1252,7 +1252,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 16;
@@ -1310,7 +1310,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 17;
@@ -1370,7 +1370,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 18;
@@ -1432,7 +1432,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 19;
@@ -1496,7 +1496,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 
 		//---------------------------------------------
 		n = 20;
@@ -1562,7 +1562,7 @@ void loofline_test(const int iteration, const int num_thread = -1)
 			}
 		}
 		t.end();
-		printf("%02d, %f, %f\n", n, n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000), n * 2.0 / (2 * 4));
+		printf("%02d, %f, %f\n", n, n * 2.0 / (2 * 4), n * 2.0 * size / (t.getLastTime() / loop * 0.001) / (1000 * 1000 * 1000));
 	}
 
 	_mm_free(x);

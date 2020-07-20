@@ -35,8 +35,15 @@ void NonLocalMeansFilter(const Image_8U& src, Image_8U& dest, const int template
 
 int main(const int argc, const char** argv)
 {
+	if (argc == 1)
+	{
+		std::cout << "image_processing num_exercise num_iterations" << std::endl;
+	}
+	const int default_exercise = 0;
 	const int default_loop = 10;
-	const int loop = (argc < 2) ? default_loop : atoi(argv[1]);
+
+	const int exercise = (argc < 2) ? default_exercise : atoi(argv[1]);
+	const int loop = (argc < 3) ? default_loop : atoi(argv[2]);
 	std::cout << "iteration = " << loop << std::endl << std::endl;
 	//////////////////////////////////////////////////////////////////////
 	// チュートリアル
@@ -229,7 +236,7 @@ int main(const int argc, const char** argv)
 	}
 
 	// gamma correction
-	//if (false)
+	if (exercise == 1)
 	{
 		std::cout << "gamma correction" << std::endl;
 
@@ -246,7 +253,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "|method|time [ms]|PSNR [dB]|" << std::endl;
 		std::cout << "|------|---------|---------|" << std::endl;
-		std::cout << "|base  | " << t.getAvgTime() << "|--------|" << std::endl;
+		std::cout << "|base  | " << t.getAvgTime() << "|---------|" << std::endl;
 
 		for (int k = 0; k < loop; k++)
 		{
@@ -273,7 +280,7 @@ int main(const int argc, const char** argv)
 	///////////////////////
 	// mean-var
 	///////////////////////
-	if (false)
+	if (exercise == 2)
 	{
 		std::cout << "mean-var" << std::endl;
 
@@ -291,7 +298,7 @@ int main(const int argc, const char** argv)
 
 		std::cout << "|method|time [ms]|mean   |var    |" << std::endl;
 		std::cout << "|------|---------|-------|-------|" << std::endl;
-		std::cout << "|base  | " << t.getAvgTime() << "|" << mean << "|" << var << "|" << std::endl;
+		std::cout << "|double| " << t.getAvgTime() << "|" << mean << "|" << var << "|" << std::endl;
 
 
 		for (int k = 0; k < loop; k++)
@@ -475,7 +482,7 @@ void GammaCorrectionFast1(const Image_8U& src, Image_8U& dest, const float gamma
 	dest = Image_8U(src.rows, src.cols, src.channels);
 	const int cn = src.channels;
 	//ここを実装
-	
+
 }
 
 void GammaCorrectionFast2(const Image_8U& src, Image_8U& dest, const float gamma)

@@ -3,6 +3,123 @@
 #include <cstring>
 #include <iostream>
 
+//Mat_8S
+Mat_8S::Mat_8S(const char* data, const int rows, const int cols)
+	: rows(rows), cols(cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	memcpy((void*)this->data, (void*)data, size);
+}
+
+Mat_8S::Mat_8S(const int rows, const int cols)
+	: rows(rows), cols(cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+}
+
+Mat_8S::Mat_8S(const Mat_8S& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	memcpy((void*)this->data, (void*)m.data, size);
+}
+
+Mat_8S::Mat_8S(const Mat_8U& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (char)m.data[j];
+	}
+}
+
+Mat_8S::Mat_8S(const Mat_16S& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (char)m.data[j];
+	}
+}
+
+Mat_8S::Mat_8S(const Mat_32S& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (char)m.data[j];
+	}
+}
+
+Mat_8S::Mat_8S(const Mat_32F& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (char)m.data[j];
+	}
+}
+
+Mat_8S::Mat_8S(const Mat_64F& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(unsigned char))
+{
+	const int size = type * rows * cols;
+	this->data = (char*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = (char)m.data[j];
+	}
+}
+
+Mat_8S::~Mat_8S()
+{
+	_mm_free(data);
+}
+
+Mat_8S& Mat_8S::operator=(const Mat_8S& m)
+{
+	if (this != &m)
+	{
+		this->rows = m.rows;
+		this->cols = m.cols;
+		this->type = sizeof(char);
+
+		if (data != nullptr)
+		{
+			_mm_free(this->data);
+		}
+		const int size = type * rows * cols;
+		this->data = (char*)_mm_malloc(size, 32);
+		memcpy((void*)this->data, (void*)m.data, size);
+	}
+	return *this;
+}
+
+void Mat_8S::show() const
+{
+	std::cout << "[ " << rows << " x " << cols << " ] 8S" << std::endl;
+
+	for (int j = 0; j < rows; j++)
+	{
+		for (int i = 0; i < cols; i++)
+		{
+			std::cout << (int)data[j * cols + i] << ", ";
+		}
+		std::cout << std::endl;
+	}
+}
+
 
 //Mat_8U
 Mat_8U::Mat_8U(const unsigned char* data, const int rows, const int cols)
@@ -451,6 +568,17 @@ Mat_64F::Mat_64F(const Mat_64F& m)
 	const int size = type * rows * cols;
 	this->data = (double*)_mm_malloc(size, 32);
 	memcpy((void*)this->data, (void*)m.data, size);
+}
+
+Mat_64F::Mat_64F(const Mat_8S& m)
+	: rows(m.rows), cols(m.cols), type(sizeof(double))
+{
+	const int size = type * rows * cols;
+	this->data = (double*)_mm_malloc(size, 32);
+	for (int j = 0; j < rows * cols; j++)
+	{
+		data[j] = m.data[j];
+	}
 }
 
 Mat_64F::Mat_64F(const Mat_8U& m)

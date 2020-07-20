@@ -35,13 +35,19 @@ void boxFilter_scalar_SoA_8U_pixelUnrollingParallel(const Image_32F& src, Image_
 
 int main(const int argc, const char** argv)
 {
+	if (argc == 1)
+	{
+		std::cout << "./boxfilter num_work num_iterations radius" << std::endl;
+	}
+
 	const int default_loop = 10;
 	const int default_r = 3;
-	const int default_work = 4;
+	const int default_work = 0;
 
-	const int loop = (argc == 1) ? default_loop : atoi(argv[1]);
-	const int r = (argc < 3) ? default_r : atoi(argv[2]);
-	const int work = (argc < 4) ? default_work : atoi(argv[3]);
+	const int work = (argc < 2) ? default_work : atoi(argv[1]);
+	const int loop = (argc < 3) ? default_loop : atoi(argv[2]);
+	const int r = (argc < 4) ? default_r : atoi(argv[3]);
+
 	std::cout << "work " << work << ": iteration = " << loop << " r = " << r << std::endl << std::endl;
 
 	//演習1
@@ -766,5 +772,3 @@ void boxFilter_simd_SoA_32F_pixelParallel_pixelUnrolling_separable(const Image_3
 void boxFilter_scalar_SoA_8U_pixelUnrollingParallel(const Image_32F& src, Image_32F& dest, const int r)
 {
 }
-
-

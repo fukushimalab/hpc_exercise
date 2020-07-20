@@ -42,11 +42,22 @@ Mat_32F mat_add(const Mat_32F& m1, const float v);
 Mat_64F mat_add(const Mat_64F& m1, const double v);
 
 //mat add
+Mat_8S mat_add(const Mat_8S& m1, const Mat_8S& m2);
 Mat_8U mat_add(const Mat_8U& m1, const Mat_8U& m2);
 Mat_16S mat_add(const Mat_16S& m1, const Mat_16S& m2);
 Mat_32S mat_add(const Mat_32S& m1, const Mat_32S& m2);
 Mat_32F mat_add(const Mat_32F& m1, const Mat_32F& m2);
 Mat_64F mat_add(const Mat_64F& m1, const Mat_64F& m2);
+
+void mat_add(const Mat_8S& m1, const Mat_8S& m2, Mat_8S& dest);
+void mat_add(const Mat_8U& m1, const Mat_8U& m2, Mat_8U& dest);
+void mat_add(const Mat_16S& m1, const Mat_16S& m2, Mat_16S& dest);
+void mat_add(const Mat_32S& m1, const Mat_32S& m2, Mat_32S& dest);
+void mat_add(const Mat_32F& m1, const Mat_32F& m2, Mat_32F& dest);
+void mat_add(const Mat_64F& m1, const Mat_64F& m2, Mat_64F& dest);
+
+void mat_add_scalar(const Mat_8S& m1, const Mat_8S& m2, Mat_8S& dest);//for auto vectorization test
+void mat_add_scalar(const Mat_8U& m1, const Mat_8U& m2, Mat_8U& dest);//for auto vectorization test
 
 //val mul
 Mat_8U mat_mul(const Mat_8U& m1, const unsigned char v);
