@@ -71,7 +71,7 @@ int main(const int argc, const char** argv)
 		std::cout << "./hpc_exercise 3 10 32" << std::endl;
 		std::cout << std::endl;
 	}
-	//ヘルプの表示ここまで．この間は削除可能．
+	//ヘルプの表示ここまで．この間のcoutは削除可能．
 
 	const int exercise = (argc < 2) ? 0 : atoi(argv[1]);
 	const int arg_loop = (argc < 3) ? 0 : atoi(argv[2]);
@@ -219,7 +219,6 @@ int main(const int argc, const char** argv)
 				//計算 yに書き込み
 				const float v = x.data[i];
 				//y.data[i] = XXXXXXXX;
-				y.data[i] = 3.f * (v * v * v * (v * (v * (v + 1.f) + 1.f) + 1.f) + 1.f);
 			}
 			t.end();
 			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
@@ -269,7 +268,6 @@ int main(const int argc, const char** argv)
 			{
 				//計算 ansに書き込み
 				//ans.data[i] = XXXXXXXX
-				ans.data[i] = (2.f * (float)M_PI + sqrt(5.f) + 0.5f * 0.5f) * x.data[i];
 			}
 
 			t.end();
@@ -285,13 +283,11 @@ int main(const int argc, const char** argv)
 			//先に計算する場合
 			t.start();
 			const int s = x.rows * x.cols;
-			const float c = (2.f * (float)M_PI + sqrt(5.f) + 0.5f * 0.5f);
 			//XXXXXXXX //定数値を計算
 			for (int i = 0; i < s; i++)
 			{
 				//計算 yに書き込み
 				//y.data[i] = XXXXXXXX;
-				y.data[i] = c * x.data[i];
 			}
 			t.end();
 			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
@@ -426,7 +422,6 @@ int main(const int argc, const char** argv)
 				{
 					//計算 ansに書き込み
 					//ans.data[XXXXXXXX]=xxxx
-					ans.data[j * ans.cols + i] = x.data[j * ans.cols + i] / 3.141592f;
 				}
 			}
 			t.end();
@@ -447,7 +442,6 @@ int main(const int argc, const char** argv)
 				{
 					//計算
 					//y.data[XXXXXXXX]=xxxxx
-					y.data[j * y.cols + i] = x.data[j * y.cols + i] * 0.3183099524f;
 				}
 			}
 			t.end();
@@ -465,7 +459,6 @@ int main(const int argc, const char** argv)
 			{
 				//計算
 				//ans.data[XXXXXXXX]=xxxx
-				ans.data[i] = x.data[i] / 3.141592f;
 			}
 			t.end();
 			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
@@ -481,7 +474,6 @@ int main(const int argc, const char** argv)
 			{
 				//計算
 				//y.data[XXXXXXXX]=xxxxx
-				y.data[i] = x.data[i] * 0.3183099524f;
 			}
 			t.end();
 			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
@@ -537,7 +529,6 @@ int main(const int argc, const char** argv)
 				{
 					//計算 ansに書き込み
 					//ans.data[XXXXXXXX]=xxxx
-					ans.data[j * ans.cols + i] = (a.data[j * ans.cols + i] / b.data[j * ans.cols + i]) * (c.data[j * ans.cols + i] / d.data[j * ans.cols + i]);
 				}
 			}
 			t.end();
@@ -558,7 +549,6 @@ int main(const int argc, const char** argv)
 				{
 					//計算 retに書き込み
 					//ret.data[XXXXXXXX]=xxxx
-					ret.data[j * ret.cols + i] = (a.data[j * ret.cols + i] * c.data[j * ret.cols + i]) / (b.data[j * ret.cols + i] * d.data[j * ret.cols + i]);
 				}
 			}
 			t.end();
@@ -578,6 +568,7 @@ int main(const int argc, const char** argv)
 	//また，nがいくつの時にmulのほうが速くなるのか（それとも常時powのほうが遅い・速いのか）比較せよ．
 	//ただし，累乗をすると値が大きくなるため，浮動小数点の最大値を超える可能性がある．その時はrandの初期化の値を小さくせよ．
 	//なお，この課題はコンパイルオプションによって結果が大きく変わる．
+	//ansにpowの結果を，retにmulの結果を入れること．
 	if (exercise == 7)
 	{
 		//変数を書き換える問題．空欄埋めはない．
@@ -610,7 +601,7 @@ int main(const int argc, const char** argv)
 			const int s = x.rows * x.cols;
 			for (int i = 0; i < s; i++)
 			{
-				//計算
+				//計算（ansに入れる）
 				ans.data[i] = pow(x.data[i], pow_n);
 			}
 			t.end();
@@ -626,8 +617,8 @@ int main(const int argc, const char** argv)
 			const int s = x.rows * x.cols;
 			for (int i = 0; i < s; i++)
 			{
-				//計算
-				ret.data[i] = x.data[i] * x.data[i];
+				//計算（retに入れる）
+				//ret.data[i] = xxxxx;
 			}
 			t.end();
 		}
@@ -658,7 +649,7 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < s; i++)
 			{
 				//計算
-				ret.data[i] = x.data[i] * x.data[i] * x.data[i];
+				//ret.data[i] = xxxx;
 			}
 			t.end();
 		}
@@ -689,7 +680,7 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < s; i++)
 			{
 				//計算
-				ret.data[i] = x.data[i] * x.data[i] * x.data[i] * x.data[i];
+				//ret.data[i] = xxxx;
 			}
 			t.end();
 		}
@@ -720,15 +711,7 @@ int main(const int argc, const char** argv)
 			const int s = x.rows * x.cols;
 			for (int i = 0; i < s; i++)
 			{
-				//計算 コメントアウトの位置を変えれば8の倍数で調整可能．数値計算的に32-48乗のあたりで限界がある．
-				ret.data[i] = x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
-					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
-					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
-					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
-					/** x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
-					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]
-					* x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i] * x.data[i]*/
-					;
+				//ret.data[i] = xxxx
 			}
 			t.end();
 		}
@@ -763,8 +746,8 @@ int main(const int argc, const char** argv)
 		Mat_8U a_8u(row, col);
 		Mat_8U b_8u(row, col);
 		Mat_8U ret_8u(row, col);
-		mat_rand(a_8u, 0, 63);//64は64+64=128でcharをオーバーフロー
-		mat_rand(b_8u, 0, 63);//64は64+64=128でcharをオーバーフロー
+		mat_rand(a_8u, 0, 63);//64は64+64=128でcharがオーバーフロー
+		mat_rand(b_8u, 0, 63);//64は64+64=128でcharがオーバーフロー
 
 		Mat_8S a_8s(a_8u);
 		Mat_8S b_8s(b_8u);
@@ -806,7 +789,6 @@ int main(const int argc, const char** argv)
 			t.start();
 			// char
 			//XXXXXXXX
-			mat_add(a_8s, b_8s, ret_8s);
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
@@ -818,7 +800,6 @@ int main(const int argc, const char** argv)
 			t.start();
 			//short
 			//XXXXXXXX
-			mat_add(a_16s, b_16s, ret_16s);
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
@@ -831,7 +812,6 @@ int main(const int argc, const char** argv)
 			t.start();
 			//int
 			//XXXXXXXX
-			mat_add(a_32s, b_32s, ret_32s);
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
@@ -844,7 +824,6 @@ int main(const int argc, const char** argv)
 			t.start();
 			//float
 			//XXXXXXXX
-			mat_add(a_32f, b_32f, ret_32f);
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
@@ -857,7 +836,6 @@ int main(const int argc, const char** argv)
 			t.start();
 			//double
 			//XXXXXXXX
-			mat_add(a_64f, b_64f, ret_64f);
 			t.end();
 			//std::cout<< "time: " << t.getLastTime() << " ms" << std::endl;
 		}
@@ -916,7 +894,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i]=xxxx
-				ret_32s.data[i] = x_32s.data[i] * 2;
 			}
 			t.end();
 		}
@@ -933,7 +910,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =xxx
-				ret_32s.data[i] = (int)(x_32s.data[i] * 2.f);
 			}
 			t.end();
 		}
@@ -948,7 +924,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =xxx
-				ret_32s.data[i] = x_32s.data[i] << 1;
 			}
 			t.end();
 		}
@@ -965,7 +940,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =xxx
-				ret_32s.data[i] = x_32s.data[i] / 2;
 			}
 			t.end();
 		}
@@ -980,7 +954,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =xxx
-				ret_32s.data[i] = (int)(x_32s.data[i] / 2.0);
 			}
 			t.end();
 		}
@@ -995,7 +968,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =xxx
-				ret_32s.data[i] = (int)(x_32s.data[i] * 0.5);
 			}
 			t.end();
 		}
@@ -1010,7 +982,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =xxx
-				ret_32s.data[i] = x_32s.data[i] >> 1;
 			}
 			t.end();
 		}
@@ -1033,7 +1004,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = x_32f.data[i] / 2.f;
 			}
 			t.end();
 		}
@@ -1048,7 +1018,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = x_32f.data[i] * 0.5f;
 			}
 			t.end();
 		}
@@ -1094,7 +1063,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ans_32f.data[i] =
-				ans_32f.data[i] = x_32f.data[i] * 3.141f;
 			}
 			t.end();
 		}
@@ -1115,7 +1083,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i] =
-				ret_32s.data[i] = (int)(x_32s.data[i] * 3.141f);
 			}
 			t.end();
 		}
@@ -1130,7 +1097,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32s.data[i]
-				ret_32s.data[i] = (3141 * x_32s.data[i]) >> 10;
 			}
 			t.end();
 		}
@@ -1150,7 +1116,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_16s.data[i] =
-				ret_16s.data[i] = (201 * x_16s.data[i]) >> 6;
 			}
 			t.end();
 		}
@@ -1201,7 +1166,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX ret_32f.data[i] =
-				ret_32f.data[i] = x_32f.data[i] + 3.141592f;
 			}
 			t.end();
 		}
@@ -1217,7 +1181,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = x_32f.data[i] * 3.141592f;
 			}
 			t.end();
 		}
@@ -1231,7 +1194,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = x_32f.data[i] / 3.141592f;
 			}
 			t.end();
 		}
@@ -1246,7 +1208,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = sqrt(x_32f.data[i]);
 			}
 			t.end();
 		}
@@ -1261,7 +1222,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = sin(x_32f.data[i]);
 			}
 			t.end();
 		}
@@ -1276,7 +1236,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = cos(x_32f.data[i]);
 			}
 			t.end();
 		}
@@ -1291,7 +1250,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = exp(x_32f.data[i]);
 			}
 			t.end();
 		}
@@ -1306,7 +1264,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = log(x_32f.data[i]);
 			}
 			t.end();
 		}
@@ -1319,7 +1276,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
-			LUT[i] = (float)sqrt(i);// 以下の課題ようのヒントのために，埋めてあります．
+			LUT[i] = (float)sqrt(i);// 以下の課題用のヒントのために，埋めてあります．
 		}
 		for (int k = 0; k < loop; k++)
 		{
@@ -1328,7 +1285,7 @@ int main(const int argc, const char** argv)
 			const int size = x_32f.cols * x_32f.rows;
 			for (int i = 0; i < size; i++)
 			{
-				ret_32f.data[i] = LUT[(int)x_32f.data[i]];// 以下の課題ようのヒントのために，埋めてあります．
+				ret_32f.data[i] = LUT[(int)x_32f.data[i]];// 以下の課題用のヒントのために，埋めてあります．
 			}
 			t.end();
 		}
@@ -1338,7 +1295,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
-			LUT[i] = (float)sin(i);
+			//XXXXXXXX
 		}
 		for (int k = 0; k < loop; k++)
 		{
@@ -1348,7 +1305,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = LUT[(int)x_32f.data[i]];
 			}
 			t.end();
 		}
@@ -1358,7 +1314,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
-			LUT[i] = (float)cos(i);
+			//XXXXXXXX
 		}
 		for (int k = 0; k < loop; k++)
 		{
@@ -1368,7 +1324,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = LUT[(int)x_32f.data[i]];
 			}
 			t.end();
 		}
@@ -1378,7 +1333,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
-			LUT[i] = (float)exp(i);
+			//XXXXXXXX
 		}
 		for (int k = 0; k < loop; k++)
 		{
@@ -1388,7 +1343,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = LUT[(int)x_32f.data[i]];//XXXX
 			}
 			t.end();
 		}
@@ -1398,7 +1352,7 @@ int main(const int argc, const char** argv)
 		for (int i = 0; i < 256; i++)
 		{
 			//LUT作成
-			LUT[i] = (float)log(i);
+			//XXXXXXXXX
 		}
 		for (int k = 0; k < loop; k++)
 		{
@@ -1408,7 +1362,6 @@ int main(const int argc, const char** argv)
 			for (int i = 0; i < size; i++)
 			{
 				//XXXXXXXX
-				ret_32f.data[i] = LUT[(int)x_32f.data[i]];
 			}
 			t.end();
 		}
@@ -1513,7 +1466,7 @@ int main(const int argc, const char** argv)
 			const int size = a.cols * a.rows;
 			for (int i = 0; i < size; i++)
 			{
-				//XXXXXXXX rot_withoutinline
+				//XXXXXXXX call rot_withoutinline
 				rot_withoutinline(a.data[i], b.data[i], x.data[i], y.data[i], radian);
 			}
 			t.end();
@@ -1529,8 +1482,7 @@ int main(const int argc, const char** argv)
 			const int size = a.cols * a.rows;
 			for (int i = 0; i < size; i++)
 			{
-				//XXXXXXXX rot
-				rot(a.data[i], b.data[i], x.data[i], y.data[i], radian);
+				//XXXXXXXX call rot
 			}
 			t.end();
 		}
@@ -1545,8 +1497,6 @@ int main(const int argc, const char** argv)
 			{
 				//XXXXXXXX
 				//XXXXXXXX
-				x.data[i] = a.data[i] * cos(radian);
-				y.data[i] = b.data[i] * sin(radian);
 			}
 			t.end();
 		}
@@ -1588,7 +1538,6 @@ int main(const int argc, const char** argv)
 				for (int i = 0; i < size; i++)
 				{
 					//XXXXXXXX
-					c.data[i] = a.data[i] * b.data[i];
 				}
 				t.end();
 			}
@@ -1611,7 +1560,6 @@ int main(const int argc, const char** argv)
 				for (int i = 0; i < size; i++)
 				{
 					//XXXXXXXX
-					a.data[i] = a.data[i] * b.data[i];
 				}
 				t.end();
 			}
@@ -1653,10 +1601,8 @@ int main(const int argc, const char** argv)
 		{
 			int i = 0, j = 0;
 			t.start();
-			//XXXXXXXX	hint: i loop row
 			for (int i = 0; i < row; ++i)
 			{
-				//XXXXXXXX hint:j loop col
 				for (int j = 0; j < col; ++j)
 				{
 					x.data[col * i + j] = 0.f;
@@ -1673,10 +1619,8 @@ int main(const int argc, const char** argv)
 		{
 			int i = 0, j = 0;
 			t.start();
-			//XXXXXXXX hint:j loop col
 			for (int j = 0; j < col; ++j)
 			{
-				//XXXXXXXX	hint: i loop row
 				for (int i = 0; i < row; ++i)
 				{
 					x.data[col * i + j] = 0.f;
@@ -1936,8 +1880,6 @@ int main(const int argc, const char** argv)
 			{
 				//XXXXXXXX
 				//XXXXXXXX
-				y[i + 0] = a * x[i + 0] + b;
-				y[i + 1] = a * x[i + 1] + b;
 			}
 			t.end();
 		}
@@ -1954,10 +1896,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				y[i + 0] = a * x[i + 0] + b;
-				y[i + 1] = a * x[i + 1] + b;
-				y[i + 2] = a * x[i + 2] + b;
-				y[i + 3] = a * x[i + 3] + b;
 			}
 			t.end();
 		}
@@ -1978,14 +1916,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				y[i + 0] = a * x[i + 0] + b;
-				y[i + 1] = a * x[i + 1] + b;
-				y[i + 2] = a * x[i + 2] + b;
-				y[i + 3] = a * x[i + 3] + b;
-				y[i + 4] = a * x[i + 4] + b;
-				y[i + 5] = a * x[i + 5] + b;
-				y[i + 6] = a * x[i + 6] + b;
-				y[i + 7] = a * x[i + 7] + b;
 			}
 			t.end();
 		}
@@ -2014,22 +1944,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				y[i + 0] = a * x[i + 0] + b;
-				y[i + 1] = a * x[i + 1] + b;
-				y[i + 2] = a * x[i + 2] + b;
-				y[i + 3] = a * x[i + 3] + b;
-				y[i + 4] = a * x[i + 4] + b;
-				y[i + 5] = a * x[i + 5] + b;
-				y[i + 6] = a * x[i + 6] + b;
-				y[i + 7] = a * x[i + 7] + b;
-				y[i + 8] = a * x[i + 8] + b;
-				y[i + 9] = a * x[i + 9] + b;
-				y[i + 10] = a * x[i + 10] + b;
-				y[i + 11] = a * x[i + 11] + b;
-				y[i + 12] = a * x[i + 12] + b;
-				y[i + 13] = a * x[i + 13] + b;
-				y[i + 14] = a * x[i + 14] + b;
-				y[i + 15] = a * x[i + 15] + b;
 			}
 			t.end();
 		}
@@ -2074,38 +1988,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				y[i + 0] = a * x[i + 0] + b;
-				y[i + 1] = a * x[i + 1] + b;
-				y[i + 2] = a * x[i + 2] + b;
-				y[i + 3] = a * x[i + 3] + b;
-				y[i + 4] = a * x[i + 4] + b;
-				y[i + 5] = a * x[i + 5] + b;
-				y[i + 6] = a * x[i + 6] + b;
-				y[i + 7] = a * x[i + 7] + b;
-				y[i + 8] = a * x[i + 8] + b;
-				y[i + 9] = a * x[i + 9] + b;
-				y[i + 10] = a * x[i + 10] + b;
-				y[i + 11] = a * x[i + 11] + b;
-				y[i + 12] = a * x[i + 12] + b;
-				y[i + 13] = a * x[i + 13] + b;
-				y[i + 14] = a * x[i + 14] + b;
-				y[i + 15] = a * x[i + 15] + b;
-				y[i + 16] = a * x[i + 16] + b;
-				y[i + 17] = a * x[i + 17] + b;
-				y[i + 18] = a * x[i + 18] + b;
-				y[i + 19] = a * x[i + 19] + b;
-				y[i + 20] = a * x[i + 20] + b;
-				y[i + 21] = a * x[i + 21] + b;
-				y[i + 22] = a * x[i + 22] + b;
-				y[i + 23] = a * x[i + 23] + b;
-				y[i + 24] = a * x[i + 24] + b;
-				y[i + 25] = a * x[i + 25] + b;
-				y[i + 26] = a * x[i + 26] + b;
-				y[i + 27] = a * x[i + 27] + b;
-				y[i + 28] = a * x[i + 28] + b;
-				y[i + 29] = a * x[i + 29] + b;
-				y[i + 30] = a * x[i + 30] + b;
-				y[i + 31] = a * x[i + 31] + b;
 			}
 			t.end();
 		}
@@ -2182,70 +2064,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				y[i + 0] = a * x[i + 0] + b;
-				y[i + 1] = a * x[i + 1] + b;
-				y[i + 2] = a * x[i + 2] + b;
-				y[i + 3] = a * x[i + 3] + b;
-				y[i + 4] = a * x[i + 4] + b;
-				y[i + 5] = a * x[i + 5] + b;
-				y[i + 6] = a * x[i + 6] + b;
-				y[i + 7] = a * x[i + 7] + b;
-				y[i + 8] = a * x[i + 8] + b;
-				y[i + 9] = a * x[i + 9] + b;
-				y[i + 10] = a * x[i + 10] + b;
-				y[i + 11] = a * x[i + 11] + b;
-				y[i + 12] = a * x[i + 12] + b;
-				y[i + 13] = a * x[i + 13] + b;
-				y[i + 14] = a * x[i + 14] + b;
-				y[i + 15] = a * x[i + 15] + b;
-				y[i + 16] = a * x[i + 16] + b;
-				y[i + 17] = a * x[i + 17] + b;
-				y[i + 18] = a * x[i + 18] + b;
-				y[i + 19] = a * x[i + 19] + b;
-				y[i + 20] = a * x[i + 20] + b;
-				y[i + 21] = a * x[i + 21] + b;
-				y[i + 22] = a * x[i + 22] + b;
-				y[i + 23] = a * x[i + 23] + b;
-				y[i + 24] = a * x[i + 24] + b;
-				y[i + 25] = a * x[i + 25] + b;
-				y[i + 26] = a * x[i + 26] + b;
-				y[i + 27] = a * x[i + 27] + b;
-				y[i + 28] = a * x[i + 28] + b;
-				y[i + 29] = a * x[i + 29] + b;
-				y[i + 30] = a * x[i + 30] + b;
-				y[i + 31] = a * x[i + 31] + b;
-				y[i + 32] = a * x[i + 32] + b;
-				y[i + 33] = a * x[i + 33] + b;
-				y[i + 34] = a * x[i + 34] + b;
-				y[i + 35] = a * x[i + 35] + b;
-				y[i + 36] = a * x[i + 36] + b;
-				y[i + 37] = a * x[i + 37] + b;
-				y[i + 38] = a * x[i + 38] + b;
-				y[i + 39] = a * x[i + 39] + b;
-				y[i + 40] = a * x[i + 40] + b;
-				y[i + 41] = a * x[i + 41] + b;
-				y[i + 42] = a * x[i + 42] + b;
-				y[i + 43] = a * x[i + 43] + b;
-				y[i + 44] = a * x[i + 44] + b;
-				y[i + 45] = a * x[i + 45] + b;
-				y[i + 46] = a * x[i + 46] + b;
-				y[i + 47] = a * x[i + 47] + b;
-				y[i + 48] = a * x[i + 48] + b;
-				y[i + 49] = a * x[i + 49] + b;
-				y[i + 50] = a * x[i + 50] + b;
-				y[i + 51] = a * x[i + 51] + b;
-				y[i + 52] = a * x[i + 52] + b;
-				y[i + 53] = a * x[i + 53] + b;
-				y[i + 54] = a * x[i + 54] + b;
-				y[i + 55] = a * x[i + 55] + b;
-				y[i + 56] = a * x[i + 56] + b;
-				y[i + 57] = a * x[i + 57] + b;
-				y[i + 58] = a * x[i + 58] + b;
-				y[i + 59] = a * x[i + 59] + b;
-				y[i + 60] = a * x[i + 60] + b;
-				y[i + 61] = a * x[i + 61] + b;
-				y[i + 62] = a * x[i + 62] + b;
-				y[i + 63] = a * x[i + 63] + b;
 			}
 			t.end();
 		}
@@ -2322,12 +2140,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				y[0] = (x[0] + x[1]) / 2.f;
-				y[size - 1] = (x[size - 1] + x[size - 1 + 1]) / 2.f;
-				for (int i = 0; i < size; ++i)
-				{
-					y[i] = (x[i - 1] + x[i] + x[i + 1]) / 3.f;
-				}
 			}
 			t.end();
 		}
@@ -2399,12 +2211,6 @@ int main(const int argc, const char** argv)
 			{
 				//XXXXXXXX
 			}*/
-			int* pa = ma.data;
-			int* pb = mb.data;
-			for (int i = 0; i < size; i++)
-			{
-				*pa++ = *pa + *pb++;
-			}
 
 			t.end();
 		}
@@ -2463,8 +2269,7 @@ int main(const int argc, const char** argv)
 		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
 
 		std::cout << "exercise 18: loop = " << loop << std::endl;
-		//XXXXXXXX
-#pragma omp parallel for
+		//XXXXXXXX hint: #pragma...
 		for (int i = 0; i < 100; i++)
 		{
 			std::cout << i << std::endl; //並列化したい処理
@@ -2522,7 +2327,6 @@ int main(const int argc, const char** argv)
 		{
 			int sum = 0;
 			//XXXXXXXX
-#pragma omp parallel for
 			for (int i = 0; i < size; i++)
 			{
 				sum += i;
@@ -2536,8 +2340,7 @@ int main(const int argc, const char** argv)
 		for (int j = 0; j < loop; j++)
 		{
 			int sum = 0;
-			//XXXXXXXX
-#pragma omp parallel for reduction(+: sum)
+			//XXXXXXXX hint reduction指定
 			for (int i = 0; i < size; i++)
 			{
 				sum += i;
@@ -2581,7 +2384,6 @@ int main(const int argc, const char** argv)
 			t.start();
 			//#pragma omp parallel for num_threads(n)で並列化，nに任意の整数を入れる
 			//XXXXXXXX
-#pragma omp parallel for num_threads(8)
 			for (int i = 0; i < size; ++i)
 			{
 				float* pc = c.data + i * size;
@@ -2664,12 +2466,10 @@ int main(const int argc, const char** argv)
 		//加算
 		//e = a + b
 		//XXXXXXXX
-		e = _mm256_add_ps(a, b);
 		std::cout << "add a b: ";
 		print_m256(e);
 		//e = c + d
 		//XXXXXXXX
-		e = _mm256_add_ps(c, d);
 		std::cout << "add c d: ";
 		print_m256(e);//出力は上と同じのはず．
 
@@ -2695,12 +2495,10 @@ int main(const int argc, const char** argv)
 		//減算
 		//e = a - b
 		//XXXXXXXX
-		e = _mm256_sub_ps(a, b);
 		std::cout << "sub a b: ";
 		print_m256(e);
 		//e = c - d
 		//XXXXXXXX
-		e = _mm256_sub_ps(c, d);
 		std::cout << "sub c d: ";
 		print_m256(e);
 
@@ -2708,12 +2506,10 @@ int main(const int argc, const char** argv)
 		//乗算
 		//e = a * b
 		//XXXXXXXX
-		e = _mm256_mul_ps(a, b);
 		std::cout << "mul a b: ";
 		print_m256(e);
 		//e = c * d
 		//XXXXXXXX
-		e = _mm256_mul_ps(c, d);
 		std::cout << "mul c d: ";
 		print_m256(e);
 
@@ -2721,12 +2517,10 @@ int main(const int argc, const char** argv)
 		//除算
 		//e = a / b
 		//XXXXXXXX
-		e = _mm256_div_ps(a, b);
 		std::cout << "div a b: ";
 		print_m256(e);
 		//e = c / d
 		//XXXXXXXX
-		e = _mm256_div_ps(c, d);
 		std::cout << "div c d: ";
 		print_m256(e);
 
@@ -2787,16 +2581,12 @@ int main(const int argc, const char** argv)
 				const __m256 mx = _mm256_load_ps(px + i);
 				const __m256 mb = _mm256_load_ps(pb + i);
 
-				//mul,addを使って
+				//mul,addを使って（結果はtempに入れること）
 				__m256 temp;
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				temp = _mm256_add_ps(_mm256_mul_ps(ma, mx), mb);
-				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
-				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
-				temp = _mm256_add_ps(_mm256_mul_ps(temp, mx), mb);
 
 				_mm256_store_ps(pc + i, temp);
 			}
@@ -2821,16 +2611,12 @@ int main(const int argc, const char** argv)
 				const __m256 mx = _mm256_load_ps(px + i);
 				const __m256 mb = _mm256_load_ps(pb + i);
 
-				//fmaを使って
+				//fmaを使って（結果はtempに入れること）
 				__m256 temp;
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				temp = _mm256_fmadd_ps(ma, mx, mb);
-				temp = _mm256_fmadd_ps(temp, mx, mb);
-				temp = _mm256_fmadd_ps(temp, mx, mb);
-				temp = _mm256_fmadd_ps(temp, mx, mb);
 
 				_mm256_store_ps(pc + i, temp);
 			}
@@ -2906,7 +2692,6 @@ int main(const int argc, const char** argv)
 				__m256 temp;
 				//divを使って
 				//XXXXXXXX
-				temp = _mm256_div_ps(ma, mb);
 
 				_mm256_store_ps(c.data + i, temp);
 			}
@@ -2928,7 +2713,6 @@ int main(const int argc, const char** argv)
 				__m256 temp;
 				//rcpとmulをつかって
 				//XXXXXXXX
-				temp = _mm256_mul_ps(ma, _mm256_rcp_ps(mb));
 
 				_mm256_store_ps(c.data + i, temp);
 			}
@@ -2948,7 +2732,6 @@ int main(const int argc, const char** argv)
 				__m256 temp;
 				//sqrtを使って
 				//XXXXXXXX
-				temp = _mm256_sqrt_ps(ma);
 
 				_mm256_store_ps(c.data + i, temp);
 			}
@@ -2956,7 +2739,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "|sqrt      |" << t.getAvgTime() << "|" << std::endl;
 
-		//rsqrt
+		//rsqrt+rcp
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -2976,6 +2759,24 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "|rsqrt+rcp |" << t.getAvgTime() << "|" << std::endl;
 
+		//rsqrt+mul
+		for (int j = 0; j < loop; j++)
+		{
+			t.start();
+			for (int i = 0; i < matsize; i += 8)
+			{
+				const __m256 ma = _mm256_load_ps(a.data + i);
+				const __m256 mb = _mm256_load_ps(b.data + i);
+
+				__m256 temp;
+				//rsqrtとmulを使って（ルートの逆数は乗算で戻る）
+				//XXXXXXXX
+
+				_mm256_store_ps(c.data + i, temp);
+			}
+			t.end();
+		}
+		std::cout << "|rsqrt+mul |" << t.getAvgTime() << "|" << std::endl;
 
 		//abs(subとmaxを使って)
 		for (int j = 0; j < loop; j++)
@@ -2989,7 +2790,6 @@ int main(const int argc, const char** argv)
 				__m256 temp;
 				//subとmaxを使って
 				//XXXXXXXX
-				temp = _mm256_max_ps(_mm256_sub_ps(ma, mb), _mm256_sub_ps(mb, ma));
 
 				_mm256_store_ps(c.data + i, temp);
 			}
@@ -3011,7 +2811,6 @@ int main(const int argc, const char** argv)
 				__m256 temp;
 				//subとnotを使って．notのマスクはabsmask
 				//XXXXXXXX
-				temp = _mm256_and_ps(_mm256_sub_ps(ma, mb), absmask);
 
 				_mm256_store_ps(c.data + i, temp);
 			}
@@ -3027,6 +2826,7 @@ int main(const int argc, const char** argv)
 #ifdef EX24
 	//課題24
 	//haddとdpで要素の総和を取るプログラムを作成し，それぞれの計算時間を比較せよ．なお，大きな差はない．
+	//なお，最も速い実装は，shuffleでデータを入れ替えてaddする方法であるが特に課題指定はない．興味があれば挑戦してみるとよい．
 	//また，正解を計算結果を比較するために，非ベクトル化コードが実装されている．
 	//（この課題は，後にリダクションの最適化でもう一度登場する．）
 	if (exercise == 24)
@@ -3092,9 +2892,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//hint sum+= XXXXXXXX
-				__m256 temp = _mm256_hadd_ps(ma, ma);
-				temp = _mm256_hadd_ps(temp, temp);
-				sum += ((float*)&temp)[0] + ((float*)&temp)[4];
 			}
 			t.end();
 			ans_hadd = sum;
@@ -3115,8 +2912,6 @@ int main(const int argc, const char** argv)
 				//dpを使って
 				//XXXXXXXX
 				//hint: sum+=XXXXXXXX
-				__m256 temp = _mm256_dp_ps(ma, one, 0xFF);
-				sum += ((float*)&temp)[0] + ((float*)&temp)[4];
 			}
 			t.end();
 			ans_dp = sum;
@@ -3180,13 +2975,10 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 
 				__m256 temp;
-				//cmp, mul, blendvを使って
+				//cmp, mul, blendvを使って（blendを使わずにビット演算でもできる）
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				temp = _mm256_mul_ps(_mm256_mul_ps(ma, ma), ma);
-				__m256 mask = _mm256_cmp_ps(ma, mth, _CMP_GE_OQ);
-				temp = _mm256_blendv_ps(ma, temp, mask);
 
 				_mm256_store_ps(b.data + i, temp);
 			}
@@ -3293,15 +3085,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
@@ -3334,25 +3117,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 16);
-				mb = _mm256_load_ps(b.data + i + 16);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 24);
-				mb = _mm256_load_ps(b.data + i + 24);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
@@ -3405,45 +3169,6 @@ int main(const int argc, const char** argv)
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 16);
-				mb = _mm256_load_ps(b.data + i + 16);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 24);
-				mb = _mm256_load_ps(b.data + i + 24);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 32);
-				mb = _mm256_load_ps(b.data + i + 32);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 32, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 40);
-				mb = _mm256_load_ps(b.data + i + 40);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 40, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 48);
-				mb = _mm256_load_ps(b.data + i + 48);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 48, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 56);
-				mb = _mm256_load_ps(b.data + i + 56);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 56, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
@@ -3536,85 +3261,6 @@ int main(const int argc, const char** argv)
 				//XXXX
 				//XXXX
 				//XXXX
-				__m256 ma = _mm256_load_ps(a.data + i);
-				__m256 mb = _mm256_load_ps(b.data + i);
-				__m256 temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 8);
-				mb = _mm256_load_ps(b.data + i + 8);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 8, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 16);
-				mb = _mm256_load_ps(b.data + i + 16);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 16, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 24);
-				mb = _mm256_load_ps(b.data + i + 24);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 24, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 32);
-				mb = _mm256_load_ps(b.data + i + 32);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 32, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 40);
-				mb = _mm256_load_ps(b.data + i + 40);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 40, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 48);
-				mb = _mm256_load_ps(b.data + i + 48);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 48, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 56);
-				mb = _mm256_load_ps(b.data + i + 56);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 56, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 64);
-				mb = _mm256_load_ps(b.data + i + 64);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 64, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 72);
-				mb = _mm256_load_ps(b.data + i + 72);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 72, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 80);
-				mb = _mm256_load_ps(b.data + i + 80);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 80, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 88);
-				mb = _mm256_load_ps(b.data + i + 88);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 88, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 96);
-				mb = _mm256_load_ps(b.data + i + 96);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 96, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 104);
-				mb = _mm256_load_ps(b.data + i + 104);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 104, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 112);
-				mb = _mm256_load_ps(b.data + i + 112);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 112, _mm256_mul_ps(temp, temp));
-
-				ma = _mm256_load_ps(a.data + i + 120);
-				mb = _mm256_load_ps(b.data + i + 120);
-				temp = _mm256_sub_ps(ma, mb);
-				_mm256_store_ps(c.data + i + 120, _mm256_mul_ps(temp, temp));
 			}
 			t.end();
 		}
@@ -3691,20 +3337,13 @@ int main(const int argc, const char** argv)
 			}
 
 			//転置
-			//作成する
+			//作成する（行数は適当）
 			//XXXXXXXX
-			__m256d tmp[4];
-			for (int i = 0; i < 4; i += 2)
-			{
-				tmp[i + 0] = _mm256_unpacklo_pd(ma[i], ma[i + 1]);
-				tmp[i + 1] = _mm256_unpackhi_pd(ma[i], ma[i + 1]);
-			}
-			for (int i = 0; i < 2; i++)
-			{
-				mb[i] = _mm256_permute2f128_pd(tmp[i + 0], tmp[i + 2], 0x20);
-				mb[i + 2] = _mm256_permute2f128_pd(tmp[i + 0], tmp[i + 2], 0x31);
-			}
+			//XXXXXXXX
+			//XXXXXXXX
+			//XXXXXXXX
 
+			//転置結果の表示
 			std::cout << "transpose" << std::endl;
 			for (int i = 0; i < 4; i++)
 			{
@@ -3736,7 +3375,6 @@ int main(const int argc, const char** argv)
 
 		//cvtを使って
 		//XXXXXXXX
-		m32f = _mm256_cvtepi32_ps(m32i);
 
 		std::cout << "after convert" << std::endl;
 		print_m256(m32f);
@@ -3765,9 +3403,6 @@ int main(const int argc, const char** argv)
 			//XXXXXXXX
 			//XXXXXXXX
 			//XXXXXXXX
-			__m128i ma = _mm_loadl_epi64((const __m128i*)(a + i));
-			__m256i ma32 = _mm256_cvtepu8_epi32(ma);
-			_mm256_store_ps(b + i, _mm256_cvtepi32_ps(ma32));
 		}
 
 		std::cout << "after convert: b" << std::endl;
@@ -3796,15 +3431,10 @@ int main(const int argc, const char** argv)
 		//ヒント：前半8個と後半8個に分けて8回処理する．packs_epi16で半分のサイズできる
 		//ヒント：下記のAVXの作りかけもヒントになる．
 		//XXXX 行数は任意
-		__m128i mc0 = _mm_loadu_si128((const __m128i*)c);
-		__m128i mc1 = _mm_loadu_si128((const __m128i*)(c + 4));
-		__m128i tempmc0 = _mm_packs_epi16(mc0, mc1);
-		_mm_storeu_si128((__m128i*)d, tempmc0);
-		__m128i mc2 = _mm_loadu_si128((const __m128i*)(c + 8));
-		__m128i mc3 = _mm_loadu_si128((const __m128i*)(c + 12));
-		__m128i tempmc1 = _mm_packs_epi16(mc2, mc3);
-		_mm_storeu_si128((__m128i*)(d + 8), tempmc1);
+		//XXXX
+		//XXXX
 
+		//結果の表示
 		std::cout << "after convert: d (SSE)" << std::endl;
 		for (int i = 0; i < 16; i++)std::cout << d[i] << " ";
 		std::cout << std::endl;
@@ -3814,8 +3444,7 @@ int main(const int argc, const char** argv)
 		__m256i mc2561 = _mm256_load_si256((__m256i*)(c + 8));
 		__m256i temp256 = _mm256_packs_epi16(mc2560, mc2561);
 		//permuteをしていないため結果がおかしい
-		//XXXXXXXX permute
-		temp256 = _mm256_permute4x64_epi64(temp256, 0b11011000);
+		//XXXXXXXX temp256をpermute
 
 		_mm256_store_si256((__m256i*)d, temp256);
 
@@ -3841,12 +3470,12 @@ int main(const int argc, const char** argv)
 		//空欄埋め問題
 		const int default_loop = 10000;
 		const int default_size = 256;
-		
+
 		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
 		const int size = (arg_size == 0) ? default_size : arg_size;
 		if (size % 8 != 0)
 		{
-			std::cout <<"input size must be 8 multiple."<<std::endl;
+			std::cout << "input size must be 8 multiple." << std::endl;
 		}
 		std::cout << "exercise 29: loop = " << loop << ", size = " << size << std::endl << std::endl;
 
@@ -3869,8 +3498,6 @@ int main(const int argc, const char** argv)
 				for (int i = 0; i < size; i++)
 				{
 					//XXXXXXXX ans.data[j * size + i] = ここだけ，ansに書き込み
-					if (a.data[j * size + i] >= threshold) ans.data[j * size + i] = a.data[j * size + i] * a.data[j * size + i] * a.data[j * size + i];
-					else ans.data[j * size + i] = a.data[j * size + i];
 				}
 			}
 			t.end();
@@ -3884,14 +3511,11 @@ int main(const int argc, const char** argv)
 			//スカラー，並列化実装
 			t.start();
 			//XXXXXXXX
-#pragma omp parallel for
 			for (int j = 0; j < size; ++j)
 			{
 				for (int i = 0; i < size; i++)
 				{
 					//XXXXXXXX　= bに書き込み書き込み
-					if (a.data[j * size + i] >= threshold) b.data[j * size + i] = a.data[j * size + i] * a.data[j * size + i] * a.data[j * size + i];
-					else b.data[j * size + i] = a.data[j * size + i];
 				}
 			}
 			t.end();
@@ -3903,8 +3527,7 @@ int main(const int argc, const char** argv)
 		{
 			//SIMD実装
 			t.start();
-			//XXXXXXXX
-			__m256 mth = _mm256_set1_ps(threshold);
+			//XXXXXXXX（閾値のセット）
 			for (int j = 0; j < size; ++j)
 			{
 				for (int i = 0; i < size; i += 8)
@@ -3913,11 +3536,6 @@ int main(const int argc, const char** argv)
 					//XXXXXXXX
 					//XXXXXXXX
 					//XXXXXXXX
-					__m256 ma = _mm256_load_ps(a.data + j * size + i);
-					__m256 temp = _mm256_mul_ps(_mm256_mul_ps(ma, ma), ma);
-					__m256 mask = _mm256_cmp_ps(ma, mth, _CMP_GE_OQ);
-					temp = _mm256_blendv_ps(ma, temp, mask);
-					_mm256_store_ps(b.data + j * size + i, temp);
 				}
 			}
 			t.end();
@@ -3930,28 +3548,22 @@ int main(const int argc, const char** argv)
 			//SIMD，並列化実装
 			t.start();
 			//XXXXXXXX
-#pragma omp parallel for
 			for (int j = 0; j < size; ++j)
 			{
-				__m256 mth = _mm256_set1_ps(threshold);
+				//XXXXXXXX（閾値のセット）	
 				for (int i = 0; i < size; i += 8)
 				{
 					//XXXXXXXX
 					//XXXXXXXX
 					//XXXXXXXX
 					//XXXXXXXX
-					__m256 ma = _mm256_load_ps(a.data + j * size + i);
-					__m256 temp = _mm256_mul_ps(_mm256_mul_ps(ma, ma), ma);
-					__m256 mask = _mm256_cmp_ps(ma, mth, _CMP_GE_OQ);
-					temp = _mm256_blendv_ps(ma, temp, mask);
-					_mm256_store_ps(b.data + j * size + i, temp);
 				}
 			}
 			t.end();
 		}
 		std::cout << "|SIMD+omp  |" << t.getAvgTime() << "|" << std::endl;
 		if (mat_diff(ans, b) > 1)std::cout << "invalid: diff = " << mat_diff(ans, b) << std::endl;
-		
+
 		std::cout << std::endl << "info:" << std::endl;
 		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 		//std::cout << "diff: " << mat_diff(ans, b) << std::endl;
