@@ -13,18 +13,18 @@ CXXFLAGS = -std=c++0x -fopenmp -Wno-unused-result -march=native #-mtune=native #
 all: depend $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-    $(CXX) $(CXXFLAGS) -o $(PROGRAM) $^
+	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $^
 
 .c.o:
-    $(CXX) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
 clean:
-    $(RM) $(PROGRAM) $(OBJS) depend.inc
+	$(RM) $(PROGRAM) $(OBJS) depend.inc
 
 .PHONY: depend
 depend: $(OBJS:.o=.cpp)
-    -@ $(RM) depend.inc
-    -@ for i in $^; do cpp -MM $$i | sed "s/\ [_a-zA-Z0-9][_a-zA-Z0-9]*\.cpp//g" >> depend.inc; done
+	-@ $(RM) depend.inc
+	-@ for i in $^; do cpp -MM $$i | sed "s/\ [_a-zA-Z0-9][_a-zA-Z0-9]*\.cpp//g" >> depend.inc; done
 
 -include depend.inc
