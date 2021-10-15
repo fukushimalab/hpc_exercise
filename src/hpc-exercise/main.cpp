@@ -3,6 +3,7 @@
 #define EX2
 #define EX3
 #define EX4
+#define EX45
 #define EX5
 #define EX6
 #define EX7
@@ -10,6 +11,7 @@
 #define EX9
 #define EX10
 #define EX11
+#define EX115
 #define EX12
 #define EX13
 #define EX14
@@ -110,227 +112,208 @@ int main(const int argc, const char** argv)
 	arg_loop = (argc < 3) ? 0 : atoi(argv[2]);
 	arg_size = (argc < 4) ? 0 : atoi(argv[3]);
 
-	if (exercise == 1)
+
+	switch(exercise)
 	{
+#ifdef EX1
+		case 1:
 		ex1();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 2)
-	{
+#ifdef EX2
+		case 2:
 		ex2();
-		return 0;
-	}
+		break;
+#endif 
 
-	if (exercise == 3)
-	{
+#ifdef EX3
+		case 3:
 		ex3();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 4)
-	{
+#ifdef EX4
+		case 4:
 		ex4();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 45)
-	{
+#ifdef EX45
+		case 45:
 		ex45();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 5)
-	{
+#ifdef EX5
+		case 5:
 		ex5();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 6)
-	{
+#ifdef EX6
+		case 6:
 		ex6();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 7)
-	{
+#ifdef EX7
+		case 7:
 		ex7();
-		return 0;
-	}
+		break;
+#endif
 
-	if (exercise == 8)
-	{
+#ifdef EX8
+		case 8:
 		ex8();
-		return 0;
-	}
+		break;
+#endif
 
 #ifdef EX9
-	if (exercise == 9)
-	{
+		case 9:
 		ex9();
-		return 0;
-	}
-#endif 
+		break;
+#endif
+
 #ifdef EX10
-	if (exercise == 10)
-	{
+		case 10:
 		ex10();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX11
-	if (exercise == 11)
-	{
+		case 11:
 		ex11();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX115
-	if (exercise == 115)
-	{
+		case 115:
 		ex115();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX12
-	if (exercise == 12)
-	{
+		case 12:
 		ex12();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX13
-	if (exercise == 13)
-	{
+		case 13:
 		ex13();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX14
-	if (exercise == 14)
-	{
+		case 14:
 		ex14();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX15
-	if (exercise == 15)
-	{
+		case 15:
 		ex15();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX16
-	if (exercise == 16)
-	{
+		case 16:
 		ex16();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX17
-	if (exercise == 17)
-	{
+		case 17:
 		ex17();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX18
-	if (exercise == 18)
-	{
+		case 18:
 		ex18();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX19
-	if (exercise == 19)
-	{
+		case 19:
 		ex19();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX20
-	if (exercise == 20)
-	{
+		case 20:
 		ex20();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX21
-	if (exercise == 21)
-	{
+		case 21:
 		ex21();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX22
-	if (exercise == 22)
-	{
+		case 22:
 		ex22();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX23
-	if (exercise == 23)
-	{
+		case 23:
 		ex23();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX24
-	if (exercise == 24)
-	{
+		case 24:
 		ex24();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX25
-	if (exercise == 25)
-	{
+		case 25:
 		ex25();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX26
-	if (exercise == 26)
-	{
+		case 26:
 		ex26();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX27
-	if (exercise == 27)
-	{
+		case 27:
 		ex27();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX28
-	if (exercise == 28)
-	{
+		case 28:
 		ex28();
-		return 0;
-	}
+		break;
 #endif
+
 #ifdef EX29
-	if (exercise == 29)
-	{
+		case 29:
 		ex29();
-		return 0;
-	}
-
+		break;	
 #endif
+
 #ifdef EX30
-	if (exercise == 30)
-	{
+		case 30:
 		ex30();
-		return 0;
-	}
+		break;
 #endif
 
-	std::cout << "no select" << std::endl;
+		default:
+		std::cout << "no select" << std::endl;
+	}
 	return 0;
 }
 
+#ifdef EX1
 //課題1
 //(1) 行列の要素の積和演算AX + Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 //なお，デフォルトのサンプルコードには行列積の後，和をとるプログラムがサンプルとして書かれており，タイマーもすでに記述済みである．
@@ -373,7 +356,9 @@ void ex1()
 	// b.show();
 	// ret.show();
 }
+#endif
 
+#ifdef EX2
 //課題2用
 void GEMM(Mat_32F& a, Mat_32F& b, Mat_32F& c)
 {
@@ -429,7 +414,9 @@ void ex2()
 	std::cout << "|------|---------|" << std::endl;
 	std::cout << "|-Oxxxx|" << t.getAvgTime() << "|" << std::endl;
 }
+#endif
 
+#ifdef EX3
 //課題3
 //小さな行列に対して，各要素を
 //3x^6+3x^5+3*x^4+3*x^3+3
@@ -501,7 +488,9 @@ void ex3()
 
 	std::cout << "diff from ans: " << mat_diff(ans, y) / double(ans.cols * ans.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX4
 //課題4
 //小さな行列に対して，各要素を下記の定数倍するプログラムを作成し，数式の展開前後で計算速度を比較せよ．
 //(2π+sqrt(5)+0.5^2)x
@@ -569,13 +558,21 @@ void ex4()
 
 	std::cout << "diff from ans: " << mat_diff(ans, y) / double(ans.cols * ans.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX45
 //課題4.5
 //浮動小数点と整数の加算と積の変換：多くのCPUで効果ないので没．SIMD化などが必要なのと，演算強度が足りない
 void ex45()
 {
-	std::cout << "exercise 4.5" << std::endl;
-	const int loop = 100000000;
+	const int default_loop = 10000;
+	const int default_size = 64;
+
+	const int loop = (arg_loop == 0) ? default_loop : arg_loop;
+	const int size = (arg_size == 0) ? default_size : arg_size;
+
+	std::cout << "exercise 4.5: loop = " << loop << ", size = " << size << std::endl << std::endl;
+
 	const int row = 64;
 	const int col = 64;
 	Mat_32F x(row, col);
@@ -650,7 +647,9 @@ void ex45()
 	}
 	std::cout << "int   add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
 }
+#endif
 
+#ifdef EX5
 //課題5
 //小さな行列に対して，各要素を3.141592で除算する計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
 // 本課題は行列を2重ループで処理している．これをループをつぶした場合に，効果がどれくらいはっきりするか比較せよ． なお，このループ構造については，演習用コードと行列演算ライブラリの説明におけるチュートリアル課題3で示してある通り．
@@ -750,7 +749,9 @@ void ex5()
 
 	std::cout << "diff from ans: " << mat_diff(ans, y) / double(ans.cols * ans.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX6
 //課題6
 //小さな４つの行列A,B,C,Dに対して，行列の各要素ごとに`(a/b)*(c/d)`を計算するプログラムを作成し，順序を入れ替えて除算を削減する前と後で計算速度を比較せよ．
 void ex6()
@@ -824,7 +825,9 @@ void ex6()
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 	std::cout << "diff from ans: " << mat_diff(ans, ret) / double(ans.cols * ans.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX7
 //課題7
 //行列の各要素を2乗，3乗，4乗．．．n乗としたときに，mulで作ったものとpowで作ったものの速度を比較せよ．
 //また，nがいくつの時にmulのほうが速くなるのか（それとも常時powのほうが遅い・速いのか）比較せよ．
@@ -984,7 +987,9 @@ void ex7()
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 	std::cout << "diff from ans: " << mat_diff(ans, ret) / double(ans.cols * ans.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX8
 //課題8
 //2つの行列の和を`char, unsigned char, short, int, float, double`で計算しそれぞれ比較せよ．
 //なお，大きい行列サイズでないと，効果がでない場合がある．
@@ -1117,7 +1122,9 @@ void ex8()
 	temp = Mat_64F(ret_64f);
 	std::cout << "diff 64F from 8U: " << mat_diff(temp, ans) / double(ans.cols * ans.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX9
 //課題9
 //intの行列を整数で2倍，浮動小数点で2.f倍,整数を１ビットだけビットシフトすることで2倍する場合の計算速度を比較せよ．
 //また，intの行列を整数で2で除算する場合，浮動小数点で2で除算する場合，浮動小数点の0.5で乗算する場合，１ビットだけビットシフトすることで1/2倍する場合の速度を比較せよ．
@@ -1286,7 +1293,9 @@ void ex9()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX10
 //課題10
 //floatの行列を3.141倍する場合と，intの行列を3.141倍する場合と，intの行列を3.141倍を固定小数点で行う場合とshortの行列を3.141倍を固定小数点で行う場合で計算し比較せよ．
 //ただし，shortの配列ではオーバーフローに注意せよ．
@@ -1386,7 +1395,9 @@ void ex10()
 	temp = Mat_32F(ret_16s);
 	std::cout << "16S diff from ans: " << mat_diff(ans_32f, temp) / double(ans_32f.cols * ans_32f.rows) << std::endl << std::endl;
 }
+#endif
 
+#ifdef EX11
 //課題11
 //floatの行列への定数値(3.141592f)の四則演算(加算，乗算，除算)と，`sqrt sin, cos, exp, log`関数の適用した場合と計算時間を比較せよ．
 //また，`sin, cos, exp, log, sqrt`計算はテーブル参照も作成した場合についても比較せよ．
@@ -1626,15 +1637,22 @@ void ex11()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX115
 //課題(省略可)
 //ループ構造変換の課題にあるので省略した
 void ex115()
 {
-	std::cout << "exercise 11.5(省略可)" << std::endl;
+	const int default_loop = 10000;
+	const int default_size = 64;
+
+	const int loop = (arg_loop == 0) ? default_loop : arg_loop;
+	const int size = (arg_size == 0) ? default_size : arg_size;
+
+	std::cout << "exercise 11.5: loop = " << loop << ", size = " << size << std::endl << std::endl;
 	CalcTime t;
-	const int loop = 1000;
-	const int size = 1024;
+
 	Mat_32F a(size, size);
 	Mat_32F b(size, size);
 
@@ -1675,7 +1693,9 @@ void ex115()
 
 	std::cout << "loop unswitching: time (avg): " << t.getAvgTime() << " ms" << std::endl;
 }
+#endif
 
+#ifdef EX12
 //課題12用
 inline void rot(double a, double b, double& x, double& y, double radian)
 {
@@ -1769,7 +1789,9 @@ void ex12()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX13
 //課題13
 //行列A，Bの各要素の乗算を行うときに，結果を行列Cに格納する場合と行列Aに上書きする場合との計算時間をせよ．
 void ex13()
@@ -1831,7 +1853,9 @@ void ex13()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX14
 //課題14
 //上記の0で初期化するコードをループの順序を変えてどちらが速いか計測して検証せよ．
 //また，行列積のコードのループの順序を変えてどれが速いか計測して検証せよ．
@@ -2087,7 +2111,9 @@ void ex14()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX15
 //課題15
 //アンローリングの段数を2,4,8,16,32,...と変更することで，速度がどのように変わるか計測せよ．
 void ex15()
@@ -2334,7 +2360,9 @@ void ex15()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX16
 //課題16
 //上記のプログラムを実装し，ループピーリングの有無で速度がどのように変わるか計測せよ．
 void ex16()
@@ -2408,7 +2436,9 @@ void ex16()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX17
 //課題17
 //Mat_32Sの配同士の加算(a=a+b)をループつぶしをするか否かで計算時間を比較せよ．
 void ex17()
@@ -2510,7 +2540,9 @@ void ex17()
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 	std::cout << "diff from ans: " << mat_diff(ma_ans, ma) << std::endl;
 }
+#endif
 
+#ifdef EX18
 //課題18
 //上記のコードを実行し，並列に動作していることを確認せよ．
 //また，並列化を有効にする場合としない場合の計算時間を比較せよ．
@@ -2529,7 +2561,9 @@ void ex18()
 
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = 0" << std::endl;
 }
+#endif
 
+#ifdef EX19
 //課題19
 //総和を計算するコードで，reduction指定子を使用する場合としない場合で計算結果がどのようになるか比較せよ．
 //なお，違いを確認するには，loopサイズは10回程度である．
@@ -2602,7 +2636,9 @@ void ex19()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX20
 //課題20
 //二つの行列の各要素の積を計算するコードで，スレッド数を変更して，計算時間がどのように推移するのかを確認せよ．
 //なお，スレッド数は，計算機のコア数以上の物まで指定せよ．
@@ -2696,7 +2732,9 @@ void ex20()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX21
 //課題21
 //四則演算のコードを書いてprintfデバッグで確認せよ．
 void ex21()
@@ -2721,7 +2759,7 @@ void ex21()
 
 	//表示の仕方色々．
 	//print_m256の関数を使わない場合はいったんstoreして出力
-	float temp[8];
+	alignas(32) float temp[8];
 	_mm256_store_ps(&temp[0], e);
 	std::cout << "cout ex1: ";
 	for (int i = 0; i < 8; i++) std::cout << temp[i] << ", ";
@@ -2770,7 +2808,9 @@ void ex21()
 	std::cout << "div c d: ";
 	print_m256(e);
 }
+#endif
 
+#ifdef EX22
 //課題22
 //(1) 配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，FMAが速くなることを示せ．
 //なお，上記の関数は以下に等しい．
@@ -2897,7 +2937,9 @@ void ex22()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX23
 //課題23
 //divとrcp,sqrtとrsqrtの実行速度を比較せよ．
 //また，絶対値の計算をandによる実装とmaxによる実装を比較せよ．
@@ -3042,7 +3084,7 @@ void ex23()
 	for (int j = 0; j < loop; j++)
 	{
 		t.start();
-		const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+		alignas(32) const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
 		const __m256 absmask = *(const __m256*)(&v32f_absmask[0]);
 		for (int i = 0; i < matsize; i += 8)
 		{
@@ -3062,7 +3104,9 @@ void ex23()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX24
 //課題24
 //haddとdpで要素の総和を取るプログラムを作成し，それぞれの計算時間を比較せよ．なお，大きな差はない．
 //なお，最も速い実装は，shuffleでデータを入れ替えてaddする方法であるが特に課題指定はない．興味があれば挑戦してみるとよい．
@@ -3162,7 +3206,9 @@ void ex24()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX25
 //課題25
 //行列aにおいて要素の値があるしきい値以上の場合だけ3乗し，それ以外は何もしない処理をベクトル化実装せよ．
 //if(a[i]>=threshold) a[i]=a[i]*a[i]*a[i];
@@ -3227,7 +3273,9 @@ void ex25()
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 	std::cout << "diff: " << mat_diff(ans, b) << std::endl;
 }
+#endif
 
+#ifdef EX26
 //課題26
 //上記のコードのように，SIMD命令を使う場合におけるループアンローリングを8，16，32，64と行い，計算時間を比較せよ．
 //ただし，ベクトル化していないコードのほうが速い可能性が高い．これは，これくらい単純なコードは，自動ベクトル化によってコードが最適化されるため．
@@ -3504,7 +3552,9 @@ void ex26()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 }
+#endif
 
+#ifdef EX27
 //課題27用
 inline void _mm256_transpose_8x8_ps(__m256* dst, const __m256* src)
 {
@@ -3612,7 +3662,9 @@ void ex27()
 		_mm_free(b);
 	}
 }
+#endif
 
+#ifdef EX28
 //課題28
 //__m256i（int）型を_m256（float）型に変換せよ．
 //また，unsigned char型をfloat型に変換せよ．
@@ -3714,7 +3766,9 @@ void ex28()
 	_mm_free(c);
 	_mm_free(d);
 }
+#endif
 
+#ifdef EX29
 //課題29
 //上記のコードのスカラ実装，スカラ実装＋並列化，SIMDのみ，SIMD＋並列化を作成し，計算時間を比較せよ．
 //
@@ -3822,7 +3876,9 @@ void ex29()
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 	//std::cout << "diff: " << mat_diff(ans, b) << std::endl;
 }
+#endif
 
+#ifdef EX30
 //課題30
 //自動ベクトル化等のテスト．現在は課題として作成していない．
 //実は課題８の8Uや8Sの加算のみ明示的にAVXのベクトル化コードを書いている．
@@ -3996,3 +4052,4 @@ void ex30()
 	std::cout << "diff 64F from 8U: " << mat_diff(temp, ans) / double(ans.cols * ans.rows) << std::endl << std::endl;
 	*/
 }
+#endif
