@@ -2475,7 +2475,8 @@ int main(const int argc, const char** argv)
 
 		//表示の仕方色々．
 		//print_m256の関数を使わない場合はいったんstoreして出力
-		alignas(32) float temp[8];
+		float temp[8];
+		// __attribute__ ((aligned(32))) float temp[8]; // segmantation faultする場合はこっち
 		_mm256_store_ps(&temp[0], e);
 		std::cout << "cout ex1: ";
 		for (int i = 0; i < 8; i++) std::cout << temp[i] << ", ";
@@ -2801,7 +2802,8 @@ int main(const int argc, const char** argv)
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
-			alignas(32) const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+			const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+			// __attribute__ ((aligned(32))) const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff }; // segmentation faultする場合はこっち
 			const __m256 absmask = *(const __m256*)(&v32f_absmask[0]);
 			for (int i = 0; i < matsize; i += 8)
 			{
