@@ -1339,6 +1339,7 @@ void ex10()
 
 	Mat_32S x_32s(row, col);
 	mat_rand(x_32s, 0, 100);
+	// Mat_32S x_32s(x_32f);
 	Mat_32S ret_32s(row, col);
 
 	//int floating point mul
@@ -1362,7 +1363,7 @@ void ex10()
 		const int size = ret_32s.cols * ret_32s.rows;
 		for (int i = 0; i < size; i++)
 		{
-			//XXXXXXXX ret_32s.data[i]
+			//XXXXXXXX ret_32s.data[i] =
 		}
 		t.end();
 	}
@@ -1371,6 +1372,7 @@ void ex10()
 
 	Mat_16S x_16s(row, col);
 	mat_rand(x_16s, 0, 100);
+	// Mat_16S x_16s(x_32f);
 	Mat_16S ret_16s(row, col);
 
 	//short fix
@@ -1391,7 +1393,7 @@ void ex10()
 	std::cout << std::endl << "info:" << std::endl;
 	std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 	Mat_32F temp = Mat_32F(ret_32s);
-	std::cout << "32S diff from ans: " << mat_diff(ans_32f, temp) / double(ans_32f.cols * ans_32f.rows) << std::endl;
+	std::cout << "32S diff from ans: " << mat_diff(ans_32f,temp) / double(ans_32f.cols * ans_32f.rows) << std::endl;
 	temp = Mat_32F(ret_16s);
 	std::cout << "16S diff from ans: " << mat_diff(ans_32f, temp) / double(ans_32f.cols * ans_32f.rows) << std::endl << std::endl;
 }
@@ -2495,7 +2497,6 @@ void ex17()
 		{
 			//XXXXXXXX
 		}*/
-
 		t.end();
 	}
 	std::cout << "|L-collapse|" << t.getAvgTime() << "|" << std::endl;
@@ -2759,7 +2760,8 @@ void ex21()
 
 	//表示の仕方色々．
 	//print_m256の関数を使わない場合はいったんstoreして出力
-	alignas(32) float temp[8];
+	float temp[8];
+	// __attribute__ ((aligned(32))) float temp[8]; // segmantation faultする場合はこっち
 	_mm256_store_ps(&temp[0], e);
 	std::cout << "cout ex1: ";
 	for (int i = 0; i < 8; i++) std::cout << temp[i] << ", ";
@@ -2871,6 +2873,7 @@ void ex22()
 			//XXXXXXXX
 			//XXXXXXXX
 
+
 			_mm256_store_ps(pc + i, temp);
 		}
 		t.end();
@@ -2908,7 +2911,6 @@ void ex22()
 	std::cout << "|fma	|" << t.getAvgTime() << "|" << std::endl;
 
 	std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
-
 
 	//loofline test
 	//上記の実験がしたいときは，下記フラグを制御するとよい．
@@ -3084,7 +3086,8 @@ void ex23()
 	for (int j = 0; j < loop; j++)
 	{
 		t.start();
-		alignas(32) const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+		const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+		// __attribute__ ((aligned(32))) const int v32f_absmask[] = { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff }; // segmentation faultする場合はこっち
 		const __m256 absmask = *(const __m256*)(&v32f_absmask[0]);
 		for (int i = 0; i < matsize; i += 8)
 		{
