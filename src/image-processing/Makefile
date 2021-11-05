@@ -1,5 +1,5 @@
-PROGRAM=hpc_exercise
-OBJS=utils/mat.o utils/mat_util.o main.o
+PROGRAM=image_processing
+OBJS=utils/image.o utils/image_util.o main.o
 
 CXX = g++
 CXXFLAGS = -std=c++0x -Wno-unused-result -pipe -fopenmp -march=native -O3
