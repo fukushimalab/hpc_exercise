@@ -46,5 +46,6 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 * ※５：デフォルトのclangはOpenMPに対応していない可能性が高いので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．[インストール用の参考ページ](https://mem-archive.com/2019/08/17/post-2038/)．
 
 AVX命令が前提なので，IntelかAMDのCPUが必要です．ARMのCPUでは動きません．
+Apple M1を使っている人は，どうやっても対応できないのでCSEの計算機を使ってください．
 
 
