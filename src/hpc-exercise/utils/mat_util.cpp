@@ -8,9 +8,13 @@
 #include <bitset>
 
 //Mat util functions
-////////////////////////////
-//init (zero)
-////////////////////////////
+
+#pragma region init(zero)
+void mat_zero(Mat_8S& m)
+{
+	const int size = m.cols * m.rows;
+	memset(m.data, 0, sizeof(char) * size);
+}
 void mat_zero(Mat_8U& m)
 {
 	const int size = m.cols * m.rows;
@@ -56,10 +60,14 @@ void mat_zero(Mat_64F& m)
 		m.data[i] = 0.0;
 	}
 }
+#pragma endregion
 
-////////////////////////////
-//init (one)
-////////////////////////////
+#pragma region init(one)
+void mat_one(Mat_8S& m)
+{
+	const int size = m.cols * m.rows;
+	memset(m.data, 1, sizeof(char) * size);
+}
 void mat_one(Mat_8U& m)
 {
 	const int size = m.cols * m.rows;
@@ -125,10 +133,21 @@ void mat_one(Mat_64F& m)
 		m.data[i] = 1.0;
 	}
 }
+#pragma endregion
 
-////////////////////////////
-//init (rand)
-////////////////////////////
+#pragma region init(rand)
+void mat_rand(Mat_8U& m, const char rand_min, const char rand_max)
+{
+	const int size = m.rows * m.cols;
+
+	unsigned char* ptr = m.data;
+	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
+	for (int i = 0; i < size; i++)
+	{
+		*ptr++ = rand_min + (char)(rand() * v);
+	}
+}
+
 void mat_rand(Mat_8U& m, const unsigned char rand_min, const unsigned char rand_max)
 {
 	const int size = m.rows * m.cols;
@@ -184,10 +203,20 @@ void mat_rand(Mat_64F& m, const double rand_min, const double rand_max)
 		*ptr++ = rand_min + (rand() * v);
 	}
 }
+#pragma endregion
 
-////////////////////////////
-//val add 
-////////////////////////////
+
+#pragma region valAdd
+Mat_8S mat_add(const Mat_8S& m, const char v)
+{
+	Mat_8S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
+	{
+		dest.data[i] = m.data[i] + v;
+	}
+	return dest;
+}
 Mat_8U mat_add(const Mat_8U& m, const unsigned char v)
 {
 	Mat_8U dest(m.rows, m.cols);
@@ -238,11 +267,9 @@ Mat_64F mat_add(const Mat_64F& m, const double v)
 	}
 	return dest;
 }
+#pragma endregion
 
-////////////////////////////
-//mat add
-////////////////////////////
-
+#pragma region matAdd
 void mat_add_scalar(const Mat_8S& m1, const Mat_8S& m2, Mat_8S& dest)
 {
 	if (m1.rows != m2.rows || m1.cols != m2.cols)
@@ -334,10 +361,10 @@ Mat_8U mat_add(const Mat_8U& m1, const Mat_8U& m2)
 		exit(-1);
 	}
 
-	Mat_8U dest(m1.rows, m1.cols);
-	mat_add(m1, m2, dest);
+	Mat_8U ret(m1.rows, m1.cols);
+	mat_add(m1, m2, ret);
 
-	return dest;
+	return ret;
 }
 void mat_add(const Mat_16S& m1, const Mat_16S& m2, Mat_16S& dest)
 {
@@ -447,10 +474,20 @@ Mat_64F mat_add(const Mat_64F& m1, const Mat_64F& m2)
 
 	return dest;
 }
+#pragma endregion
 
-////////////////////////////
-//val mul
-////////////////////////////
+#pragma region valMul
+Mat_8S mat_mul(const Mat_8S& m, const char v)
+{
+	Mat_8S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
+	{
+		dest.data[i] = m.data[i] * v;
+	}
+	return dest;
+}
+
 Mat_8U mat_mul(const Mat_8U& m, const unsigned char v)
 {
 	Mat_8U dest(m.rows, m.cols);
@@ -501,10 +538,25 @@ Mat_64F mat_mul(const Mat_64F& m, const double v)
 	}
 	return dest;
 }
+#pragma endregion
 
-////////////////////////////
-//mat mul
-////////////////////////////
+#pragma region matMul
+Mat_8S mat_mul(const Mat_8S& m1, const Mat_8S& m2)
+{
+	if (m1.rows != m2.cols)
+	{
+		std::cout << "invalid mat size (mat mul)" << std::endl;
+		exit(-1);
+	}
+
+	Mat_8S dest(m1.rows, m1.cols);
+	const int size = m1.cols * m1.rows;
+	for (int i = 0; i < size; i++)
+	{
+		dest.data[i] = m1.data[i] * m2.data[i];
+	}
+	return dest;
+}
 Mat_8U mat_mul(const Mat_8U& m1, const Mat_8U& m2)
 {
 	if (m1.rows != m2.cols)
@@ -531,7 +583,14 @@ Mat_16S mat_mul(const Mat_16S& m1, const Mat_16S& m2)
 
 	Mat_16S dest(m1.rows, m1.cols);
 	const int size = m1.cols * m1.rows;
-	for (int i = 0; i < size; i++)
+	const int simdsize = get_simd_floor(size, 16);
+	for (int i = 0; i < simdsize; i += 16)
+	{
+		__m256i ms1 = _mm256_load_si256((__m256i*)(m1.data + i));
+		__m256i ms2 = _mm256_load_si256((__m256i*)(m2.data + i));
+		_mm256_store_si256((__m256i*)(dest.data + i), _mm256_mullo_epi16(ms1, ms2));
+	}
+	for (int i = simdsize; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] * m2.data[i];
 	}
@@ -547,10 +606,18 @@ Mat_32S mat_mul(const Mat_32S& m1, const Mat_32S& m2)
 
 	Mat_32S dest(m1.rows, m1.cols);
 	const int size = m1.cols * m1.rows;
-	for (int i = 0; i < size; i++)
+	const int simdsize = get_simd_floor(size, 8);
+	for (int i = 0; i < simdsize; i += 8)
+	{
+		__m256i ms1 = _mm256_load_si256((__m256i*)(m1.data + i));
+		__m256i ms2 = _mm256_load_si256((__m256i*)(m2.data + i));
+		_mm256_store_si256((__m256i*)(dest.data + i), _mm256_mullo_epi32(ms1, ms2));
+	}
+	for (int i = simdsize; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] * m2.data[i];
 	}
+
 	return dest;
 }
 Mat_32F mat_mul(const Mat_32F& m1, const Mat_32F& m2)
@@ -563,10 +630,18 @@ Mat_32F mat_mul(const Mat_32F& m1, const Mat_32F& m2)
 
 	Mat_32F dest(m1.rows, m2.cols);
 	const int size = m1.cols * m1.rows;
-	for (int i = 0; i < size; i++)
+	const int simdsize = get_simd_floor(size, 8);
+	for (int i = 0; i < simdsize; i += 8)
+	{
+		__m256 ms1 = _mm256_load_ps(m1.data + i);
+		__m256 ms2 = _mm256_load_ps(m2.data + i);
+		_mm256_store_ps((dest.data + i), _mm256_mul_ps(ms1, ms2));
+	}
+	for (int i = simdsize; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] * m2.data[i];
 	}
+
 	return dest;
 }
 Mat_64F mat_mul(const Mat_64F& m1, const Mat_64F& m2)
@@ -579,16 +654,32 @@ Mat_64F mat_mul(const Mat_64F& m1, const Mat_64F& m2)
 
 	Mat_64F dest(m1.rows, m2.cols);
 	const int size = m1.cols * m1.rows;
-	for (int i = 0; i < size; i++)
+	const int simdsize = get_simd_floor(size, 4);
+	for (int i = 0; i < simdsize; i += 4)
+	{
+		__m256d ms1 = _mm256_load_pd(m1.data + i);
+		__m256d ms2 = _mm256_load_pd(m2.data + i);
+		_mm256_store_pd((dest.data + i), _mm256_mul_pd(ms1, ms2));
+	}
+	for (int i = simdsize; i < size; i++)
 	{
 		dest.data[i] = m1.data[i] * m2.data[i];
 	}
 	return dest;
 }
+#pragma endregion
 
-////////////////////////////
-//val div
-////////////////////////////
+#pragma region valDiv
+Mat_8S mat_div(const Mat_8S& m, const unsigned char v)
+{
+	Mat_8S dest(m.rows, m.cols);
+	const int size = m.cols * m.rows;
+	for (int i = 0; i < size; i++)
+	{
+		dest.data[i] = m.data[i] / v;
+	}
+	return dest;
+}
 Mat_8U mat_div(const Mat_8U& m, const unsigned char v)
 {
 	Mat_8U dest(m.rows, m.cols);
@@ -639,10 +730,10 @@ Mat_64F mat_div(const Mat_64F& m, const double v)
 	}
 	return dest;
 }
+#pragma endregion
 
-////////////////////////////
-//show
-////////////////////////////
+
+#pragma region show
 void mat_show(const Mat_8U& m)
 {
 	std::cout << "[ " << m.rows << " x " << m.cols << " ] 8U" << std::endl;
@@ -708,8 +799,9 @@ void mat_show(const Mat_64F& m)
 		std::cout << std::endl;
 	}
 }
+#pragma endregion
 
-//rand
+#pragma region rand
 unsigned char rand_8u(const unsigned char rand_min, const unsigned char rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / (RAND_MAX));
@@ -730,7 +822,9 @@ double rand_64f(const double rand_min, const double rand_max)
 {
 	return rand_min + (rand() * (rand_max - rand_min) / static_cast<double>(RAND_MAX));
 }
+#pragma endregion
 
+#pragma region matDiff
 int mat_diff(Mat_8U& src1, Mat_8U& src2)
 {
 	if (src1.rows * src1.cols != src2.cols * src2.rows)
@@ -816,8 +910,10 @@ double mat_diff(Mat_64F& src1, Mat_64F& src2)
 	}
 	return ret;
 }
+#pragma endregion
 
-//timer
+
+#pragma region timer
 #ifdef USE_TIME_CHRONO
 void CalcTime::start()
 {
@@ -946,7 +1042,7 @@ double CalcTime::getLastTime()
 	}
 	return que.back();
 }
-
+#pragma endregion
 
 bool show_mxcsr(const bool showState, const bool showMask, const bool isClaer)
 {
