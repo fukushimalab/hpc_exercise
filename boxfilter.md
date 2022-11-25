@@ -99,7 +99,7 @@ for(int y=0;y<heigh;y++) //画素ループ（y方向）
 ボックスフィルタのコードをコンパイルして実行せよ
 boxfilterのコードはコマンドライン引数をとることができ，下記のように使える．
 ```．
-./boxfilter 繰り返し回数iteration 半径r 課題番号
+./boxfilter 課題番号 繰り返し回数iteration 半径r
 ```
 また引数を省略した場合は，`main`直下にデフォルトの値が定義してあり，それを用いる．
 課題番号の指定は省略した場合は0版になる．
@@ -112,7 +112,7 @@ int main(const int argc, const char** argv)
   const int default_work=0;
 ```
 ```
-fukushima@LetsnoteLV7:~/hpc/boxfilter$ ./boxfilter 100 5 4
+fukushima@LetsnoteLV7:~/hpc/boxfilter$ ./boxfilter 4 100 5
 work 4: iteration = 100 r = 5
 
 |time(avg) method|time [ms]|

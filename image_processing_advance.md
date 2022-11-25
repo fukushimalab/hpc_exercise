@@ -25,11 +25,11 @@ G_{\sigma_r}(\bm{I}_{\bm{p}}, \bm{I}_{\bm{q}}) &=& \exp\left(\frac{(r_p-r_q)^2+(
 参照画素はサーチウィンドウ（サポートウィンドウ）サイズによって決まる．
 
 <img src="docfig/image-processing/nlmf.png" width="75%">
-<!--
+<!-- 
 \begin{eqnarray}
 \bm{J}_{\bm{p}} & = & \sum_{\bm{q}\in {N}_{\bm{p}}}\exp(\frac{\|\bm{v}(\bm{p})-\bm{v}(\bm{q})\|^2_2}{-h^2}) \nonumber\\
 \|\bm{v}(\bm{p})-\bm{v}(\bm{q})\|^2_2  & = & \sum_{\bm{o}\in {M}} (\bm{I}_{\bm{p}+\bm{o}}-\bm{I}_{\bm{q}+\bm{o}})^2
-\end{eqnarray}
+\end{eqnarray} -->
 
 
 <img src="https://latex.codecogs.com/gif.latex?h" title="h" />は平滑パラメータである．
