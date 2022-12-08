@@ -1839,7 +1839,7 @@ int main(const int argc, const char** argv)
 	{
 		//空欄埋め問題
 		const int default_loop = 1000;
-		const int default_size = 65535;
+		const int default_size = 65536;
 
 		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
 		const int size = (arg_size == 0) ? default_size : arg_size;
@@ -3416,7 +3416,7 @@ int main(const int argc, const char** argv)
 
 		//int->short
 		std::cout << std::endl << "int->short" << std::endl;
-		int* c = (int*)_mm_malloc(sizeof(char) * 16, 32);
+		int* c = (int*)_mm_malloc(sizeof(int) * 16, 32);
 		short* d = (short*)_mm_malloc(sizeof(short) * 16, 32);
 
 		for (int i = 0; i < 16; i++)
