@@ -48,4 +48,6 @@ Linux用に改行コードはLFになっていますが，Visual Stdio2019上で
 AVX命令が前提なので，IntelかAMDのCPUが必要です．ARMのCPUでは動きません．
 Apple M1を使っている人は，どうやっても対応できないのでCSEの計算機を使ってください．
 
-
+CSEの情報（2023年～）：
+* 各自端末 Intel Core-i5 11500T（1.5GHz，6コア，12スレッド）
+* サーバー AMD EPYC 7763 64コア128スレッドx2
