@@ -51,3 +51,81 @@ Apple M1を使っている人は，どうやっても対応できないのでCSE
 CSEの情報（2023年～）：
 * 各自端末 Intel Core-i5 11500T（1.5GHz，6コア，12スレッド）
 * サーバー AMD EPYC 7763 64コア128スレッドx2
+
+# 入門用
+
+1. プログラムをコンパイルする
+テキストファイルに，hello worldを表示するプログラムを書き，コンパイルして実行する．
+例えば，main.cというファイルを作成して下記のように書く．
+```cpp
+#include <stdio.h>
+int main()
+{
+  printf("hello world");
+  return 0;
+}
+```
+
+そのあと，そのファイルが存在するディレクトリでターミナルを立ち上げ，下記コマンドを打つと，テキストファイルがコンパイルされ，C言語が機械語に変換される．
+```console
+gcc main.c
+```
+そうするとa.outというファイルができるので，
+```console
+./a.out
+```
+とするとターミナルでプログラムが実行できる．
+
+2. 配列をmallocで確保し，配列の中身を０から順番に埋めよ．
+
+```cpp
+int main()
+{
+  const int size = 100000000;
+  int* data = (int*)malloc(sizeof(int)*size);
+  for(int i=0;i<size;i++)
+  {
+    data[i]=i;
+  }
+  return 0;
+}
+```
+
+3. この埋める作業の計算時間を計測せよ．
+linuxには，プログラムの実行時間を計測するコマンドtimeがある．
+下記で実行するとtimeに続くプログラムの実行時間を計測できる．
+```
+time ./a.out
+```
+
+この時，2番で用意した配列のサイズを変えて，大きいほど時間がかかることを確認せよ．
+
+4. dataと同じサイズの配列data2を作り，そこに，逆順（i-size）でデータを用意せよ．
+
+5. dataと同じサイズの配列data3を作り，dataとdata2を足した結果をdata3に格納し，計算時間を計測せよ．
+
+6. data3は作らず，計算結果をdata2に上書きして入れて，計算時間を計測せよ．
+
+7. 今使っているプログラムはマルチコアCPUである．複数のCPUを使って計算せよ．
+C言語は，普通に書いただけでは，CPU一つしか使えない．
+これを複数のCPUで計算することを簡単にできるようにするものにOpenMPがある．
+例えば以下のようにするとforループをコア数の数だけに分割して，CPUの数だけ分業してくれる．
+これを，足し算のプログラムに適用し，速度がどうなるか確認せよ．
+ただし，コンパイルは，下記で行う．-fopenmpでOpenMPが使えるようになる．
+```console
+gcc main.c -fopenmp
+```
+
+```cpp
+int main()
+{
+  const int size = 100000000;
+  int* data = (int*)malloc(sizeof(int)*size);
+#pragma omp parallel for
+   for(int i=0;i<size;i++)
+   {
+    data[i]=i;
+  }
+  return 0;
+}
+```
