@@ -108,6 +108,7 @@ time ./a.out
 5. dataと同じサイズの配列data3を作り，dataとdata2を足した結果をdata3に格納し，計算時間を計測せよ．
 
 6. data3は作らず，計算結果をdata2に上書きして入れて，計算時間を計測せよ．
+これは，メモリの書き込みにキャッシュをうまく使うため，5よりも高速化するはずである．
 
 7. 今使っているプログラムはマルチコアCPUである．複数のCPUを使って計算せよ．
 C言語は，普通に書いただけでは，CPU一つしか使えない．
@@ -128,6 +129,24 @@ gcc main.c -fopenmp
      for(int i=0;i<size;i++)
      {
       data[i]=i;
+    }
+    return 0;
+  }
+```
+８. 今使っているプログラムはSIMD演算が使用できる．SIMDとはの資料を読み，下記プログラムを実行し高速化したことを確認せよ．
+なお，サイズは必ず８の倍数にすること．
+これは，課題２のプログラムをSIMDによるベクトル演算化したものである．
+
+```cpp
+  int main()
+  {
+    const int size = 80000000;//must be 8 multple
+    int* data = (int*)malloc(sizeof(int)*size);
+    __m256 offset  = _mm256_setr_epi32(0,1,2,3,4,5,6,7);
+     for(int i=0;i<size;i+=8)
+     {
+        __m256 a  = _mm256_add_epi32(_mm256_set1_si256(i), offset);
+        _mm256_storeu_si256(data + i, a);
     }
     return 0;
   }
