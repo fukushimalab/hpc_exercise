@@ -76,19 +76,22 @@ gcc main.c
 ```
 とするとターミナルでプログラムが実行できる．
 
-2. 配列をmallocで確保し，配列の中身を０から順番に埋めよ．
+2. 配列をmallocで確保し，配列の中身を0から順番に埋めよ．
+malloc関数はstdlibヘッダがないと使えないためインクルードが必要である．
 
 ```cpp
-int main()
-{
-  const int size = 100000000;
-  int* data = (int*)malloc(sizeof(int)*size);
-  for(int i=0;i<size;i++)
+  #include <stdio.h>
+  #include <stdlib.h>
+  int main()
   {
-    data[i]=i;
+    const int size = 100000000;
+    int* data = (int*)malloc(sizeof(int)*size);
+    for(int i=0;i<size;i++)
+    {
+      data[i]=i;
+    }
+    return 0;
   }
-  return 0;
-}
 ```
 
 3. この埋める作業の計算時間を計測せよ．
@@ -117,15 +120,15 @@ gcc main.c -fopenmp
 ```
 
 ```cpp
-int main()
-{
-  const int size = 100000000;
-  int* data = (int*)malloc(sizeof(int)*size);
-#pragma omp parallel for
-   for(int i=0;i<size;i++)
-   {
-    data[i]=i;
+  int main()
+  {
+    const int size = 100000000;
+    int* data = (int*)malloc(sizeof(int)*size);
+  #pragma omp parallel for
+     for(int i=0;i<size;i++)
+     {
+      data[i]=i;
+    }
+    return 0;
   }
-  return 0;
-}
 ```
