@@ -151,3 +151,54 @@ gcc main.c -fopenmp
     return 0;
   }
 ```
+
+９．
+下記コードは全ての値を総和するプログラムである．
+このプログラムをどんな方法でもよいので高速化せよ．
+ただし，数列を使って数式を展開する方法はやってもよいが，別途すべて計算する方法も作ること．
+ヒントとして，初期化部分は高速化している．
+```cpp
+#include <stdio.h>
+#include <stdlib.h>
+int maint()
+{
+	const int size = 100000000;
+	const int size32 = (size / 32) * 32;//必ず32の倍数にする
+	int* data = (int*)malloc(sizeof(int) * size32);
+	__m256i mstep = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+
+#pragma omp parallel for schedule (dynamic)
+	for (int i = 0; i < size32; i += 32)
+	{
+		_mm256_store_si256((__m256i*)(data + i + 0), _mm256_add_epi32(_mm256_set1_epi32(i + 0), mstep));
+		_mm256_store_si256((__m256i*)(data + i + 8), _mm256_add_epi32(_mm256_set1_epi32(i + 8), mstep));
+		_mm256_store_si256((__m256i*)(data + i + 16), _mm256_add_epi32(_mm256_set1_epi32(i + 16), mstep));
+		_mm256_store_si256((__m256i*)(data + i + 24), _mm256_add_epi32(_mm256_set1_epi32(i + 24), mstep));
+	}
+	/*
+	//上と同じコード
+#pragma omp parallel for
+	for (int i = 0; i < size32; i+=8)
+	{
+		_mm256_store_si256((__m256i*)(data + i), _mm256_add_epi32(_mm256_set1_epi32(i), mstep));
+	}
+	*/
+	/*
+	//上と同じコード
+#pragma omp parallel for
+	for (int i = 0; i < size32; i++)
+	{
+		data[i] = i;
+	}
+	*/
+
+	int sum = 0;
+	for (int i = 0; i < size32; i++)
+	{
+		sum += data[i];
+	}
+	printf("sum: %d", sum);// 887459712
+
+	return 0;
+}
+```
