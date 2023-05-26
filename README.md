@@ -177,10 +177,10 @@ int main()
 #pragma omp parallel for schedule (dynamic)
 	for (int i = 0; i < size32; i += 32)
 	{
-		_mm256_store_si256((__m256i*)(data + i + 0), _mm256_add_epi32(_mm256_set1_epi32(i + 0), mstep));
-		_mm256_store_si256((__m256i*)(data + i + 8), _mm256_add_epi32(_mm256_set1_epi32(i + 8), mstep));
-		_mm256_store_si256((__m256i*)(data + i + 16), _mm256_add_epi32(_mm256_set1_epi32(i + 16), mstep));
-		_mm256_store_si256((__m256i*)(data + i + 24), _mm256_add_epi32(_mm256_set1_epi32(i + 24), mstep));
+		_mm256_storeu_si256((__m256i*)(data + i + 0), _mm256_add_epi32(_mm256_set1_epi32(i + 0), mstep));
+		_mm256_storeu_si256((__m256i*)(data + i + 8), _mm256_add_epi32(_mm256_set1_epi32(i + 8), mstep));
+		_mm256_storeu_si256((__m256i*)(data + i + 16), _mm256_add_epi32(_mm256_set1_epi32(i + 16), mstep));
+		_mm256_storeu_si256((__m256i*)(data + i + 24), _mm256_add_epi32(_mm256_set1_epi32(i + 24), mstep));
 	}
 	/*
 	//上と同じコード
