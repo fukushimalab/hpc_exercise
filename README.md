@@ -142,10 +142,10 @@ gcc main.c -fopenmp
   {
     const int size = 80000000;//must be 8 multple
     int* data = (int*)malloc(sizeof(int)*size);
-    __m256 offset  = _mm256_setr_epi32(0,1,2,3,4,5,6,7);
+    __m256i offset  = _mm256_setr_epi32(0,1,2,3,4,5,6,7);
      for(int i=0;i<size;i+=8)
      {
-        __m256 a  = _mm256_add_epi32(_mm256_set1_si256(i), offset);
+        __m256i a  = _mm256_add_epi32(_mm256_set1_si256(i), offset);
         _mm256_storeu_si256(data + i, a);
     }
     return 0;
