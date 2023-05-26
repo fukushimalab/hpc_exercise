@@ -160,7 +160,7 @@ gcc main.c -fopenmp
 ```cpp
 #include <stdio.h>
 #include <stdlib.h>
-int maint()
+int main()
 {
 	const int size = 100000000;
 	const int size32 = (size / 32) * 32;//必ず32の倍数にする
