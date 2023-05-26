@@ -138,18 +138,24 @@ gcc main.c -fopenmp
 これは，課題２のプログラムをSIMDによるベクトル演算化したものである．
 
 ```cpp
-  int main()
-  {
-    const int size = 80000000;//must be 8 multple
-    int* data = (int*)malloc(sizeof(int)*size);
-    __m256i offset  = _mm256_setr_epi32(0,1,2,3,4,5,6,7);
-     for(int i=0;i<size;i+=8)
-     {
-        __m256i a  = _mm256_add_epi32(_mm256_set1_si256(i), offset);
-        _mm256_storeu_si256(data + i, a);
-    }
-    return 0;
-  }
+int main()
+{
+	const int size = 80000000;//must be 8 multple
+	int* data = (int*)malloc(sizeof(int) * size);
+	__m256i offset = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+
+	for (int i = 0; i < size; i += 8)
+	{
+		__m256i a = _mm256_add_epi32(_mm256_set1_epi32(i), offset);
+		_mm256_storeu_si256((__m256i*)(data + i), a);
+	}
+	return 0;
+}
+```
+
+コンパイルの方法は以下である．
+```console
+gcc main.c -mavx2
 ```
 
 ９．
@@ -157,6 +163,7 @@ gcc main.c -fopenmp
 このプログラムをどんな方法でもよいので高速化せよ．
 ただし，数列を使って数式を展開する方法はやってもよいが，別途すべて計算する方法も作ること．
 ヒントとして，初期化部分は高速化している．
+また，コンパイルオプションを変えてみてもよい．
 ```cpp
 #include <stdio.h>
 #include <stdlib.h>
