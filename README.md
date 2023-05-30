@@ -1,7 +1,10 @@
 # ネットワーク系演習II：ハイパフォーマンスコンピューティング
 名古屋工業大学 情報工学科 ネットワーク系分野 3年後期 ネットワーク系演習II：ハイパフォーマンスコンピューティングの演習資料です．詳しい説明は下記リンクから．
-
 [ドキュメントURL](https://fukushimalab.github.io/hpc_exercise/)
+
+# Todo
+## 2023
+[] 画像表示関数の作成（tmp.pngを書きだして，popenあたりで，開くだけ．）
 
 # ディレクトリ構成
 ```
@@ -49,8 +52,9 @@ AVX命令が前提なので，IntelかAMDのCPUが必要です．ARMのCPUでは
 Apple M1を使っている人は，どうやっても対応できないのでCSEの計算機を使ってください．
 
 CSEの情報（2023年～）：
-* 各自端末 Intel Core-i5 11500T（1.5GHz，6コア，12スレッド）
-* サーバー AMD EPYC 7763 64コア128スレッドx2
+* 各自端末 [Intel Core-i5 11500T](https://www.intel.co.jp/content/www/jp/ja/products/sku/212272/intel-core-i511500t-processor-12m-cache-up-to-3-90-ghz/specifications.html)（1.5GHz，6コア，12スレッド）2号館
+* 各自端末 [Intel Core-i5 11500](https://www.intel.co.jp/content/www/jp/ja/products/sku/212277/intel-core-i511500-processor-12m-cache-up-to-4-60-ghz/specifications.html)（2.7GHz，6コア，12スレッド）20号館
+* サーバー [AMD EPYC 7763](https://www.amd.com/ja/products/cpu/amd-epyc-7763) 64コア128スレッドx2
 
 # 入門用 
 二部実験など短く行うとき用．
