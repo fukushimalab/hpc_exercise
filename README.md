@@ -3,7 +3,7 @@
 
 * [ドキュメントURL](https://fukushimalab.github.io/hpc_exercise/)
 * [Intel Intrinsics](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)
-* [2部実験など短い演習用ページ] (simple.md)
+* [2部実験など短い演習用ページ](./simple.md)
 
 # Todo
 ## 2023
