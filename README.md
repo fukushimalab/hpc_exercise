@@ -2,7 +2,8 @@
 名古屋工業大学 情報工学科 ネットワーク系分野 3年後期 ネットワーク系演習II：ハイパフォーマンスコンピューティングの演習資料です．詳しい説明は下記リンクから．
 
 * [ドキュメントURL](https://fukushimalab.github.io/hpc_exercise/)
-* (2部実験など短い演習用)[simple.md]
+* [Intel Intrinsics](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)
+* [2部実験など短い演習用ページ] (simple.md)
 
 # Todo
 ## 2023
