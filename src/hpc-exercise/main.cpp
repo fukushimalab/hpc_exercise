@@ -747,14 +747,12 @@ int main(const int argc, const char** argv)
 		Mat_8U a_8u(row, col);
 		Mat_8U b_8u(row, col);
 		Mat_8U ret_8u(row, col);
-		mat_rand(a_8u, 0, 127);//128は128+128=256でunsigned charがオーバーフロー
-		mat_rand(b_8u, 0, 127);//128は128+128=256でunsigned charがオーバーフロー
+		mat_rand(a_8u, 0, 63);//64は64+64=128でcharがオーバーフロー
+		mat_rand(b_8u, 0, 63);//64は64+64=128でcharがオーバーフロー
 
 		Mat_8S a_8s(a_8u);
 		Mat_8S b_8s(b_8u);
 		Mat_8S ret_8s(row, col);
-		mat_rand(a_8u, 0, 63);//64は64+64=128でcharがオーバーフロー
-		mat_rand(b_8u, 0, 63);//64は64+64=128でcharがオーバーフロー
 
 		Mat_16S a_16s(a_8u);
 		Mat_16S b_16s(b_8u);
