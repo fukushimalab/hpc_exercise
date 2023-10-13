@@ -136,11 +136,11 @@ void mat_one(Mat_64F& m)
 #pragma endregion
 
 #pragma region init(rand)
-void mat_rand(Mat_8U& m, const char rand_min, const char rand_max)
+void mat_rand(Mat_8S& m, const char rand_min, const char rand_max)
 {
 	const int size = m.rows * m.cols;
 
-	unsigned char* ptr = m.data;
+	char* ptr = m.data;
 	const float v = (float)(rand_max - rand_min) / static_cast<float>(RAND_MAX);
 	for (int i = 0; i < size; i++)
 	{
