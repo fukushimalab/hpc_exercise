@@ -479,7 +479,7 @@ int main(const int argc, const char** argv)
 			t.end();
 			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "|mul 2lp|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|mul 1lp|" << t.getAvgTime() << "|" << std::endl;
 
 		std::cout << std::endl << "info:" << std::endl;
 		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
