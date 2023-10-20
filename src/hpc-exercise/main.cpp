@@ -1072,8 +1072,7 @@ int main(const int argc, const char** argv)
 		std::cout << "|32F mul 32F|" << t.getAvgTime() << "|" << std::endl;
 
 
-		Mat_32S x_32s(row, col);
-		mat_rand(x_32s, 0, 100);
+		Mat_32S x_32s = Mat_32S(x_32f);
 		Mat_32S ret_32s(row, col);
 
 		//int floating point mul
@@ -1104,8 +1103,7 @@ int main(const int argc, const char** argv)
 		std::cout << "|32S mul fix|" << t.getAvgTime() << "|" << std::endl;
 
 
-		Mat_16S x_16s(row, col);
-		mat_rand(x_16s, 0, 100);
+		Mat_16S x_16s = Mat_16S(x_32f);
 		Mat_16S ret_16s(row, col);
 
 		//short fix
