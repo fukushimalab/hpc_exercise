@@ -2,6 +2,7 @@
 #include "simd_util.h"
 #include <cstring>
 #include <iostream>
+#include <cmath>
 
 //Mat_8S
 Mat_8S::Mat_8S(const char* data, const int rows, const int cols)
@@ -67,7 +68,7 @@ Mat_8S::Mat_8S(const Mat_32F& m)
 	this->data = (char*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (char)m.data[j];
+		data[j] = (char)std::round(m.data[j]);
 	}
 }
 
@@ -78,7 +79,7 @@ Mat_8S::Mat_8S(const Mat_64F& m)
 	this->data = (char*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (char)m.data[j];
+		data[j] = (char)std::round(m.data[j]);
 	}
 }
 
@@ -174,7 +175,7 @@ Mat_8U::Mat_8U(const Mat_32F& m)
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (unsigned char)m.data[j];
+		data[j] = (unsigned char)std::round(m.data[j]);
 	}
 }
 
@@ -185,7 +186,7 @@ Mat_8U::Mat_8U(const Mat_64F& m)
 	this->data = (unsigned char*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (unsigned char)m.data[j];
+		data[j] = (unsigned char)std::round(m.data[j]);
 	}
 }
 
@@ -280,7 +281,7 @@ Mat_16S::Mat_16S(const Mat_32F& m)
 	this->data = (short*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (short)m.data[j];
+		data[j] = (short)std::round(m.data[j]);
 	}
 }
 
@@ -291,7 +292,7 @@ Mat_16S::Mat_16S(const Mat_64F& m)
 	this->data = (short*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (short)m.data[j];
+		data[j] = (short)std::round(m.data[j]);
 	}
 }
 
@@ -387,7 +388,7 @@ Mat_32S::Mat_32S(const Mat_32F& m)
 	this->data = (int*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (int)m.data[j];
+		data[j] = (int)std::round(m.data[j]);
 	}
 }
 
@@ -398,7 +399,7 @@ Mat_32S::Mat_32S(const Mat_64F& m)
 	this->data = (int*)_mm_malloc(size, 32);
 	for (int j = 0; j < rows * cols; j++)
 	{
-		data[j] = (int)m.data[j];
+		data[j] = (int)std::round(m.data[j]);
 	}
 }
 
