@@ -2797,7 +2797,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "|abs submax|" << t.getAvgTime() << "|" << std::endl;
 
-		//abs(subとnotを使って)
+		//abs(subとandを使って)
 		for (int j = 0; j < loop; j++)
 		{
 			t.start();
@@ -2810,14 +2810,14 @@ int main(const int argc, const char** argv)
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
 				__m256 temp;
-				//subとnotを使って．notのマスクはabsmask
+				//subとandを使って．andのマスクはabsmask
 				//XXXXXXXX
 
 				_mm256_store_ps(c.data + i, temp);
 			}
 			t.end();
 		}
-		std::cout << "|abs subnot|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|abs suband|" << t.getAvgTime() << "|" << std::endl;
 
 		std::cout << std::endl << "info:" << std::endl;
 		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
