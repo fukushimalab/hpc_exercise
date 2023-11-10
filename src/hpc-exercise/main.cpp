@@ -1819,7 +1819,7 @@ int main(const int argc, const char** argv)
 			t.end();
 			//std::cout << "time : " << t.getLastTime() << std::endl;
 		}
-		std::cout << "|k-i-j |" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|k-j-i |" << t.getAvgTime() << "|" << std::endl;
 
 		if (mat_diff(ans, c) > 1)std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
 
