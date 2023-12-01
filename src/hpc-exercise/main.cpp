@@ -3516,7 +3516,7 @@ int main(const int argc, const char** argv)
 			{
 				for (int i = 0; i < size; i++)
 				{
-					//XXXXXXXX　= bに書き込み書き込み
+					//XXXXXXXX　bに書き込み
 				}
 			}
 			t.end();
