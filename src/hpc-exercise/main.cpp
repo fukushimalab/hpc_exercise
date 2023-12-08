@@ -2259,22 +2259,93 @@ int main(const int argc, const char** argv)
 #endif
 #ifdef EX18
 	//課題18
-	//上記のコードを実行し，並列に動作していることを確認せよ．
-	//また，並列化を有効にする場合としない場合の計算時間を比較せよ．
+	//行列の要素ごとの和を計算し，並列化を有効にする場合としない場合の計算時間を比較せよ．
+	//また，標準出力ストリームへのデータ出力を並列化し，動作が並列になっていることを確認した上で，並列化を有効にする場合としない場合の計算時間を比較せよ．
+	//なお，複数のスレッドから標準出力ストリームへアクセスすると，リソースの奪い合いが発生して実行時間が低下することがある．
 	if (exercise == 18)
 	{
 		//空欄埋め問題
-		const int default_loop = 64;
-		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
+		const int default_loop = 10000;
+		const int default_size = 512;
 
-		std::cout << "exercise 18: loop = " << loop << std::endl;
-		//XXXXXXXX hint: #pragma...
-		for (int i = 0; i < 100; i++)
+		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
+		const int size = (arg_size == 0) ? default_size : arg_size;
+
+		std::cout << "exercise 18: loop = " << loop << ", size = " << size << std::endl << std::endl;
+
+		Mat_32F a(size, size);
+		Mat_32F b(size, size);
+		Mat_32F c(size, size);
+		Mat_32F ans(size, size);
+
+		mat_rand(a, 0, 100);
+
+		CalcTime t;
+
+		// add 並列化なし
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int j = 0; j < size; ++j)
+			{
+				for (int i = 0; i < size; ++i)
+				{
+					ans.data[j * size + i] = a.data[j * size + i] + b.data[j * size + i];
+				}
+			}
+			t.end();
+		}
+		double time_add = t.getAvgTime();
+
+		// add 並列化あり
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			//XXXXXXXX hint: #pragma...
+			for (int j = 0; j < size; ++j)
+			{
+				for (int i = 0; i < size; ++i)
+				{
+					//XXXXXXXX c.data[j * size + i] =
+				}
+			}
+			t.end();
+		}
+		double time_add_parallel = t.getAvgTime();
+
+		if (mat_diff(ans, c) > 1)std::cout << "diff from ans: " << mat_diff(ans, c) << std::endl;
+
+		// cout 並列化なし
+		std::cout << "cout" << std::endl;
+		t.start();
+		for (int i = 0; i < 10; i++)
 		{
 			std::cout << i << std::endl; //並列化したい処理
 		}
+		t.end();
+		double time_cout = t.getAvgTime(false);
 
-		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = 0" << std::endl;
+		// cout 並列化あり
+		std::cout << "cout parallel" << std::endl;
+		t.start();
+		//XXXXXXXX hint: #pragma...
+		for (int i = 0; i < 10; i++)
+		{
+			std::cout << i << std::endl; //並列化したい処理
+		}
+		t.end();
+		double time_cout_parallel = t.getAvgTime(false);
+		
+		std::cout << std::endl;
+		std::cout << "|method       |time [ms]|" << std::endl;
+		std::cout << "|-------------|---------|" << std::endl;
+		std::cout << "|add          |" << time_add << "|" << std::endl;
+		std::cout << "|add parallel |" << time_add_parallel << "|" << std::endl;
+		std::cout << "|cout         |" << time_cout << "|" << std::endl;
+		std::cout << "|cout parallel|" << time_cout_parallel << "|" << std::endl;
+
+		std::cout << std::endl << "info:" << std::endl;
+		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
 		return 0;
 	}
 #endif
