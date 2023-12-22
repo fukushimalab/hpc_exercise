@@ -3429,7 +3429,7 @@ int main(const int argc, const char** argv)
 		std::cout << std::endl;
 
 		//SSEでの実装 cを入力として，dに書き込み
-		//ヒント：前半8個と後半8個に分けて8回処理する．packs_epi16で半分のサイズできる
+		//ヒント：前半8個と後半8個に分けて2回処理する．packs_epi16で半分のサイズへ変換できる
 		//ヒント：下記のAVXの作りかけもヒントになる．
 		//XXXX 行数は任意
 		//XXXX
