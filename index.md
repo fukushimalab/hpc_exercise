@@ -628,6 +628,8 @@ Makefileには，既に必要なオプションが記述されており，`CXXFL
 また，このMakefileはコンパイルの最後にCSEかlocal環境か分かるような表示がある．
 もし名工大CSEを使わない場合には，Makefile_notNIT_Userをリネームして使うこと．
 
+なお，2020年度はコロナウイルス対策で自宅での実行になったため，デフォルトをこちらにしている．普段のものをMakefile_for_CSEとした．
+
 ```Makefile
 PROGRAM=hpc_exercise
 OBJS=utils/mat.o utils/mat_util.o main.o
