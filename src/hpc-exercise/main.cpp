@@ -2448,71 +2448,44 @@ int main(const int argc, const char** argv)
 		mat_rand(b, 0, 100);
 		Mat_32F c(size, size);
 
-		for (int l = 0; l < loop; l++)
-		{
-			mat_zero(c);
-			t.start();
-			//#pragma omp parallel for num_threads(n)で並列化，nに任意の整数を入れる
-			//XXXXXXXX
-			for (int i = 0; i < size; ++i)
-			{
-				float* pc = c.data + i * size;
-				float* pa = a.data + i * size;
-				for (int k = 0; k < size; ++k)
-				{
-					float* pb = b.data + k * size;
-					const float pak = pa[k];
-					for (int j = 0; j < size; ++j)
-					{
-						pc[j] += (pak * pb[j]);
-					}
-				}
-			}
-			t.end();
-			//std::cout << "time : " << t.getLastTime() << std::endl;
-		}
-		std::cout << "|num_threads(8)|time [ms]|" << std::endl;
-		std::cout << "|--------------|---------|" << std::endl;
-		std::cout << "|xx            |" << t.getAvgTime() << "|" << std::endl;
-
-		std::cout << std::endl;
-
-		//上記はプログラムコンパイル時にスレッド数を決定する方法．
-		//プログラム実行時にスレッド数を変更するには下記のset_num_threadを用いる．
+		//スレッド数の指定には2種類ある
+		//1. num_threads句を用いる方法
+		//2. omp_set_num_threads関数を用いる方法
+		//num_threads句を使用する方法では，並列化ループ単体で設定することができる
+		//omp_set_num_threads関数を使用する方法では，それ以降での並列化ループ全てに設定を適用できる
+		//どちらの方法でもスレッド数の指定は可能だが，その適用範囲が異なるため，用途に合わせて使い分けると良い
 		//詳細は，並列化用の関数群 omp.h　の章を参照のこと．
-		//上記は，何度もコンパイルしないといけないが，下記は一度だけでよいのでif (isUseSetNumThread)のコメントアウトなどをうまく使うこと．
-		bool isUseSetNumThread = false;
-		//if (isUseSetNumThread)
+		const int threadMax = 32;
+		std::cout << "|set_thread|time [ms]|" << std::endl;
+		std::cout << "|----------|---------|" << std::endl;
+		for (int nt = 1; nt < threadMax; nt++)
 		{
-			const int threadMax = 32;
-			std::cout << "|set_thread|time [ms]|" << std::endl;
-			std::cout << "|----------|---------|" << std::endl;
-			for (int nt = 1; nt < threadMax; nt++)
+			//omp_set_num_threads(n)で並列化，nに任意の整数を入れる，整数変数でも可
+			//XXXXXXXX 
+			for (int l = 0; l < loop; l++)
 			{
-				omp_set_num_threads(nt);
-				for (int l = 0; l < loop; l++)
-				{
-					mat_zero(c);
-					t.start();
+				mat_zero(c);
+				t.start();
+				//#pragma omp parallel for num_threads(n)で並列化，nに任意の整数を入れる，整数変数でも可
+				//XXXXXXXX
 #pragma omp parallel for
-					for (int i = 0; i < size; ++i)
+				for (int i = 0; i < size; ++i)
+				{
+					float* pc = c.data + i * size;
+					float* pa = a.data + i * size;
+					for (int k = 0; k < size; ++k)
 					{
-						float* pc = c.data + i * size;
-						float* pa = a.data + i * size;
-						for (int k = 0; k < size; ++k)
+						float* pb = b.data + k * size;
+						const float pak = pa[k];
+						for (int j = 0; j < size; ++j)
 						{
-							float* pb = b.data + k * size;
-							const float pak = pa[k];
-							for (int j = 0; j < size; ++j)
-							{
-								pc[j] += (pak * pb[j]);
-							}
+							pc[j] += (pak * pb[j]);
 						}
 					}
-					t.end();
 				}
-				std::cout << "|set      " << nt << "|" << t.getAvgTime() << "|" << std::endl;
+				t.end();
 			}
+			std::cout << "|set      " << nt << "|" << t.getAvgTime() << "|" << std::endl;
 		}
 
 		std::cout << std::endl << "info:" << std::endl;
