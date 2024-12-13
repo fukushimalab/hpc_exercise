@@ -35,7 +35,8 @@ void loofline_test_cpp(const int iteration, const int num_thread = -1)
 	}
 
 	printf("size %d KBYTE, iteration %d\n", size * (int)(sizeof(float)) / 1024, iteration);
-	printf("order, GFLOPS, FLOPS/BYTE\n");
+	// printf("order, GFLOPS, FLOPS/BYTE\n");
+	printf("order, FLOPS/BYTE, GFLOPS\n")
 
 	int n = 0;
 	{
