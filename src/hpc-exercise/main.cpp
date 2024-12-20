@@ -3466,7 +3466,7 @@ int main(const int argc, const char** argv)
 	//上記のコードのスカラ実装，スカラ実装＋並列化，SIMDのみ，SIMD＋並列化を作成し，計算時間を比較せよ．
 	//
 	//課題25のように行列aにおいて要素の値があるしきい値以上の場合だけ3乗し，それ以外は何もしない処理をスカラ実装，スカラ実装＋並列化，SIMDのみ，SIMD＋並列化で作成し，計算時間を比較せよ．
-	//if (exercise == 29)
+	if (exercise == 29)
 	{
 		//空欄埋め問題
 		const int default_loop = 10000;
