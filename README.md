@@ -22,39 +22,25 @@
 
 src内の各プロジェクトは，Makefileでコンパイルできるようになっています．   
 
-また，Visual Studio 2019でもコンパイルできるようにしています．
-下記のファイルはVisual Studio 2019用のファイルです．必要ない人は無視してください．  
-`*.sln` `*.vcxproj*`
+Windows用にはVisual Studioのプロジェクトファイル（`*.sln`，`*.vcxproj*`）も提供しています．本演習の動作確認環境はCSEのg++です．ファイルはLF改行で管理しています．
 
-ただしファイルの文字コードや改行コードには注意すること．
-Linux用に改行コードはLFになっていますが，Visual Stdio2019上で実行するには，CRLFになっていないといけません．
+# 動作確認環境
+2026年10月2日にCSEサーバーで確認した環境です．
 
-# 動作確認
-2020/5/26現在の動作確認
+|項目|環境|
+|---|---|
+|OS|Linux（x86_64）|
+|コンパイラ|g++ 13.3.0（Ubuntuパッケージ：13.3.0-6ubuntu2~24.04.1）|
+|CPU|AMD EPYC 9745 × 2|
+|コア数|256物理コア・512論理CPU|
+|ビルド|各プロジェクトのMakefileを使用|
 
-|OS等 |コンパイラ|備考|
-|---|---------|---|
-|20号館ローカル（名工大）|g++|〇：make※１|
-|CSE@384コア（名工大）|g++|〇：make※２|
-|CSE@384コア（名工大）|icc|〇：make※２|
-|Linux (Ubuntu)|g++|〇：make|
-|Linux (Ubuntu)|clang++|〇：make|
-|Windows|Visual Studio2019|〇：slnを開く|
-|Windows|g++on WSL|〇：make|
-|Windows|MinGW|△：※３|
-|Windows|clang+VS2019|×：※４|
-|Mac|clang++|△：※５|
+プロジェクトのルートから，次のようにコンパイルします．
 
-* ※１：普段はこれがデフォルト
-* ※２：普通の時間にこれで回すと，1～4年生の全ユーザのCPU資源が枯渇するので，他の授業に影響がでないように使うなら深夜．
-* ※３：インストーラでデフォルトではついてこないpthreadを必ずチェック．getclock_timeがないので`mat_util.h`の`＃USU_TIME_CHRONO`をコメントアウトを戻す．そのあとmake．この場合，1ms以下の精度がないので，タイマーの測り方を変更すること．
-* ※４：Visual StudioのMSBuild用のclangのOpenMPが有効化できずに動作していない．頑張ったら動くはず．普通のLLVM+clangなら動くはず（検証していない）
-* ※５：デフォルトのclangはOpenMPに対応していない可能性が高いので，OpenMPに対応したg++に変更する．場合によっては，Makefileのg++のところはclang++に．[インストール用の参考ページ](https://mem-archive.com/2019/08/17/post-2038/)．
+```shell
+make -C src/hpc-exercise
+```
 
-AVX命令が前提なので，IntelかAMDのCPUが必要です．ARMのCPUでは動きません．
-Apple M1を使っている人は，どうやっても対応できないのでCSEの計算機を使ってください．
+最適化オプションを変更した場合は，`make -B`で全オブジェクトを再コンパイルしてください．CSEのg++ 13.3では，`-O2`でも自動ベクトル化が有効です．オプションの説明とアセンブリの観察方法は[演習資料](index.md)に記載しています．
 
-CSEの情報（2023年～）：
-* 各自端末 [Intel Core-i5 11500T](https://www.intel.co.jp/content/www/jp/ja/products/sku/212272/intel-core-i511500t-processor-12m-cache-up-to-3-90-ghz/specifications.html)（1.5GHz，6コア，12スレッド）2号館
-* 各自端末 [Intel Core-i5 11500](https://www.intel.co.jp/content/www/jp/ja/products/sku/212277/intel-core-i511500-processor-12m-cache-up-to-4-60-ghz/specifications.html)（2.7GHz，6コア，12スレッド）20号館
-* サーバー [AMD EPYC 7763](https://www.amd.com/ja/products/cpu/amd-epyc-7763) 64コア128スレッドx2
+WindowsでLinux環境を利用する場合はWSLを使用できます．AVX命令を扱う演習は，AVXに対応するx86 CPUが必要です．Apple SiliconなどARM環境を使用している場合は，CSEサーバーで実行してください．

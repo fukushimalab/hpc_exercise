@@ -1,10 +1,18 @@
 # Makefileについて
-Makefileは二つある．
-普段は，Makefile_for_CSEをmakefileにしてある．
-2020年はコロナウィルス対策で，自宅のPCで行うことを前提に，Makefile_notNIT_Userをデフォルトに設定し，Makefileにリネームしている．
+配布されている`Makefile`をそのまま使用する．CSEサーバーの動作確認環境はg++ 13.3.0である．
 
-* Makefile_for_CSE
-* Makefile_notNIT_User
+このディレクトリで次のコマンドを実行する．
 
-Windowsでこの演習を行おうと思った場合，MinGWは，中で使われているclock_gettimeが動かない．
-そのため，WSLで行うこと．
+```shell
+make
+```
+
+コンパイラは`CXX`，コンパイルオプションは`CXXFLAGS`に指定されている．最適化レベルを変更した場合は，`make -B`で全オブジェクトを再コンパイルすること．例えば，ファイルを編集せずに`-O3`を指定するには次のように実行する．
+
+```shell
+make -B CXXFLAGS='-std=c++0x -fopenmp -Wno-unused-result -march=native -O3'
+```
+
+`Makefile_for_CSE`には実行環境の確認表示が追加されている．通常のビルドにファイルのリネームは必要ない．
+
+WindowsでLinux用のMakefileを使用する場合はWSLを利用する．AVX命令を扱う演習には，AVX対応のx86環境を使用すること．

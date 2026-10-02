@@ -5,6 +5,7 @@
 #define EX4
 #define EX5
 #define EX6
+#define EX65
 #define EX7
 #define EX8
 #define EX9
@@ -28,10 +29,9 @@
 #define EX27
 #define EX28
 #define EX29
-#define EX30
 #else
 //一番先頭の#if 1を#if 0に変えると，ここで定義した課題だけがコンパイルされるようになる．
-//main関数が長すぎてコンパイラが最適化できないときの対策用
+//対象外の課題をコンパイルから除外し，アセンブリ出力を絞るために使用する．
 
 #define EX9
 
@@ -51,10 +51,25 @@
 #ifdef EX22
 #include "utils/loofline_performace.h"
 #endif
+#ifdef EX27
 void inline _mm256_transpose_8x8_ps(__m256* dst, const __m256* src);
-void inline rot(double a, double b, double& x, double& y, double radian);
-void rot_withoutinline(double a, double b, double& x, double& y, double radian);
+#endif
+#ifdef EX12
+//課題12用：回転を繰り返す段数．変更したら再ビルドすること．
+#define ROT_STAGES 8
+//関数のinline展開を禁止する指定．GCC/clangとVisual Studio（MSVC）で書き方が異なる．
+#ifdef _MSC_VER
+#define NOINLINE __declspec(noinline)
+#else
+#define NOINLINE __attribute__((noinline))
+#endif
+NOINLINE void rot_noinline(double a, double b, double& x, double& y, double c, double s);
+void rot_function(double a, double b, double& x, double& y, double c, double s);
+inline void rot_inline(double a, double b, double& x, double& y, double c, double s);
+#endif
+#ifdef EX2
 void GEMM(Mat_32F& a, Mat_32F& b, Mat_32F& c);
+#endif
 
 
 int main(const int argc, const char** argv)
@@ -77,6 +92,7 @@ int main(const int argc, const char** argv)
 	const int arg_loop = (argc < 3) ? 0 : atoi(argv[2]);
 	const int arg_size = (argc < 4) ? 0 : atoi(argv[3]);
 
+#ifdef EX1
 	//課題1
 	//(1) 行列の"要素"の積和演算AX + Bを計算するプログラムにおいて，行列積と和それぞれの実行時間をタイマーを挟むことで測定せよ．
 	//なお，デフォルトのサンプルコードには行列積の後，和をとるプログラムがサンプルとして書かれており，タイマーもすでに記述済みである．
@@ -122,6 +138,8 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
+#ifdef EX2
 	//課題2
 	//行列積を計算するプログラムにおいて，コンパイラオプションを変えて計算速度の計測し，その違いを観測せよ．
 	//なお，行列の要素積ではなく行列積であり，呼ぶ関数はGEMMである．
@@ -160,6 +178,8 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
+#ifdef EX3
 	//課題3
 	//小さな行列に対して，各要素を
 	//3x^6+3x^5+3*x^4+3*x^3+3
@@ -234,6 +254,8 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
+#ifdef EX4
 	//課題4
 	//小さな行列に対して，各要素を下記の定数倍するプログラムを作成し，数式の展開前後で計算速度を比較せよ．
 	//(2π+sqrt(5)+0.5^2)x
@@ -304,93 +326,13 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
-	//課題4.5
-	//浮動小数点と整数の加算と積の変換：多くのCPUで効果ないので没．SIMD化などが必要なのと，演算強度が足りない
-	if (exercise == 45)
-	{
-		std::cout << "exercise 4.5" << std::endl;
-		const int loop = 100000000;
-		const int row = 64;
-		const int col = 64;
-		Mat_32F x(row, col);
-		mat_rand(x, 0, 100);
-		Mat_32F ret(row, col);
-		mat_zero(ret);
-
-		CalcTime t;
-
-		//float演算
-		for (int k = 0; k < loop; k++)
-		{
-			//浮動小数点の乗算
-			t.start();
-			const int size = x.rows * x.cols;
-			for (int i = 0; i < size; i += 8)
-			{
-				//計算
-				ret.data[i] = 2.f * x.data[i];
-			}
-
-			t.end();
-		}
-		std::cout << "float mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
-		for (int k = 0; k < loop; k++)
-		{
-			//浮動小数点の加算
-			t.start();
-			const int size = x.rows * x.cols;
-			for (int i = 0; i < size; i++)
-			{
-				//計算
-				ret.data[i] = x.data[i] + x.data[i];
-			}
-			t.end();
-		}
-		std::cout << "float add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
-		//int演算
-		Mat_32S xi(row, col);
-		mat_rand(xi, 0, 100);
-		Mat_32S reti(row, col);
-		mat_zero(reti);
-
-		for (int k = 0; k < loop; k++)
-		{
-			//整数の乗算
-			t.start();
-			const int size = xi.rows * xi.cols;
-			for (int i = 0; i < size; i++)
-			{
-				//計算
-				reti.data[i] = 2 * xi.data[i];
-			}
-
-			t.end();
-		}
-		std::cout << "int   mul: time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
-		for (int k = 0; k < loop; k++)
-		{
-			//浮動小数点の加算
-			t.start();
-			const int size = xi.rows * xi.cols;
-			for (int i = 0; i < size; i++)
-			{
-				//計算
-				reti.data[i] = xi.data[i] + xi.data[i];
-			}
-			t.end();
-		}
-		std::cout << "int   add : time (avg): " << t.getAvgTime() << " ms" << std::endl;
-
-		return 0;
-	}
-
+#endif
+#ifdef EX5
 	//課題5
 	//小さな行列に対して，各要素を3.141592で除算する計算するプログラムを作成し，除算を削減する前と後で計算速度を比較せよ．
 	// 本課題は行列を2重ループで処理している．これをループをつぶした場合に，効果がどれくらいはっきりするか比較せよ． なお，このループ構造については，演習用コードと行列演算ライブラリの説明におけるチュートリアル課題3で示してある通り．
 	//大きな行列で行うと，効果が少ない可能性があるため注意すること．
+	//-O2と-O3の両方で計測し，課題4.5の方法でアセンブリを観察して考察せよ．
 	if (exercise == 5)
 	{
 		//空欄埋め問題
@@ -489,8 +431,14 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
+#ifdef EX6
 	//課題6
-	//小さな4つの行列A, B, C, Dに対して，行列の各要素ごとに`(a/b)*(c/d)`を計算するプログラムを作成し，順序を入れ替えて除算を削減する前と後で計算速度を比較せよ．
+	//小さな4つのfloat型の行列A, B, C, D（要素は1〜100）について，同じ位置の要素から下記の式を計算せよ．
+	//a / b / c / d / b / c / d / b / c / d / b / c / d
+	//除算は左から順に行う．aをb，c，dで順に割る処理を4回重ねる．
+	//式を変形して除算回数を削減し，変形前後の計算速度を-O0と-O3で比較せよ．
+	//課題4.5の方法で生成されたアセンブリを観察して結果を考察せよ．
 	if (exercise == 6)
 	{
 		//空欄埋め問題
@@ -537,7 +485,7 @@ int main(const int argc, const char** argv)
 		}
 		std::cout << "|method|time [ms]|" << std::endl;
 		std::cout << "|------|---------|" << std::endl;
-		std::cout << "|div x2|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|before|" << t.getAvgTime() << "|" << std::endl;
 
 		//after
 		for (int k = 0; k < loop; k++)
@@ -555,7 +503,7 @@ int main(const int argc, const char** argv)
 			t.end();
 			//std::cout << "after : time: " << t.getLastTime() << " ms" << std::endl;
 		}
-		std::cout << "|div x1|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|after |" << t.getAvgTime() << "|" << std::endl;
 
 
 		std::cout << std::endl << "info:" << std::endl;
@@ -564,6 +512,94 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
+#ifdef EX65
+	//課題6.5：データIOと演算コスト
+	//定数のコピー，入力のコピー，単純な加算，入力値の繰り返し加算を比較せよ．
+	//-O3で行列サイズと加算回数を変え，生成されたアセンブリと実行時間を考察せよ．
+	//繰り返し加算の回数Nは下記のADDITION_COUNTで指定する（4，8，16）．変更したら再ビルドすること．
+	//コンパイル時にNが決まっていると，コンパイラが加算のループを展開し，要素ループのSIMD化を保てる．
+#define ADDITION_COUNT 4
+	if (exercise == 65)
+	{
+		const int loop = (arg_loop == 0) ? 1001 : arg_loop;
+		const int size = (arg_size == 0) ? 64 : arg_size;
+		const int addition_count = ADDITION_COUNT;
+		if (loop < 2 || size < 1 || addition_count < 1)
+		{
+			std::cout << "exercise 65: loop >= 2, size >= 1, additions >= 1" << std::endl;
+			return 1;
+		}
+		std::cout << "exercise 65: loop = " << loop << ", size = " << size
+			<< ", additions = " << addition_count << std::endl << std::endl;
+		Mat_32F x(size, size);
+		Mat_32F y(size, size);
+		mat_rand(x, 1.f, 100.f);
+		mat_zero(y);
+		const int elements = x.rows * x.cols;
+		CalcTime t;
+		std::cout << "|method|time [ms]|" << std::endl;
+		std::cout << "|------|---------|" << std::endl;
+
+		//定数のコピー
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int i = 0; i < elements; i++)
+			{
+				//XXXXXXXX y.data[i]に1.fを書き込む．
+			}
+			t.end();
+		}
+		std::cout << "|constant copy|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "result sample: " << y.data[0] << std::endl;
+
+		//入力のコピー
+		mat_zero(y);//前の方式の結果を消す（計測外）
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int i = 0; i < elements; i++)
+			{
+				//XXXXXXXX x.data[i]をy.data[i]にコピーする．
+			}
+			t.end();
+		}
+		std::cout << "|input copy|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "result sample: " << y.data[0] << std::endl;
+
+		//単純な加算
+		mat_zero(y);//前の方式の結果を消す（計測外）
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int i = 0; i < elements; i++)
+			{
+				//XXXXXXXX x.data[i]に1.fを加え，y.data[i]に書き込む．
+			}
+			t.end();
+		}
+		std::cout << "|add|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "result sample: " << y.data[0] << std::endl;
+
+		//非定数の繰り返し加算
+		mat_zero(y);//前の方式の結果を消す（計測外）
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			for (int i = 0; i < elements; i++)
+			{
+				//XXXXXXXX x.data[i]を一度読み出し，その値を0.fにaddition_count回加える．
+				//最終結果だけをy.data[i]に書き込む．
+			}
+			t.end();
+		}
+		std::cout << "|repeated add|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "result sample: " << y.data[0] << std::endl;
+		return 0;
+	}
+#endif
+#ifdef EX7
 	//課題7
 	//行列の各要素を2乗，3乗，4乗．．．n乗としたときに，mulで作ったものとpowで作ったものの速度を比較せよ．
 	//また，nがいくつの時にmulのほうが速くなるのか（それとも常時powのほうが遅い・速いのか）比較せよ．
@@ -725,6 +761,8 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
+#ifdef EX8
 	//課題8
 	//2つの行列の和を`char, unsigned char, short, int, float, double`で計算しそれぞれ比較せよ．
 	//なお，大きい行列サイズでないと，効果がでない場合がある．
@@ -859,13 +897,15 @@ int main(const int argc, const char** argv)
 		return 0;
 	}
 
+#endif
 #ifdef EX9
 	//課題9
 	//intの行列を整数で2倍，浮動小数点で2.f倍,整数を１ビットだけビットシフトすることで2倍する場合の計算速度を比較せよ．
 	//また，intの行列を整数で2で除算する場合，浮動小数点で2で除算する場合，浮動小数点の0.5で乗算する場合，１ビットだけビットシフトすることで1/2倍する場合の速度を比較せよ．
 	//加えて，floatの行列で，2.0で除算する場合と0.5で乗算する場合を比較せよ．
-	//なお，浮動小数点で乗算する場合は整数の場合よりも遅い． 
-	//また，大きい行列サイズでないと，効果がでない場合がある．
+	//なお，浮動小数点で乗算する場合は整数の場合よりも遅いことが多いが，新しい計算機ではそれほど違わないことも多い．
+	//また，小さい行列サイズでないと，効果がでない場合がある．
+	//差が出なかった場合は，課題4.5の方法でアセンブリを観察し，各方式が同じ命令になっているかを確認せよ．
 	if (exercise == 9)
 	{
 		//空欄埋め問題
@@ -1425,24 +1465,22 @@ int main(const int argc, const char** argv)
 #endif
 #ifdef EX12
 	//課題12
-	//小さな行列A,Bの各要素を任意のradianだけ回転させて，x,yにして格納するプログラムを記述し，inline展開の有無で速度がどのように変わるか計測せよ．
-	//また，関数をべた書きした場合とも比較せよ．
-	//ただし，-O2以上のオプションを付けると強制的にinline展開される可能性がある．
-	//inline void rot(double a, double b, double &x, double &y, double radian)
-	//{
-	//	x = a * cos(radian);
-	//	y = b * sin(radian);
-	//}
+	//小さな行列A,Bの各要素の組(a,b)を回転させてx,yに格納する処理を，次の4方式で記述し，計算速度を比較せよ．
+	//(1) noinline指定の関数呼出し（記述済み），(2) inline指定のない通常の関数呼出し，(3) inline指定の関数呼出し，(4) べた書き
+	//関数はrot_noinline，rot_function，rot_inlineで，同じ処理（回転をROT_STAGES回繰り返す）を実装している．
+	//cos，sinは関数の外で一度だけ計算して引数で渡す．
+	//-O0，-O2，-O3で計測し，課題4.5の方法でアセンブリを観察して，関数呼出しが残っているか，要素ループがSIMD化されているかを確認せよ．
+	//ROT_STAGESを1に変えて再ビルドし，8の場合と比較せよ．
 	if (exercise == 12)
 	{
 		//空欄埋め問題
-		const int default_loop = 10000;
-		const int default_size = 256;
+		const int default_loop = 1000;
+		const int default_size = 128;
 
 		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
 		const int size = (arg_size == 0) ? default_size : arg_size;
 
-		std::cout << "exercise 12: loop = " << loop << ", size = " << size << std::endl << std::endl;
+		std::cout << "exercise 12: loop = " << loop << ", size = " << size << ", stages = " << ROT_STAGES << std::endl << std::endl;
 
 		const int row = size;
 		const int col = size;
@@ -1453,56 +1491,83 @@ int main(const int argc, const char** argv)
 		mat_rand(a, 0.0, 100.0);
 		Mat_64F b(row, col);
 		mat_rand(b, 0.0, 100.0);
+		Mat_64F ansx(row, col);
+		Mat_64F ansy(row, col);
 		Mat_64F x(row, col);
 		Mat_64F y(row, col);
 
 		const double radian = 2.2;
+		//cos，sinは計測の外で一度だけ計算する．
+		const double c = cos(radian);
+		const double s = sin(radian);
 
-		//関数呼び出し
+		std::cout << "|method   |time [ms]|" << std::endl;
+		std::cout << "|---------|---------|" << std::endl;
+
+		//(1) noinline指定の関数呼出し（記述済み．結果を正解としてansx，ansyに格納）
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
 			const int size = a.cols * a.rows;
 			for (int i = 0; i < size; i++)
 			{
-				//XXXXXXXX call rot_withoutinline
-				rot_withoutinline(a.data[i], b.data[i], x.data[i], y.data[i], radian);
+				rot_noinline(a.data[i], b.data[i], ansx.data[i], ansy.data[i], c, s);
 			}
 			t.end();
 		}
-		std::cout << "|method  |time [ms]|" << std::endl;
-		std::cout << "|--------|---------|" << std::endl;
-		std::cout << "|func    |" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|noinline |" << t.getAvgTime() << "|" << std::endl;
 
-		//inline 関数呼び出し
+		//(2) inline指定のない通常の関数呼出し
+		mat_zero(x);//前の方式の結果を消す（計測外）
+		mat_zero(y);
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
 			const int size = a.cols * a.rows;
 			for (int i = 0; i < size; i++)
 			{
-				//XXXXXXXX call rot
+				//XXXXXXXX call rot_function
 			}
 			t.end();
 		}
-		std::cout << "|inline  |" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|function |" << t.getAvgTime() << "|" << std::endl;
+		const double diff_function = mat_diff(ansx, x) + mat_diff(ansy, y);
 
-		//べた書き（関数の中身をループないに書く）
+		//(3) inline指定の関数呼出し
+		mat_zero(x);//前の方式の結果を消す（計測外）
+		mat_zero(y);
 		for (int k = 0; k < loop; k++)
 		{
 			t.start();
 			const int size = a.cols * a.rows;
 			for (int i = 0; i < size; i++)
 			{
-				//XXXXXXXX
-				//XXXXXXXX
+				//XXXXXXXX call rot_inline
 			}
 			t.end();
 		}
-		std::cout << "|hardcode|" << t.getAvgTime() << "|" << std::endl;
+		std::cout << "|inline   |" << t.getAvgTime() << "|" << std::endl;
+		const double diff_inline = mat_diff(ansx, x) + mat_diff(ansy, y);
+
+		//(4) べた書き（関数の中身をループ内に書く）
+		mat_zero(x);//前の方式の結果を消す（計測外）
+		mat_zero(y);
+		for (int k = 0; k < loop; k++)
+		{
+			t.start();
+			const int size = a.cols * a.rows;
+			for (int i = 0; i < size; i++)
+			{
+				//XXXXXXXX rot_functionと同じ計算を書き，結果をx.data[i]，y.data[i]に格納する
+			}
+			t.end();
+		}
+		std::cout << "|hardcode |" << t.getAvgTime() << "|" << std::endl;
+		const double diff_hardcode = mat_diff(ansx, x) + mat_diff(ansy, y);
 
 		std::cout << std::endl << "info:" << std::endl;
 		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
+		std::cout << "diff from noinline: function = " << diff_function << ", inline = " << diff_inline << ", hardcode = " << diff_hardcode << std::endl;
 		return 0;
 	}
 #endif
@@ -2261,6 +2326,7 @@ int main(const int argc, const char** argv)
 	//課題18
 	//上記のコードを実行し，並列に動作していることを確認せよ．
 	//また，並列化を有効にする場合としない場合の計算時間を比較せよ．
+	//目的は並列動作の確認である．表示はスレッド間の同期が必要なため，並列化しても必ずしも速くはならない．
 	if (exercise == 18)
 	{
 		//空欄埋め問題
@@ -2354,7 +2420,7 @@ int main(const int argc, const char** argv)
 	}
 #endif
 #ifdef EX20
-	//課題20
+	//課題20（ローカルPCでの実行を前提とする．CSEサーバーで行う場合は講義時間外など利用者の少ない時間帯を選ぶこと．）
 	//二つの行列の各要素の積を計算するコードで，スレッド数を変更して，計算時間がどのように推移するのかを確認せよ．
 	//なお，スレッド数は，計算機のコア数以上の物まで指定せよ．
 	//8コア16スレッドのPCでは，16コアよりも大きいスレッド数（例えば32までなど）までを指定せよ．
@@ -2474,8 +2540,9 @@ int main(const int argc, const char** argv)
 
 		//表示の仕方色々．
 		//print_m256の関数を使わない場合はいったんstoreして出力
-		float temp[8];
-		// __attribute__ ((aligned(32))) float temp[8]; // segmantation faultする場合はこっち
+		//_mm256_store_psは32バイト境界にアラインされたアドレスが必要なため，alignas(32)を付ける．
+		//付けない場合はsegmentation faultする可能性がある．アラインを気にしない場合は_mm256_storeu_psを使う．
+		alignas(32) float temp[8];
 		_mm256_store_ps(&temp[0], e);
 		std::cout << "cout ex1: ";
 		for (int i = 0; i < 8; i++) std::cout << temp[i] << ", ";
@@ -2529,14 +2596,14 @@ int main(const int argc, const char** argv)
 #endif
 #ifdef EX22
 	//課題22
-	//(1) 配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，FMAが速くなることを示せ．
+	//(1) 配列a,x,bに対して，`(((a*x+b)*x+b)*x+b)*x+b `の計算を配列ｃに格納するコードをmul/addで記述するものとFMAを使うもので記述し，計算速度と計算結果を比較せよ．
 	//なお，上記の関数は以下に等しい．
 	//a=_mm256_fmadd_ps(a,b,c);
 	//a=_mm256_fmadd_ps(a,b,c);
 	//a=_mm256_fmadd_ps(a,b,c);
 	//a=_mm256_fmadd_ps(a,b,c);
 	//これは，単純にFMAが1度だとメモリで律速するこのコードでは計算速度の差が出にくいためである．差が小さければ，より演算を増やせば良い．
-	//なお，現在のg++では，最適化によってmul - addの命令はおそらくFMAに自動的に最適化されている．コンパイラオプション等で抑制して様子を見るとよい．
+	//なお，現在のg++では，-O2以上でmul/addの命令もFMAに自動的に変換される．-ffp-contract=offを付けると変換を抑制できる．
 
 	//(2) また，GFLOPSと演算強度[FLOPS / BYTE]をFMA命令で計算する関数`loofline_test`を使って，ルールラインのグラフとして図示せよ．
 	if (exercise == 22)
@@ -2582,7 +2649,7 @@ int main(const int argc, const char** argv)
 				const __m256 mb = _mm256_load_ps(pb + i);
 
 				//mul,addを使って（結果はtempに入れること）
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
@@ -2612,7 +2679,7 @@ int main(const int argc, const char** argv)
 				const __m256 mb = _mm256_load_ps(pb + i);
 
 				//fmaを使って（結果はtempに入れること）
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//XXXXXXXX
 				//XXXXXXXX
 				//XXXXXXXX
@@ -2689,7 +2756,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//divを使って
 				//XXXXXXXX
 
@@ -2710,7 +2777,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//rcpとmulをつかって
 				//XXXXXXXX
 
@@ -2729,7 +2796,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//sqrtを使って
 				//XXXXXXXX
 
@@ -2748,7 +2815,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//rsqrtとrcpを使って
 				//XXXXXXXX
 				temp = _mm256_rcp_ps(_mm256_rsqrt_ps(ma));
@@ -2768,7 +2835,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//rsqrtとmulを使って（ルートの逆数は乗算で戻る）
 				//XXXXXXXX
 
@@ -2787,7 +2854,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//subとmaxを使って
 				//XXXXXXXX
 
@@ -2809,7 +2876,7 @@ int main(const int argc, const char** argv)
 				const __m256 ma = _mm256_load_ps(a.data + i);
 				const __m256 mb = _mm256_load_ps(b.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//subとandを使って．andのマスクはabsmask
 				//XXXXXXXX
 
@@ -2975,7 +3042,7 @@ int main(const int argc, const char** argv)
 			{
 				const __m256 ma = _mm256_load_ps(a.data + i);
 
-				__m256 temp;
+				__m256 temp = _mm256_setzero_ps();
 				//cmp, mul, blendvを使って（blendを使わずにビット演算でもできる）
 				//XXXXXXXX
 				//XXXXXXXX
@@ -3466,7 +3533,7 @@ int main(const int argc, const char** argv)
 	//上記のコードのスカラ実装，スカラ実装＋並列化，SIMDのみ，SIMD＋並列化を作成し，計算時間を比較せよ．
 	//
 	//課題25のように行列aにおいて要素の値があるしきい値以上の場合だけ3乗し，それ以外は何もしない処理をスカラ実装，スカラ実装＋並列化，SIMDのみ，SIMD＋並列化で作成し，計算時間を比較せよ．
-	//if (exercise == 29)
+	if (exercise == 29)
 	{
 		//空欄埋め問題
 		const int default_loop = 10000;
@@ -3572,188 +3639,12 @@ int main(const int argc, const char** argv)
 	}
 
 #endif
-#ifdef EX30
-	//課題30
-	//自動ベクトル化等のテスト．現在は課題として作成していない．
-	//実は課題８の8Uや8Sの加算のみ明示的にAVXのベクトル化コードを書いている．
-	//mat_add_scalar関数を代わりに呼び出すと結果が変わる（mat_add_scalar関数は8Uと8Sしか用意していない．）
-	//VisualStudioやiccは自動的にベクトル化してくれるが，gccやclangは2020/7/19現在，ベクトル化が自動でかからない．
-
-	if (exercise == 30)
-	{
-		const int default_loop = 1000;
-		const int default_size = 1024;
-
-		const int loop = (arg_loop == 0) ? default_loop : arg_loop;
-		const int size = (arg_size == 0) ? default_size : arg_size;
-
-		std::cout << "exercise 21.5: loop = " << loop << ", size = " << size << std::endl << std::endl;
-
-		const int row = size;
-		const int col = size;
-
-		CalcTime t;
-
-		Mat_8U a_8u(row, col);
-		Mat_8U b_8u(row, col);
-		Mat_8U ans_8u(row, col);
-		Mat_8U ret_8u(row, col);
-		mat_rand(a_8u, 1, 63);//64は64+64=128でcharをオーバーフロー．0は0除算が発生する可能性があるので回避
-		mat_rand(b_8u, 1, 63);//64は64+64=128でcharをオーバーフロー．0は0除算が発生する可能性があるので回避
-
-		Mat_8S a_8s(a_8u);
-		Mat_8S b_8s(b_8u);
-		Mat_8S abs_8s(row, col);
-		Mat_8S ret_8s(row, col);
-
-		Mat_16S a_16s(a_8u);
-		Mat_16S b_16s(b_8u);
-		Mat_16S ans_16s(row, col);
-		Mat_16S ret_16s(row, col);
-
-		Mat_32S a_32s(a_8u);
-		Mat_32S b_32s(b_8u);
-		Mat_32S ans_32s(row, col);
-		Mat_32S ret_32s(row, col);
-
-		Mat_32F a_32f(a_8u);
-		Mat_32F b_32f(b_8u);
-		Mat_32F ans_32f(row, col);
-		Mat_32F ret_32f(row, col);
-
-		Mat_64F a_64f(a_8u);
-		Mat_64F b_64f(b_8u);
-		Mat_64F ans_64f(row, col);
-		Mat_64F ret_64f(row, col);
-
-		const int matsize = row * col;
-		if (matsize % 32 != 0)
-		{
-			std::cout << "size x size must be 32 multiple" << std::endl;
-			exit(-1);
-		}
-
-		std::cout << "|method        |time [ms]|" << std::endl;
-		std::cout << "|--------------|---------|" << std::endl;
-		for (int l = 0; l < loop; l++)
-		{
-			t.start();
-			for (int i = 0; i < matsize; i++)
-			{
-				ans_8u.data[i] = a_8u.data[i] + b_8u.data[i];
-			}
-			t.end();
-		}
-		std::cout << "|8U add scalar |" << t.getAvgTime() << "|" << std::endl;
-		for (int l = 0; l < loop; l++)
-		{
-			t.start();
-			for (int i = 0; i < matsize; i += 32)
-			{
-				__m256i ms1 = _mm256_load_si256((__m256i*)(a_8u.data + i));
-				__m256i ms2 = _mm256_load_si256((__m256i*)(b_8u.data + i));
-				_mm256_store_si256((__m256i*)(ret_8u.data + i), _mm256_add_epi8(ms1, ms2));
-			}
-			t.end();
-		}
-		std::cout << "|8U add SIMD   |" << t.getAvgTime() << "|" << std::endl;
-		if (mat_diff(ans_8u, ret_8u) > 1)std::cout << "error is too big: " << mat_diff(ans_32f, ret_32f) << std::endl;
-
-		for (int l = 0; l < loop; l++)
-		{
-			t.start();
-			float* a = a_32f.data;
-			float* b = b_32f.data;
-			float* d = ans_32f.data;
-			for (int n = 0; n < matsize; n++)
-			{
-				*d++ = *a++ + *b++;
-			}
-			t.end();
-		}
-		std::cout << "|32F add scalar|" << t.getAvgTime() << "|" << std::endl;
-
-		for (int l = 0; l < loop; l++)
-		{
-			t.start();
-			for (int i = 0; i < matsize; i += 8)
-			{
-				__m256 ms1 = _mm256_load_ps((a_32f.data + i));
-				__m256 ms2 = _mm256_load_ps((b_32f.data + i));
-				_mm256_store_ps((ret_32f.data + i), _mm256_add_ps(ms1, ms2));
-			}
-			t.end();
-		}
-		std::cout << "|32F add SIMD  |" << t.getAvgTime() << "|" << std::endl;
-		if (mat_diff(ans_32f, ret_32f) > 1)std::cout << "error is too big: " << mat_diff(ans_32f, ret_32f) << std::endl;
-
-		for (int l = 0; l < loop; l++)
-		{
-			t.start();
-			for (int i = 0; i < matsize; i += 16)
-			{
-				__m256 ms1 = _mm256_load_ps((a_32f.data + i));
-				__m256 ms2 = _mm256_load_ps((b_32f.data + i));
-				_mm256_store_ps((ret_32f.data + i), _mm256_add_ps(ms1, ms2));
-
-				ms1 = _mm256_load_ps((a_32f.data + i + 8));
-				ms2 = _mm256_load_ps((b_32f.data + i + 8));
-				_mm256_store_ps((ret_32f.data + i + 8), _mm256_add_ps(ms1, ms2));
-			}
-			t.end();
-		}
-		std::cout << "|32F add SIMDx2|" << t.getAvgTime() << "|" << std::endl;
-		if (mat_diff(ans_32f, ret_32f) > 1)std::cout << "error is too big: " << mat_diff(ans_32f, ret_32f) << std::endl;
-
-		for (int l = 0; l < loop; l++)
-		{
-			t.start();
-			for (int i = 0; i < matsize; i += 32)
-			{
-				__m256 ms1 = _mm256_load_ps((a_32f.data + i));
-				__m256 ms2 = _mm256_load_ps((b_32f.data + i));
-				_mm256_store_ps((ret_32f.data + i), _mm256_add_ps(ms1, ms2));
-
-				ms1 = _mm256_load_ps((a_32f.data + i + 8));
-				ms2 = _mm256_load_ps((b_32f.data + i + 8));
-				_mm256_store_ps((ret_32f.data + i + 8), _mm256_add_ps(ms1, ms2));
-
-				ms1 = _mm256_load_ps((a_32f.data + i + 16));
-				ms2 = _mm256_load_ps((b_32f.data + i + 16));
-				_mm256_store_ps((ret_32f.data + i + 16), _mm256_add_ps(ms1, ms2));
-
-				ms1 = _mm256_load_ps((a_32f.data + i + 24));
-				ms2 = _mm256_load_ps((b_32f.data + i + 24));
-				_mm256_store_ps((ret_32f.data + i + 24), _mm256_add_ps(ms1, ms2));
-			}
-			t.end();
-		}
-		std::cout << "|32F add SIMDx4|" << t.getAvgTime() << "|" << std::endl;
-		if (mat_diff(ans_32f, ret_32f) > 1)std::cout << "error is too big: " << mat_diff(ans_32f, ret_32f) << std::endl;
-
-		std::cout << std::endl << "info:" << std::endl;
-		std::cout << "default parameter: default_loop = " << default_loop << ", default_size = " << default_size << std::endl;
-		/*
-		Mat_64F ans(ret_8u);
-		Mat_64F temp = Mat_64F(ret_8s);
-		std::cout << "diff  8S from 8U: " << mat_diff(temp, ans) / double(ans.cols * ans.rows) << std::endl;
-		temp = Mat_64F(ret_16s);
-		std::cout << "diff 16S from 8U: " << mat_diff(temp, ans) / double(ans.cols * ans.rows) << std::endl;
-		Mat_64F temp2 = Mat_64F(ret_32s);
-		std::cout << "diff 32S from 8U: " << mat_diff(temp2, ans) / double(ans.cols * ans.rows) << std::endl;
-		temp = Mat_64F(ret_32f);
-		std::cout << "diff 32F from 8U: " << mat_diff(temp, ans) / double(ans.cols * ans.rows) << std::endl;
-		temp = Mat_64F(ret_64f);
-		std::cout << "diff 64F from 8U: " << mat_diff(temp, ans) / double(ans.cols * ans.rows) << std::endl << std::endl;
-		*/
-		return 0;
-	}
-#endif
 
 	std::cout << "no select" << std::endl;
 	return 0;
 }
 
+#ifdef EX2
 //課題2用
 void GEMM(Mat_32F& a, Mat_32F& b, Mat_32F& c)
 {
@@ -3775,19 +3666,47 @@ void GEMM(Mat_32F& a, Mat_32F& b, Mat_32F& c)
 	}
 }
 
+#endif
+#ifdef EX12
 //課題12用
-inline void rot(double a, double b, double& x, double& y, double radian)
+//3つの関数は同じ処理を行う．cos(radian)，sin(radian)をc，sとして受け取り，(a,b)の回転をROT_STAGES回繰り返す．
+NOINLINE void rot_noinline(double a, double b, double& x, double& y, double c, double s)
 {
-	x = a * cos(radian);
-	y = b * sin(radian);
+	for (int j = 0; j < ROT_STAGES; j++)
+	{
+		const double t = a * c - b * s;
+		b = a * s + b * c;
+		a = t;
+	}
+	x = a;
+	y = b;
 }
 
-void rot_withoutinline(double a, double b, double& x, double& y, double radian)
+void rot_function(double a, double b, double& x, double& y, double c, double s)
 {
-	x = a * cos(radian);
-	y = b * sin(radian);
+	for (int j = 0; j < ROT_STAGES; j++)
+	{
+		const double t = a * c - b * s;
+		b = a * s + b * c;
+		a = t;
+	}
+	x = a;
+	y = b;
 }
 
+inline void rot_inline(double a, double b, double& x, double& y, double c, double s)
+{
+	for (int j = 0; j < ROT_STAGES; j++)
+	{
+		const double t = a * c - b * s;
+		b = a * s + b * c;
+		a = t;
+	}
+	x = a;
+	y = b;
+}
+#endif
+#ifdef EX27
 //課題27用
 inline void _mm256_transpose_8x8_ps(__m256* dst, const __m256* src)
 {
@@ -3814,3 +3733,4 @@ inline void _mm256_transpose_8x8_ps(__m256* dst, const __m256* src)
 		dst[i + 4] = _mm256_permute2f128_ps(tmpp[i], tmpp[i + 4], 0x31);
 	}
 }
+#endif
