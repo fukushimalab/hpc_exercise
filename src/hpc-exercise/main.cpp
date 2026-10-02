@@ -922,8 +922,9 @@ int main(const int argc, const char** argv)
 
 		//int
 		Mat_32S x_32s(row, col);
+		mat_rand(x_32s, 0, 100);
 		Mat_32S ret_32s(row, col);
-
+		mat_zero(ret_32s);
 
 		CalcTime t;
 		//2x mul
